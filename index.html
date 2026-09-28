@@ -1526,28 +1526,194 @@ ROTAS["/config"] = el => {
    (não cai na UFBA). Deixe vazio se não souber — dá para editar depois.
    ========================================================================= */
 const PROVAS = [
-  { id: "aocp-ifma-2023", banca: "Instituto AOCP", ano: 2023, orgao: "IF-MA", cargo: "Assistente em Administração", n: 50, tipo: "AE",
-    estrutura: "lp:1-10,rl:11-15,inf:16-20,ap:21-32,ce:33-50",
-    links: [["QConcursos", "https://www.qconcursos.com/questoes-de-concursos/provas/instituto-aocp-2023-if-ma-assistente-em-administracao"], ["PDF da prova", "https://arquivos.qconcursos.com/prova/arquivo_prova/96127/instituto-aocp-2023-if-ma-assistente-em-administracao-prova.pdf"], ["Prova comentada (Gran)", "https://questoes.grancursosonline.com.br/prova/ifma-2023-instituto-aocp-assistente-em-administracao"], ["Gabarito (site da AOCP)", "https://www.institutoaocp.org.br/concursos/636"]],
-    nota: "A prova mais parecida com a da UFBA: mesmo cargo, 5 alternativas. As questões 21–32 (Legislação) equivalem à nossa Administração Pública." },
-  { id: "aocp-ifms-2025", banca: "Instituto AOCP", ano: 2025, orgao: "IF-MS", cargo: "Assistente em Administração", n: 50, tipo: "AE", estrutura: "",
-    links: [["QConcursos", "https://www.qconcursos.com/questoes-de-concursos/provas/instituto-aocp-2025-if-ms-assistente-em-administracao"]],
-    nota: "A mais recente da AOCP para o cargo. Confira na capa da prova a divisão por disciplina e preencha a estrutura." },
-  { id: "aocp-ufpb-2019", banca: "Instituto AOCP", ano: 2019, orgao: "UFPB", cargo: "Assistente em Administração", n: 50, tipo: "AE", estrutura: "",
-    links: [["QConcursos", "https://www.qconcursos.com/questoes-de-concursos/provas/instituto-aocp-2019-ufpb-assistente-em-administracao"]],
-    nota: "Universidade federal e muito Direito Administrativo (16 das 50 questões) — ótimo treino para Específicos e AP." },
-  { id: "aocp-unir-2018", banca: "Instituto AOCP", ano: 2018, orgao: "UNIR", cargo: "Assistente em Administração", n: 85, tipo: "CE", estrutura: "",
-    links: [["QConcursos", "https://www.qconcursos.com/questoes-de-concursos/provas/instituto-aocp-2018-unir-assistente-em-administracao"]],
-    nota: "Formato Certo/Errado — diferente da UFBA, mas bom para treinar a leitura literal da lei." },
-  { id: "aocp-ufpel-2015", banca: "Instituto AOCP", ano: 2015, orgao: "UFPEL", cargo: "Assistente Administrativo", n: 50, tipo: "AE", estrutura: "",
-    links: [["QConcursos", "https://www.qconcursos.com/questoes-de-concursos/provas/instituto-aocp-2015-ufpel-assistente-administrativo"]], nota: "Mais antiga; use para volume de questões." },
-  { id: "aocp-ufpb-2014", banca: "Instituto AOCP", ano: 2014, orgao: "UFPB", cargo: "Assistente Administrativo", n: 50, tipo: "AE", estrutura: "",
-    links: [["QConcursos", "https://www.qconcursos.com/questoes-de-concursos/provas/instituto-aocp-2014-ufpb-assistente-administrativo"]], nota: "Mais antiga; use para volume de questões." },
-  { id: "avalia-feas-2026", banca: "Instituto Avalia", ano: 2026, orgao: "FEAS Curitiba", cargo: "Assistente Administrativo", n: 40, tipo: "AE", estrutura: "",
-    links: [["QConcursos", "https://www.qconcursos.com/questoes-de-concursos/provas/instituto-avalia-2026-feas-de-curitiba-pr-assistente-administrativo"]],
-    nota: "Prova da própria Avalia em 2026 — o retrato mais atual da banca. Confira o nº de questões na capa e ajuste." },
+ {
+  "id": "aocp-ifma-2023",
+  "banca": "Instituto AOCP",
+  "ano": 2023,
+  "orgao": "IF-MA",
+  "cargo": "Assistente em Administração",
+  "n": 50,
+  "tipo": "AE",
+  "estrutura": "lp:1-10,rl:11-15,inf:16-20,ap:21-32,ce:33-50",
+  "gab": "DBEACDBDAECBEDABDBCEEDCABDAEBECBAEDBDCAEBAECDDBECA",
+  "links": [
+   [
+    "QConcursos",
+    "https://www.qconcursos.com/questoes-de-concursos/provas/instituto-aocp-2023-if-ma-assistente-em-administracao"
+   ],
+   [
+    "PDF da prova",
+    "https://arquivos.qconcursos.com/prova/arquivo_prova/96127/instituto-aocp-2023-if-ma-assistente-em-administracao-prova.pdf"
+   ],
+   [
+    "PDF do gabarito",
+    "https://arquivos.qconcursos.com/prova/arquivo_gabarito/96127/instituto-aocp-2023-if-ma-assistente-em-administracao-gabarito.pdf"
+   ],
+   [
+    "Prova comentada (Gran)",
+    "https://questoes.grancursosonline.com.br/prova/ifma-2023-instituto-aocp-assistente-em-administracao"
+   ]
+  ],
+  "nota": "A mais parecida com a UFBA: mesmo cargo, 5 alternativas. Use o caderno TIPO 01 (o primeiro do PDF). Gabarito pós-recursos já preenchido."
+ },
+ {
+  "id": "aocp-ifms-2025",
+  "banca": "Instituto AOCP",
+  "ano": 2025,
+  "orgao": "IF-MS",
+  "cargo": "Assistente em Administração",
+  "n": 40,
+  "tipo": "AE",
+  "estrutura": "lp:1-10,inf:11-15,ap:16-25,ce:26-40",
+  "gab": "CADXDDBBACEDCXADBEBACECABBACABCAABDDXCBX",
+  "links": [
+   [
+    "QConcursos",
+    "https://www.qconcursos.com/questoes-de-concursos/provas/instituto-aocp-2025-if-ms-assistente-em-administracao"
+   ],
+   [
+    "PDF da prova",
+    "https://arquivos.qconcursos.com/prova/arquivo_prova/135451/instituto-aocp-2025-if-ms-assistente-em-administracao-prova.pdf"
+   ],
+   [
+    "PDF do gabarito",
+    "https://arquivos.qconcursos.com/prova/arquivo_gabarito/135451/instituto-aocp-2025-if-ms-assistente-em-administracao-gabarito.pdf"
+   ]
+  ],
+  "nota": "A mais recente da AOCP para o cargo (40 questões). Caderno PROVA 01. Gabarito oficial preenchido — 4 questões anuladas (4, 14, 37 e 40)."
+ },
+ {
+  "id": "aocp-ufpb-2019",
+  "banca": "Instituto AOCP",
+  "ano": 2019,
+  "orgao": "UFPB",
+  "cargo": "Assistente em Administração",
+  "n": 50,
+  "tipo": "AE",
+  "estrutura": "lp:1-10,ap:11-20,inf:21-25,ce:26-50",
+  "gab": "EACABEBCDEAXCDCCACEDDBCBEXDECCAABBXEBAXEDCAECBECBD",
+  "links": [
+   [
+    "QConcursos",
+    "https://www.qconcursos.com/questoes-de-concursos/provas/instituto-aocp-2019-ufpb-assistente-em-administracao"
+   ],
+   [
+    "PDF da prova",
+    "https://arquivos.qconcursos.com/prova/arquivo_prova/61328/instituto-aocp-2019-ufpb-assistente-em-administracao-prova.pdf"
+   ],
+   [
+    "PDF do gabarito",
+    "https://arquivos.qconcursos.com/prova/arquivo_gabarito/61328/instituto-aocp-2019-ufpb-assistente-em-administracao-gabarito.pdf"
+   ]
+  ],
+  "nota": "Universidade federal, com muito Direito Administrativo nos Específicos. Gabarito pós-recursos preenchido. Atenção: as questões de licitação usam a Lei 8.666, que foi revogada — na UFBA vale a 14.133."
+ },
+ {
+  "id": "aocp-unir-2018",
+  "banca": "Instituto AOCP",
+  "ano": 2018,
+  "orgao": "UNIR",
+  "cargo": "Assistente em Administração",
+  "n": 85,
+  "tipo": "CE",
+  "estrutura": "lp:1-15,ap:16-30,inf:31-45,ce:46-85",
+  "gab": "EEECCEXEEEECCCCCCCEEECCECECECCCECEECCEEECCECCCCCECCCECECCCECECCCCEECCXCCEECEEECECCEEE",
+  "links": [
+   [
+    "QConcursos",
+    "https://www.qconcursos.com/questoes-de-concursos/provas/instituto-aocp-2018-unir-assistente-em-administracao"
+   ],
+   [
+    "PDF da prova",
+    "https://arquivos.qconcursos.com/prova/arquivo_prova/67434/instituto-aocp-2018-unir-assistente-em-administracao-prova.pdf"
+   ],
+   [
+    "PDF do gabarito",
+    "https://arquivos.qconcursos.com/prova/arquivo_gabarito/67434/instituto-aocp-2018-unir-assistente-em-administracao-gabarito.pdf"
+   ]
+  ],
+  "nota": "Formato Verdadeiro/Falso (C = verdadeiro, E = falso na folha). Bom para treinar leitura literal. Gabarito pós-recursos preenchido."
+ },
+ {
+  "id": "aocp-ufpel-2015",
+  "banca": "Instituto AOCP",
+  "ano": 2015,
+  "orgao": "EBSERH/HE-UFPEL",
+  "cargo": "Assistente Administrativo",
+  "n": 50,
+  "tipo": "AE",
+  "estrutura": "lp:1-10,rl:11-15,out:16-25,ce:26-50",
+  "gab": "CXCEDBDCAEAECDBEXADADBAAEABECDECDEDACBAACDEAABBCBE",
+  "links": [
+   [
+    "QConcursos",
+    "https://www.qconcursos.com/questoes-de-concursos/provas/instituto-aocp-2015-ufpel-assistente-administrativo"
+   ],
+   [
+    "PDF da prova",
+    "https://arquivos.qconcursos.com/prova/arquivo_prova/43307/instituto-aocp-2015-ufpel-assistente-administrativo-prova.pdf"
+   ],
+   [
+    "PDF do gabarito",
+    "https://arquivos.qconcursos.com/prova/arquivo_gabarito/43307/instituto-aocp-2015-ufpel-assistente-administrativo-gabarito.pdf"
+   ]
+  ],
+  "nota": "Hospital universitário (EBSERH): as questões 16–25 são de legislação da EBSERH e do SUS, que não caem na UFBA. Foque em Português e Específicos. Gabarito definitivo preenchido."
+ },
+ {
+  "id": "aocp-ufpb-2014",
+  "banca": "Instituto AOCP",
+  "ano": 2014,
+  "orgao": "EBSERH/HULW-UFPB",
+  "cargo": "Assistente Administrativo",
+  "n": 50,
+  "tipo": "AE",
+  "estrutura": "lp:1-10,rl:11-15,out:16-25,ce:26-50",
+  "gab": "ABECECADDBECDBAAEBCEDECABXACDBEACDBBADCEBEXEADCCAD",
+  "links": [
+   [
+    "QConcursos",
+    "https://www.qconcursos.com/questoes-de-concursos/provas/instituto-aocp-2014-ufpb-assistente-administrativo"
+   ],
+   [
+    "PDF da prova",
+    "https://arquivos.qconcursos.com/prova/arquivo_prova/39361/instituto-aocp-2014-ufpb-assistente-administrativo-prova.pdf"
+   ],
+   [
+    "PDF do gabarito",
+    "https://arquivos.qconcursos.com/prova/arquivo_gabarito/39361/instituto-aocp-2014-ufpb-assistente-administrativo-gabarito.pdf"
+   ]
+  ],
+  "nota": "Hospital universitário (EBSERH): questões 16–25 de legislação da EBSERH e do SUS (fora do edital da UFBA). Gabarito definitivo preenchido."
+ },
+ {
+  "id": "avalia-feas-2026",
+  "banca": "Instituto Avalia",
+  "ano": 2026,
+  "orgao": "FEAS Curitiba",
+  "cargo": "Assistente Administrativo",
+  "n": 60,
+  "tipo": "AD",
+  "estrutura": "lp:1-5,rl:6-10,out:11-20,ce:21-60",
+  "gab": "BDCCADBCBAACCBCBCCBABCBAACDDBCDACBABDACDCBBADCDCBAACDBCBAADD",
+  "links": [
+   [
+    "QConcursos",
+    "https://www.qconcursos.com/questoes-de-concursos/provas/instituto-avalia-2026-feas-de-curitiba-pr-assistente-administrativo"
+   ],
+   [
+    "PDF da prova",
+    "https://arquivos.qconcursos.com/prova/arquivo_prova/155229/instituto-avalia-2026-feas-de-curitiba-pr-assistente-administrativo-prova.pdf"
+   ],
+   [
+    "PDF do gabarito",
+    "https://arquivos.qconcursos.com/prova/arquivo_gabarito/155229/instituto-avalia-2026-feas-de-curitiba-pr-assistente-administrativo-gabarito.pdf"
+   ]
+  ],
+  "nota": "Prova da própria Avalia em 2026, com 4 alternativas (A–D). Use o caderno PROVA 03 (o do PDF). Questões 11–20 são de legislação municipal de Curitiba. Gabarito PRELIMINAR preenchido — pode ter mudado após recursos."
+ }
 ];
-const AREA_EXTRA = { rl: { id: "rl", nome: "Raciocínio Lógico (não cai na UFBA)", cor: "var(--muted)" } };
+const AREA_EXTRA = { rl: { id: "rl", nome: "Raciocínio Lógico (não cai na UFBA)", cor: "var(--muted)" }, out: { id: "out", nome: "Legislação específica do órgão (não cai na UFBA)", cor: "var(--border-strong)" } };
 const areaInfo = id => AREA[id] || AREA_EXTRA[id] || { id, nome: "Sem área", cor: "var(--border-strong)" };
 function todasProvas(){ return [...PROVAS, ...(S.provasExtras || [])]; }
 function estadoProva(id){ S.provas = S.provas || {}; return S.provas[id] = S.provas[id] || { resp: {}, gab: "", estrutura: null, tentativas: [] }; }
@@ -1560,8 +1726,9 @@ function parseEstrutura(str, n){
   return mapa;
 }
 function parseGabarito(txt, n, tipo){
-  const letras = tipo === "CE" ? "CE" : "ABCDE"; const g = {};
-  const t = (txt || "").toUpperCase();
+  const letras = tipo === "CE" ? "CE" : tipo === "AD" ? "ABCD" : "ABCDE"; const g = {};
+  let t = (txt || "").toUpperCase();
+  if (tipo === "CE") t = t.replace(/\bV\b/g, "C").replace(/\bF\b/g, "E").replace(/^[VFX\s]+$/, m => m.replace(/V/g, "C").replace(/F/g, "E"));
   const pares = [...t.matchAll(/(\d+)\s*[-.:)=]?\s*([A-E]|X|ANULADA)/g)];
   if (pares.length >= Math.min(5, n)) pares.forEach(m => { const q = Number(m[1]); if (q >= 1 && q <= n) g[q] = m[2].startsWith("X") || m[2] === "ANULADA" ? "X" : m[2]; });
   else {
@@ -1575,11 +1742,11 @@ function parseGabarito(txt, n, tipo){
 ROTAS["/provas"] = el => {
   const provas = todasProvas();
   el.innerHTML = `<div class="container">
-    ${header("Praticar · Provas anteriores", "Provas anteriores da AOCP e da Avalia", "Resolva a prova original (PDF ou QConcursos) com o cronômetro e a folha de respostas daqui. Depois cole o gabarito oficial: o app corrige por área e manda seus erros para o painel de desempenho. As questões originais não são copiadas para o app (são da banca).")}
+    ${header("Praticar · Provas anteriores", "Provas anteriores da AOCP e da Avalia", "Resolva a prova original (PDF ou QConcursos) com o cronômetro e a folha de respostas daqui. Depois clique em corrigir (o gabarito oficial já vem preenchido): o app corrige por área e manda seus erros para o painel de desempenho. As questões originais não são copiadas para o app (são da banca).")}
     <div class="grid g2">${provas.map(p => { const st = estadoProva(p.id); const ult = st.tentativas[st.tentativas.length - 1];
       return `<div class="card"><div class="row between"><span class="pill ${p.banca.includes("Avalia") ? "pill-warn" : ""}">${esc(p.banca)} · ${p.ano}</span>${ult ? `<span class="pill pill-ok">${ult.acertos}/${ult.validas} · ${pct(ult.acertos / ult.validas)}</span>` : '<span class="pill pill-muted">não feita</span>'}</div>
         <h2 style="margin-top:10px">${esc(p.orgao)} — ${esc(p.cargo)}</h2>
-        <p class="small muted" style="margin:0 0 8px">${p.n} questões · ${p.tipo === "CE" ? "Certo/Errado" : "A–E"}${p.estrutura || st.estrutura ? "" : " · estrutura a preencher"}</p>
+        <p class="small muted" style="margin:0 0 8px">${p.n} questões · ${p.tipo === "CE" ? "Verdadeiro/Falso" : p.tipo === "AD" ? "A–D" : "A–E"}${p.estrutura || st.estrutura ? "" : " · estrutura a preencher"}${p.gab ? " · gabarito incluso" : ""}</p>
         <p class="small" style="margin:0 0 10px">${esc(p.nota || "")}</p>
         <div class="row small" style="flex-wrap:wrap;gap:10px">${p.links.map(([l, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(l)} ↗</a>`).join("")}</div>
         <div class="btn-row"><a class="btn btn-primary btn-sm" href="#/prova?id=${encodeURIComponent(p.id)}">Abrir folha de respostas</a></div></div>`; }).join("")}</div>
@@ -1653,7 +1820,7 @@ ROTAS["/prova"] = el => {
   if (!p) { el.innerHTML = `<div class="container"><div class="empty card"><h2>Prova não encontrada</h2><a href="#/provas">Voltar</a></div></div>`; return; }
   const st = estadoProva(p.id);
   const estr = () => st.estrutura != null ? st.estrutura : p.estrutura;
-  const letras = p.tipo === "CE" ? ["C", "E"] : ["A", "B", "C", "D", "E"];
+  const letras = p.tipo === "CE" ? ["C", "E"] : p.tipo === "AD" ? ["A", "B", "C", "D"] : ["A", "B", "C", "D", "E"];
   let t0 = null, tick = null, corrigido = null;
   const pinta = () => {
     const mapa = parseEstrutura(estr(), p.n);
@@ -1673,7 +1840,7 @@ ROTAS["/prova"] = el => {
         <div class="card sheet">${s.qs.map(q => { const r = st.resp[q]; const gq = g[q]; const status = !corrigido ? "" : gq === "X" ? "anul" : !gq ? "" : r === gq ? "ok" : "bad";
           return `<div class="sheet-row ${status}"><span class="qn">${q}</span>${letras.map(L => `<button class="bub${r === L ? " sel" : ""}${corrigido && gq === L ? " gab" : ""}" data-q="${q}" data-l="${L}">${L}</button>`).join("")}${status === "anul" ? '<span class="small muted">anulada</span>' : ""}</div>`; }).join("")}</div>`).join("")}
       <h3>Corrigir</h3>
-      <div class="card"><div class="field"><label>Cole o gabarito oficial (definitivo, de preferência)</label><textarea id="gab" style="min-height:80px" placeholder="Aceita “ABCDE…” em sequência ou “1-A 2-C 3-B…”. Use X para questão anulada.">${esc(st.gab)}</textarea></div>
+      <div class="card"><div class="field"><label>${p.gab ? "Gabarito oficial (já preenchido — confira a versão do caderno na descrição)" : "Cole o gabarito oficial (definitivo, de preferência)"}</label><textarea id="gab" style="min-height:80px" placeholder="Aceita “ABCDE…” em sequência ou “1-A 2-C 3-B…”. Use X para questão anulada.">${esc(st.gab || p.gab || "")}</textarea></div>
         <button class="btn btn-primary" id="corr">Corrigir e salvar tentativa</button></div>
       <div id="res"></div></div>`;
     const $ = s => el.querySelector(s);
