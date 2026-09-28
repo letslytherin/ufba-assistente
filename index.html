@@ -196,6 +196,7 @@ details.texto div{white-space:pre-line;margin-top:8px;line-height:1.7}
   .timer{font-size:3.4rem}
 }
 @media (max-width:420px){.g3,.g4{grid-template-columns:1fr 1fr}.hero .units{gap:12px}}
+.rodape-fontes{font-size:12px;line-height:1.5;color:var(--muted, #777);padding:18px 24px 90px;border-top:1px solid var(--border, #ddd);margin-top:24px;max-width:960px}
 </style>
 </head>
 <body>
@@ -218,12 +219,16 @@ details.texto div{white-space:pre-line;margin-top:8px;line-height:1.7}
       <button class="icon-btn" id="theme-btn-2" aria-label="Alternar tema">◐</button>
     </header>
     <main class="main" id="main" tabindex="-1"></main>
+    <footer class="rodape-fontes">Material de estudo pessoal, sem fins comerciais. As questões de concursos anteriores são reproduzidas de provas públicas, com indicação de banca, órgão e ano em cada uma; os direitos pertencem às respectivas bancas organizadoras (Instituto AOCP, Instituto Avalia, COPEVE/UFAL, CEBRASPE, FGV, FCC, VUNESP e outras). Os resumos citam as fontes oficiais usadas (Planalto, Manual de Redação da Presidência da República, Arquivo Nacional/CONARQ, CERT.br, Microsoft, UFBA). Comentários e textos de cursos preparatórios não são publicados neste site. Edital: UFBA 007/2026 — Instituto Avalia.</footer>
   </div>
 </div>
 <nav class="bottom-nav" id="bottom-nav" aria-label="Navegação inferior"></nav>
 
 <script src="materiais-locais.js"></script>
 <script src="questoes-locais.js"></script>
+<script src="questoes-publicas.js"></script>
+<script src="flashcards-locais.js"></script>
+<script src="flashcards-publicos.js"></script>
 <script>
 "use strict";
 /* =========================================================================
@@ -653,11 +658,16 @@ let S;
 try { S = Object.assign(estadoInicial(), JSON.parse(localStorage.getItem(KEY) || "{}")); } catch { S = estadoInicial(); }
 function salvar(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} }
 
-const Q_LOCAIS = (window.QUESTOES_LOCAIS || []).map(q => ({ ...q, txt: q.ti != null ? (window.TEXTOS_LOCAIS || [])[q.ti] : undefined }));
+const Q_FONTE_LOCAL = !!window.QUESTOES_LOCAIS;
+const Q_LOCAIS = (() => { const qs = window.QUESTOES_LOCAIS || window.QUESTOES_PUBLICAS || [], tx = (Q_FONTE_LOCAL ? window.TEXTOS_LOCAIS : window.TEXTOS_PUBLICOS) || [];
+  return qs.map(q => ({ ...q, orig: q.orig === "prova_ap" ? "prova" : q.orig, txt: q.ti != null ? tx[q.ti] : undefined })); })();
 const Q_APP = Q_SEED.map((q,i)=>({...q,id:"s"+i, orig:"app"}));
 const todasQuestoes = () => [...Q_APP, ...S.qExtras.map(q => ({...q, orig: String(q.id).startsWith("i") ? "importada" : "propria"})), ...Q_LOCAIS];
 const ORIGENS = { app: "Autorais do app", prova: "Provas reais", apostila: "Apostilas", simulado: "Simulados", importada: "Importadas", propria: "Criadas por você" };
-const todosFlash = () => [...FC_SEED.map((f,i)=>({a:f[0],f:f[1],v:f[2],id:"f"+i})), ...S.fcExtras];
+const F_LOCAIS = window.FLASH_LOCAIS || window.FLASH_PUBLICOS || [];
+const FC_ORIGENS = { app: "Do app", apostila: "Conceitos das apostilas", ce: "Certo ou errado (provas)", propria: "Criados por você" };
+const todosFlash = () => [...FC_SEED.map((f,i)=>({a:f[0],f:f[1],v:f[2],id:"f"+i,orig:"app"})), ...S.fcExtras.map(f => ({...f, orig:"propria"})), ...F_LOCAIS];
+function novosHoje(){ const n = S.fcNovos || {}; return n.data === hoje() ? n.n : 0; }
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
 /* Repetição espaçada simples (caixas de Leitner) */
@@ -708,7 +718,13 @@ function minutosPorDia(n=14){
   return out;
 }
 function errosVencidos(){ return Object.entries(S.erros).filter(([,e]) => e.proxima <= hoje()); }
-function flashVencidos(){ return todosFlash().filter(f => { const s = S.flash[f.id]; return !s || s.proxima <= hoje(); }); }
+function flashVencidos(filtro){
+  const lim = S.fcLimite ?? 20; let livres = Math.max(0, lim - novosHoje());
+  const fs = todosFlash().filter(f => !filtro || filtro(f));
+  const rev = fs.filter(f => S.flash[f.id] && S.flash[f.id].proxima <= hoje());
+  const novos = fs.filter(f => !S.flash[f.id] && (f.orig === "app" || f.orig === "propria" || livres-- > 0));
+  return [...rev, ...novos];
+}
 function proximoEvento(){ return DATAS.filter(d => d.fim >= hoje()).sort((a,b)=>a.fim.localeCompare(b.fim))[0]; }
 
 /* =========================================================================
@@ -1181,7 +1197,7 @@ ROTAS["/questoes"] = el => {
     fila = lista(); idx = 0; sessao = {ok:0,n:0};
     el.innerHTML = `<div class="container" style="max-width:780px">
       ${(() => { const tq = todasQuestoes(); const c = {}; tq.forEach(q => c[q.orig] = (c[q.orig] || 0) + 1);
-        return header("Estudar · Questões","Banco de questões",`${tq.length.toLocaleString("pt-BR")} questões: ${Object.entries(c).map(([k, v]) => `${v.toLocaleString("pt-BR")} ${ORIGENS[k] ? ORIGENS[k].toLowerCase() : k}`).join(" · ")}. Erros vão para <a href="#/erros">Meus erros</a>.${Q_LOCAIS.length ? "" : " (As questões das suas provas e apostilas aparecem quando o app é aberto pelo arquivo index.html do seu computador.)"}`); })()}
+        return header("Estudar · Questões","Banco de questões",`${tq.length.toLocaleString("pt-BR")} questões: ${Object.entries(c).map(([k, v]) => `${v.toLocaleString("pt-BR")} ${ORIGENS[k] ? ORIGENS[k].toLowerCase() : k}`).join(" · ")}. Erros vão para <a href="#/erros">Meus erros</a>.${Q_FONTE_LOCAL ? "" : " No site aparecem só questões de provas públicas, sem comentários; a fonte de cada uma vem indicada."}`); })()}
       <div class="row" style="flex-wrap:wrap;margin-bottom:14px;gap:8px">
         <select id="qa" style="max-width:220px"><option value="todas">Todas as áreas</option>${AREAS.map(a=>`<option value="${a.id}" ${filtro===a.id?"selected":""}>${a.nome}</option>`).join("")}</select>
         <select id="qt" style="max-width:280px"><option value="">Todos os tópicos</option>${(filtro === "todas" ? AREAS : [AREA[filtro]]).flatMap(a => S.topicos[a.id]).map(t => `<option ${topicoF === t.nome ? "selected" : ""}>${esc(t.nome)}</option>`).join("")}</select>
@@ -1248,17 +1264,28 @@ ROTAS["/erros"] = el => {
 };
 
 ROTAS["/flashcards"] = el => {
-  let fila = [], i = 0, verso = false, res = {n:0, ok:0};
+  let fila = [], i = 0, verso = false, res = {n:0, ok:0}, fa = "todas", fo = "todas";
   function config(){
-    const venc = flashVencidos(); const tot = todosFlash().length;
+    const flt = f => (fa === "todas" || f.a === fa) && (fo === "todas" || f.orig === fo);
+    const venc = flashVencidos(flt); const tot = todosFlash().filter(flt).length;
+    const cont = {}; todosFlash().forEach(f => cont[f.orig] = (cont[f.orig] || 0) + 1);
     el.innerHTML = `<div class="container" style="max-width:720px">
-      ${header("Estudar · Flashcards","Flashcards","Frente e verso com repetição espaçada — errou, volta amanhã; acertou, o intervalo cresce.")}
+      ${header("Estudar · Flashcards","Flashcards",`Frente e verso com repetição espaçada — errou, volta amanhã; acertou, o intervalo cresce. ${Object.entries(cont).map(([k, v]) => `${v} ${(FC_ORIGENS[k] || k).toLowerCase()}`).join(" · ")}.`)}
+      <div class="row" style="flex-wrap:wrap;gap:8px;margin-bottom:14px">
+        <select id="fca" style="max-width:220px"><option value="todas">Todas as áreas</option>${AREAS.map(a=>`<option value="${a.id}" ${fa===a.id?"selected":""}>${a.nome}</option>`).join("")}</select>
+        <select id="fco" style="max-width:240px"><option value="todas">Todas as origens</option>${Object.entries(FC_ORIGENS).filter(([k]) => cont[k]).map(([k, v]) => `<option value="${k}" ${fo===k?"selected":""}>${v}</option>`).join("")}</select>
+        <label class="small muted" style="display:flex;align-items:center;gap:6px">Novos por dia <input type="number" id="fcl" min="0" max="300" value="${S.fcLimite ?? 20}" style="width:70px"></label>
+      </div>
+      <p class="small muted" style="margin:-6px 0 12px">Hoje você já viu ${novosHoje()} card(s) novo(s) das apostilas/provas. Os que passam do limite ficam para os próximos dias.</p>
       <div class="grid g3"><div class="stat"><div class="v">${venc.length}</div><div class="l">para revisar agora</div></div><div class="stat"><div class="v">${tot}</div><div class="l">cards no total</div></div><div class="stat"><div class="v">${tot-venc.length}</div><div class="l">ainda não vencidos</div></div></div>
       <div class="btn-row">${venc.length?`<button class="btn btn-primary" id="go">Revisar ${venc.length} cards</button>`:`<span class="muted">Tudo revisado por hoje ✓</span>`}</div>
       <details class="card" style="margin-top:18px"><summary style="cursor:pointer;font-weight:600">+ Criar flashcard</summary><div style="margin-top:12px">
         <div class="field"><label>Área</label><select id="fa">${AREAS.map(a=>`<option value="${a.id}">${a.nome}</option>`).join("")}</select></div>
         <div class="field"><label>Frente</label><input type="text" id="ff"></div><div class="field"><label>Verso</label><textarea id="fv" style="min-height:70px"></textarea></div>
         <button class="btn btn-primary" id="fsave">Salvar</button></div></details></div>`;
+    el.querySelector("#fca").onchange = e => { fa = e.target.value; config(); };
+    el.querySelector("#fco").onchange = e => { fo = e.target.value; config(); };
+    el.querySelector("#fcl").onchange = e => { S.fcLimite = Math.max(0, Number(e.target.value) || 0); salvar(); config(); };
     const go = el.querySelector("#go"); if (go) go.onclick = () => { fila = venc.sort(()=>Math.random()-.5); i = 0; res={n:0,ok:0}; card(); };
     el.querySelector("#fsave").onclick = () => { const f = el.querySelector("#ff").value.trim(), v = el.querySelector("#fv").value.trim(); if(!f||!v) return; S.fcExtras.push({id:"uf"+Date.now(), a:el.querySelector("#fa").value, f, v}); salvar(); config(); };
   }
@@ -1266,10 +1293,10 @@ ROTAS["/flashcards"] = el => {
     if (i >= fila.length){ el.innerHTML = `<div class="container" style="max-width:720px">${header("Estudar · Flashcards","Sessão concluída")}<div class="card empty"><h2>${res.ok}/${res.n} lembrados</h2><button class="btn btn-primary" id="back">Voltar</button></div></div>`; el.querySelector("#back").onclick = config; return; }
     const f = fila[i]; verso = false;
     el.innerHTML = `<div class="container" style="max-width:720px">${header("Estudar · Flashcards",`Card ${i+1} de ${fila.length}`)}
-      <div class="card flash" id="fc"><div class="lado">${AREA[f.a].nome} · frente</div><div id="ftxt" style="font-weight:600">${esc(f.f)}</div><div class="small muted" style="margin-top:16px">toque para virar</div></div>
+      <div class="card flash" id="fc"><div class="lado">${AREA[f.a].nome} · frente</div><div id="ftxt" style="font-weight:600">${esc(f.f)}</div>${f.t ? `<div class="small muted" style="margin-top:8px">${esc(f.t)}</div>` : ""}<div class="small muted" style="margin-top:16px">toque para virar</div></div>
       <div class="btn-row" id="fbtns" style="justify-content:center;visibility:hidden"><button class="btn btn-danger" data-q="0">Não lembrei</button><button class="btn btn-secondary" data-q="1">Lembrei</button><button class="btn btn-primary" data-q="2">Fácil</button></div></div>`;
-    el.querySelector("#fc").onclick = () => { verso = !verso; el.querySelector("#fc").innerHTML = verso ? `<div class="lado">verso</div><div>${esc(f.v)}</div><div class="small muted" style="margin-top:16px">${esc(f.f)}</div>` : `<div class="lado">${AREA[f.a].nome} · frente</div><div style="font-weight:600">${esc(f.f)}</div>`; el.querySelector("#fbtns").style.visibility = "visible"; };
-    el.querySelectorAll("[data-q]").forEach(b => b.onclick = () => { const q = Number(b.dataset.q); const s = S.flash[f.id] = S.flash[f.id] || {caixa:0}; agendar(s, q>0); if (q===2) { s.caixa = Math.min(s.caixa+1, INTERVALOS.length-1); s.proxima = addDias(hoje(), INTERVALOS[s.caixa]); } res.n++; if(q>0) res.ok++; S.sessoes.push({data:hoje(),min:0,a:f.a}); salvar(); i++; card(); });
+    el.querySelector("#fc").onclick = () => { verso = !verso; el.querySelector("#fc").innerHTML = verso ? `<div class="lado">verso</div><div>${esc(f.v)}</div><div class="small muted" style="margin-top:16px">${esc(f.f)}</div>${f.fonte ? `<div class="small muted" style="margin-top:10px">📄 ${esc(f.fonte)}${f.link && LOCAL ? ` · <a href="${esc(linkLocal(f.link, f.pg))}" target="_blank" onclick="event.stopPropagation()">ver na apostila${f.pg ? " (p. " + f.pg + ")" : ""} ↗</a>` : ""}</div>` : ""}` : `<div class="lado">${AREA[f.a].nome} · frente</div><div style="font-weight:600">${esc(f.f)}</div>`; el.querySelector("#fbtns").style.visibility = "visible"; };
+    el.querySelectorAll("[data-q]").forEach(b => b.onclick = () => { const q = Number(b.dataset.q); if (!S.flash[f.id] && f.orig !== "app" && f.orig !== "propria") S.fcNovos = { data: hoje(), n: novosHoje() + 1 }; const s = S.flash[f.id] = S.flash[f.id] || {caixa:0}; agendar(s, q>0); if (q===2) { s.caixa = Math.min(s.caixa+1, INTERVALOS.length-1); s.proxima = addDias(hoje(), INTERVALOS[s.caixa]); } res.n++; if(q>0) res.ok++; S.sessoes.push({data:hoje(),min:0,a:f.a}); salvar(); i++; card(); });
   }
   config();
 };
