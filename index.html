@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>UFBA Assistente — Preparação</title>
+<meta name="theme-color" content="#2f5d8a" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
+<style>
+:root{
+  --bg:#ffffff;--bg-subtle:#f5f7f9;--surface:#ffffff;--surface-hover:#eef2f6;--border:#e3e8ee;--border-strong:#cfd7e0;
+  --text:#1c2733;--text-2:#56636f;--muted:#8793a0;--on-accent:#fff;
+  --accent:#2f5d8a;--accent-hover:#264d73;--accent-soft:#e8f0f8;--accent-soft-border:#cddcec;
+  --gradient:linear-gradient(135deg,#2f5d8a,#5b8bb8);--shadow-accent:0 6px 16px rgba(47,93,138,.28);
+  --danger:#b3413e;--danger-soft:#f7e9e8;--warning:#b8791b;--warning-soft:#faf1e1;--success:#3f7a5c;--success-soft:#e9f3ee;
+  --radius-sm:10px;--radius-md:14px;--radius-lg:20px;
+  --shadow-sm:0 1px 2px rgba(28,39,51,.06);--shadow-md:0 4px 12px rgba(28,39,51,.08);
+  --font:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  --c-lp:#2f5d8a;--c-inf:#7a5aa6;--c-ap:#b8791b;--c-ce:#3f7a5c;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#12171d;--bg-subtle:#171e25;--surface:#1b232b;--surface-hover:#232d37;--border:#2a3540;--border-strong:#3a4652;
+  --text:#e6ebf0;--text-2:#a9b4bf;--muted:#7b8793;--accent:#6fa3d6;--accent-hover:#8ab6e0;--accent-soft:#1d2b3a;--accent-soft-border:#2c4259;
+  --gradient:linear-gradient(135deg,#3b6c9c,#6fa3d6);--danger:#e07b77;--danger-soft:#3a2221;--warning:#e0a54a;--warning-soft:#382c17;--success:#6fbf92;--success-soft:#1c3226;
+  --c-lp:#6fa3d6;--c-inf:#b194d8;--c-ap:#e0a54a;--c-ce:#6fbf92;
+}}
+:root[data-theme="dark"]{
+  --bg:#12171d;--bg-subtle:#171e25;--surface:#1b232b;--surface-hover:#232d37;--border:#2a3540;--border-strong:#3a4652;
+  --text:#e6ebf0;--text-2:#a9b4bf;--muted:#7b8793;--accent:#6fa3d6;--accent-hover:#8ab6e0;--accent-soft:#1d2b3a;--accent-soft-border:#2c4259;
+  --gradient:linear-gradient(135deg,#3b6c9c,#6fa3d6);--danger:#e07b77;--danger-soft:#3a2221;--warning:#e0a54a;--warning-soft:#382c17;--success:#6fbf92;--success-soft:#1c3226;
+  --c-lp:#6fa3d6;--c-inf:#b194d8;--c-ap:#e0a54a;--c-ce:#6fbf92;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg-subtle);color:var(--text);line-height:1.55;font-size:16px;-webkit-font-smoothing:antialiased}
+a{color:var(--accent)}
+button{font-family:inherit}
+h1{font-size:1.75rem;line-height:1.25;margin:4px 0 6px;letter-spacing:-.01em}
+h2{font-size:1.25rem;margin:0 0 8px}
+h3{font-size:1.05rem;margin:28px 0 12px}
+.app{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+.sidebar{position:sticky;top:0;height:100vh;overflow-y:auto;background:var(--surface);border-right:1px solid var(--border);padding:18px 12px;display:flex;flex-direction:column}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 8px 18px;font-weight:800;font-size:1.05rem}
+.brand-mark{width:34px;height:34px;border-radius:10px;background:var(--gradient);color:#fff;display:grid;place-items:center;font-weight:800;font-size:15px;box-shadow:var(--shadow-accent)}
+.brand small{display:block;font-weight:500;color:var(--muted);font-size:.72rem}
+.nav-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700;padding:14px 10px 6px}
+.nav-link{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--radius-sm);color:var(--text-2);text-decoration:none;font-size:.9rem;font-weight:500;border:0;background:none;width:100%;cursor:pointer;text-align:left}
+.nav-link:hover{background:var(--surface-hover);color:var(--text)}
+.nav-link.active{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.nav-link .ic{width:20px;text-align:center;font-size:15px}
+.sidebar-foot{margin-top:auto;padding-top:14px;border-top:1px solid var(--border)}
+.side-count{margin:0 4px 6px;padding:12px;border-radius:var(--radius-md);background:var(--gradient);color:#fff}
+.side-count b{font-size:1.6rem;display:block;line-height:1.1}
+.side-count span{font-size:.78rem;opacity:.9}
+.topbar{display:none}
+.main{padding:32px 32px 96px;min-width:0}
+.container{max-width:1040px;margin:0 auto}
+.eyebrow{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);font-weight:700}
+.desc{color:var(--text-2);margin:0 0 20px;max-width:720px}
+.page-header{margin-bottom:22px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm)}
+.card+.card{margin-top:14px}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px 16px}
+.stat .v{font-size:1.6rem;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums}
+.stat .l{font-size:.8rem;color:var(--text-2);margin-top:4px}
+.hero{background:var(--gradient);color:#fff;border-radius:var(--radius-lg);padding:24px;display:flex;flex-wrap:wrap;gap:24px;align-items:center;justify-content:space-between;box-shadow:var(--shadow-accent)}
+.hero .big{font-size:3.4rem;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.hero .sub{opacity:.92;font-size:.92rem}
+.hero .units{display:flex;gap:18px}
+.hero .units div{text-align:center}
+.hero .units b{display:block;font-size:1.5rem;font-variant-numeric:tabular-nums}
+.hero .units span{font-size:.72rem;opacity:.85;text-transform:uppercase;letter-spacing:.06em}
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:var(--radius-sm);padding:9px 16px;font-weight:600;font-size:.9rem;border:1px solid transparent;cursor:pointer;text-decoration:none;transition:background .15s}
+.btn-primary{background:var(--accent);color:var(--on-accent)}
+.btn-primary:hover{background:var(--accent-hover)}
+.btn-secondary{background:var(--surface);color:var(--text);border-color:var(--border-strong)}
+.btn-secondary:hover{background:var(--surface-hover)}
+.btn-ghost{background:none;color:var(--text-2)}
+.btn-ghost:hover{background:var(--surface-hover)}
+.btn-danger{background:var(--danger-soft);color:var(--danger)}
+.btn-sm{padding:5px 10px;font-size:.8rem}
+.btn-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.pill{display:inline-block;font-size:.72rem;font-weight:600;padding:2px 9px;border-radius:999px;background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent-soft-border)}
+.pill-ok{background:var(--success-soft);color:var(--success);border-color:transparent}
+.pill-warn{background:var(--warning-soft);color:var(--warning);border-color:transparent}
+.pill-bad{background:var(--danger-soft);color:var(--danger);border-color:transparent}
+.pill-muted{background:var(--bg-subtle);color:var(--muted);border-color:var(--border)}
+.notice{border-radius:var(--radius-md);padding:12px 16px;font-size:.88rem;margin-bottom:18px;background:var(--warning-soft);color:var(--text);border:1px solid color-mix(in srgb,var(--warning) 30%,transparent)}
+.notice b{color:var(--warning)}
+.bar{height:8px;border-radius:99px;background:var(--bg-subtle);overflow:hidden;border:1px solid var(--border)}
+.bar>i{display:block;height:100%;border-radius:99px;background:var(--accent)}
+.row{display:flex;align-items:center;gap:12px}
+.between{justify-content:space-between}
+.muted{color:var(--muted)}
+.small{font-size:.82rem}
+.list{list-style:none;margin:0;padding:0}
+.list li{display:flex;align-items:center;gap:12px;padding:10px 4px;border-bottom:1px solid var(--border)}
+.list li:last-child{border-bottom:0}
+.topic{cursor:default}
+.topic label{flex:1;cursor:pointer}
+.chk{width:18px;height:18px;accent-color:var(--accent);flex:none}
+.area-dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex:none}
+details.disc{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:12px;overflow:hidden}
+details.disc>summary{list-style:none;cursor:pointer;padding:16px 20px;display:flex;align-items:center;gap:14px}
+details.disc>summary::-webkit-details-marker{display:none}
+details.disc .body{padding:0 20px 14px}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.field label{font-size:.82rem;font-weight:600;color:var(--text-2)}
+input[type=text],input[type=number],input[type=date],select,textarea{font:inherit;color:var(--text);background:var(--surface);border:1px solid var(--border-strong);border-radius:var(--radius-sm);padding:9px 12px;width:100%}
+textarea{min-height:120px;resize:vertical}
+input:focus,select:focus,textarea:focus,button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.q-enun{font-size:1.02rem;margin:6px 0 16px;white-space:pre-line}
+.alt{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;padding:11px 14px;margin-bottom:8px;border-radius:var(--radius-md);border:1px solid var(--border-strong);background:var(--surface);color:var(--text);cursor:pointer;font-size:.95rem}
+.alt:hover{background:var(--surface-hover)}
+.alt .letra{font-weight:700;color:var(--accent);flex:none;width:18px}
+.alt.sel{border-color:var(--accent);background:var(--accent-soft)}
+.alt.ok{border-color:var(--success);background:var(--success-soft)}
+.alt.bad{border-color:var(--danger);background:var(--danger-soft)}
+.alt[disabled]{cursor:default}
+.expl{margin-top:12px;padding:12px 16px;border-radius:var(--radius-md);background:var(--bg-subtle);border-left:3px solid var(--accent);font-size:.92rem}
+.flash{min-height:220px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;font-size:1.15rem;cursor:pointer;padding:28px}
+.flash .lado{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:12px}
+.timeline{list-style:none;margin:0;padding:0;position:relative}
+.timeline li{position:relative;padding:0 0 18px 28px}
+.timeline li:before{content:"";position:absolute;left:7px;top:6px;bottom:-6px;width:2px;background:var(--border)}
+.timeline li:last-child:before{display:none}
+.timeline li:after{content:"";position:absolute;left:1px;top:4px;width:14px;height:14px;border-radius:50%;background:var(--surface);border:2px solid var(--border-strong)}
+.timeline li.passado:after{background:var(--muted);border-color:var(--muted)}
+.timeline li.proximo:after{background:var(--accent);border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.timeline li.prova:after{background:var(--danger);border-color:var(--danger)}
+.timeline .d{font-size:.8rem;font-weight:700;color:var(--text-2)}
+.timeline li.passado .t{color:var(--muted);text-decoration:line-through}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--border)}
+th{font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+.timer{font-size:4.5rem;font-weight:800;text-align:center;font-variant-numeric:tabular-nums;letter-spacing:-.02em;margin:10px 0}
+.plan-item{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--border)}
+.plan-item:last-child{border-bottom:0}
+.plan-item .min{flex:none;width:64px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
+.heat{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.heat .cell{border-radius:var(--radius-md);padding:12px 14px;border:1px solid var(--border);font-size:.85rem}
+.heat .cell b{display:block;font-size:.88rem;margin-bottom:4px}
+.c-red{background:var(--danger-soft)}.c-yel{background:var(--warning-soft)}.c-grn{background:var(--success-soft)}.c-none{background:var(--bg-subtle)}
+.redacao-area{font-family:"Courier New",monospace;line-height:28px;min-height:560px;background-image:repeating-linear-gradient(var(--surface),var(--surface) 27px,var(--border) 28px);background-attachment:local;padding-top:4px}
+.empty{text-align:center;padding:40px 20px;color:var(--text-2)}
+.empty h2{color:var(--text)}
+.bottom-nav{display:none}
+.skip{position:absolute;left:-999px}.skip:focus{left:8px;top:8px;z-index:99;background:var(--surface);padding:8px}
+.overlay{display:none}
+.chart-bars{display:flex;align-items:flex-end;gap:6px;height:140px;padding-top:8px}
+.chart-bars .b{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px;height:100%;min-width:0}
+.chart-bars .b i{display:block;width:100%;max-width:34px;border-radius:6px 6px 2px 2px;background:var(--accent)}
+.chart-bars .b span{font-size:.68rem;color:var(--muted);white-space:nowrap}
+@media (max-width:900px){
+  .app{grid-template-columns:1fr}
+  .sidebar{position:fixed;left:0;top:0;z-index:50;width:280px;transform:translateX(-100%);transition:transform .2s;box-shadow:var(--shadow-md)}
+  .app.nav-open .sidebar{transform:none}
+  .app.nav-open .overlay{display:block;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:40}
+  .topbar{display:flex;position:sticky;top:0;z-index:30;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--surface);border-bottom:1px solid var(--border)}
+  .topbar .t{display:flex;align-items:center;gap:8px;font-weight:700}
+  .icon-btn{border:0;background:none;font-size:20px;color:var(--text);cursor:pointer;padding:6px 8px;border-radius:8px}
+  .main{padding:20px 16px 96px}
+  .g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .g2{grid-template-columns:1fr}
+  .bottom-nav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:30;background:var(--surface);border-top:1px solid var(--border);padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
+  .bottom-nav a{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.7rem;color:var(--text-2);text-decoration:none;padding:4px}
+  .bottom-nav a .ic{font-size:18px}
+  .bottom-nav a.active{color:var(--accent);font-weight:600}
+  .hero .big{font-size:2.8rem}
+  .timer{font-size:3.4rem}
+}
+@media (max-width:420px){.g3,.g4{grid-template-columns:1fr 1fr}.hero .units{gap:12px}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Pular para o conteúdo</a>
+<div class="app" id="app">
+  <div class="overlay" id="overlay"></div>
+  <aside class="sidebar" id="sidebar" aria-label="Navegação">
+    <div class="brand"><div class="brand-mark">AA</div><div>UFBA Assistente<small>Edital 007/2026 · cargo 201</small></div></div>
+    <div class="side-count" id="side-count"></div>
+    <nav id="nav"></nav>
+    <div class="sidebar-foot">
+      <button class="nav-link" id="theme-btn"><span class="ic">◐</span><span>Alternar tema</span></button>
+      <a class="nav-link" href="#/config"><span class="ic">⚙</span><span>Configurações e backup</span></a>
+    </div>
+  </aside>
+  <div style="min-width:0">
+    <header class="topbar">
+      <button class="icon-btn" id="menu-btn" aria-label="Abrir menu">☰</button>
+      <div class="t"><div class="brand-mark" style="width:28px;height:28px;font-size:12px">AA</div>UFBA Assistente</div>
+      <button class="icon-btn" id="theme-btn-2" aria-label="Alternar tema">◐</button>
+    </header>
+    <main class="main" id="main" tabindex="-1"></main>
+  </div>
+</div>
+<nav class="bottom-nav" id="bottom-nav" aria-label="Navegação inferior"></nav>
+
+<script>
+"use strict";
+/* =========================================================================
+   DADOS DO EDITAL (Edital de Abertura nº 007/2026 – UFBA / Instituto Avalia)
+   ========================================================================= */
+const EDITAL = {
+  cargo: "201 – Assistente em Administração",
+  classe: "Nível Médio – Classe D",
+  vagas: { total: 94, ac: 55, pp: 24, pcd: 10, ind: 3, quil: 2 },
+  redacaoCorrigida: { ac: 338, pp: 141, pcd: 57, ind: 17, quil: 11 },
+  vencimento: 3181.39, auxAlimentacao: 1192.0, taxa: 100,
+  banca: "Instituto Avalia", turno: "Manhã", duracao: "4 horas (objetiva + redação)",
+  cidades: "Salvador, Vitória da Conquista, Barreiras, Teixeira de Freitas e Juazeiro",
+  dataProva: "2026-12-20",
+};
+const AREAS = [
+  { id: "lp",  nome: "Língua Portuguesa",         q: 12, peso: 1, cor: "var(--c-lp)" },
+  { id: "inf", nome: "Noções de Informática",     q: 6,  peso: 1, cor: "var(--c-inf)" },
+  { id: "ap",  nome: "Administração Pública",     q: 12, peso: 1, cor: "var(--c-ap)" },
+  { id: "ce",  nome: "Conhecimentos Específicos", q: 30, peso: 2, cor: "var(--c-ce)" },
+];
+const AREA = Object.fromEntries(AREAS.map(a => [a.id, a]));
+const TOTAL_OBJ = AREAS.reduce((s, a) => s + a.q * a.peso, 0); // 90
+
+const DATAS = [
+  { ini: "2026-09-28", fim: "2026-09-28", t: "Publicação do Edital de Abertura" },
+  { ini: "2026-09-28", fim: "2026-10-02", t: "Impugnação do edital" },
+  { ini: "2026-09-28", fim: "2026-10-05", t: "Pedido de isenção da taxa (até 23h59)" },
+  { ini: "2026-09-28", fim: "2026-10-06", t: "Upload dos documentos da isenção (até 23h59)" },
+  { ini: "2026-10-09", fim: "2026-10-09", t: "Resultado dos pedidos de isenção" },
+  { ini: "2026-10-12", fim: "2026-10-13", t: "Recurso contra indeferimento da isenção" },
+  { ini: "2026-10-19", fim: "2026-10-19", t: "Resultado da isenção pós-recurso" },
+  { ini: "2026-09-28", fim: "2026-10-29", t: "Inscrições (até 23h59 de 29/10)" },
+  { ini: "2026-09-28", fim: "2026-10-30", t: "Pagamento da taxa (até 23h) e upload de laudo/documentos de reserva de vagas (até 23h59)" },
+  { ini: "2026-11-06", fim: "2026-11-06", t: "Deferimento das inscrições" },
+  { ini: "2026-11-09", fim: "2026-11-10", t: "Recurso contra indeferimento da inscrição" },
+  { ini: "2026-11-17", fim: "2026-11-17", t: "Deferimento das inscrições pós-recurso" },
+  { ini: "2026-12-11", fim: "2026-12-11", t: "Divulgação do horário e local de prova" },
+  { ini: "2026-12-20", fim: "2026-12-20", t: "PROVA OBJETIVA + REDAÇÃO (manhã)", prova: true },
+  { ini: "2026-12-21", fim: "2026-12-21", t: "Gabarito preliminar e caderno de questões" },
+  { ini: "2026-12-22", fim: "2026-12-23", t: "Recurso contra o gabarito preliminar" },
+  { ini: "2027-01-12", fim: "2027-01-12", t: "Gabarito pós-recursos e resultado preliminar da objetiva" },
+  { ini: "2027-01-13", fim: "2027-01-14", t: "Recurso contra o resultado da objetiva" },
+  { ini: "2027-01-20", fim: "2027-01-20", t: "Resultado da objetiva pós-recursos e gabarito definitivo" },
+  { ini: "2027-01-29", fim: "2027-01-29", t: "Convocação: heteroidentificação (cotas negros/indígenas) e avaliação multiprofissional (PcD)" },
+  { ini: "2027-02-13", fim: "2027-02-14", t: "Heteroidentificação presencial e análise documental (13–14/02); avaliação multiprofissional (14/02)" },
+  { ini: "2027-02-24", fim: "2027-02-24", t: "Divulgação dos habilitados para correção da redação" },
+  { ini: "2027-03-10", fim: "2027-03-10", t: "Resultado preliminar da redação" },
+  { ini: "2027-03-11", fim: "2027-03-12", t: "Recurso contra o resultado da redação" },
+  { ini: "2027-03-23", fim: "2027-03-23", t: "Resultado da redação pós-recurso" },
+  { ini: "2027-04-23", fim: "2027-04-23", t: "Resultado preliminar e classificação" },
+  { ini: "2027-04-26", fim: "2027-04-27", t: "Recurso contra o resultado e a classificação" },
+  { ini: "2027-05-03", fim: "2027-05-03", t: "Resultado final e HOMOLOGAÇÃO" },
+];
+
+/* Conteúdo programático — Anexo II, Nível Médio (Conhecimentos Comuns) e
+   Cargo 201 (Conhecimentos Específicos). Itens longos foram divididos. */
+const TOPICOS_PADRAO = {
+  lp: ["Compreensão e interpretação de textos","Tipologia textual e gêneros textuais","Ortografia oficial e acentuação gráfica","Coesão e coerência: referência, conectores, progressão","Morfossintaxe: classes e formação de palavras, termos da oração","Coordenação, subordinação, vozes verbais e pronomes relativos","Pontuação e efeitos de sentido","Concordância verbal e nominal","Regência verbal e nominal","Crase","Colocação pronominal","Semântica: denotação, conotação, sinonímia, paronímia, figuras de linguagem","Reescrita de frases e equivalência de estruturas","Variação linguística e adequação de registro","Redação Oficial (Manual da Presidência, 3ª ed.)"],
+  inf: ["Conceitos básicos de informática e TI","Windows 10+: arquivos, pastas, programas e configurações","Organização de arquivos, diretórios e integridade de documentos","Processador de textos (Word)","Planilhas eletrônicas (Excel)","Apresentações (PowerPoint)","Correio eletrônico (Outlook) e colaboração online","Internet, intranet e navegadores","Ferramentas de busca e compartilhamento","Computação em nuvem","Redes de computadores: noções","Segurança da informação: senhas, autenticação, engenharia social, phishing","Ameaças: vírus, worms, malware, ransomware","Antivírus, firewall, atualizações e backup"],
+  ap: ["CF/88: princípios e disposições gerais (Título III, Cap. VII)","Organização da Adm. Pública Federal: direta, indireta, descentralização","Agentes públicos, atendimento ao cidadão, inclusão e acessibilidade","Lei 8.112/1990: provimento, vacância, direitos e vantagens","Lei 8.112/1990: deveres, proibições, regime disciplinar e PAD","Ética: Decreto 1.171/1994 e Decreto 6.029/2007","Improbidade administrativa (Lei 8.429/1992 e alterações)","Processo administrativo federal (Lei 9.784/1999)","LAI (Lei 12.527/2011 e Decreto 7.724/2012)","LGPD (Lei 13.709/2018) na Administração Pública","Licitações e contratos (Lei 14.133/2021)","Governança, integridade, controle e Decreto 9.830/2019","Governo Digital (Lei 14.129/2021)","Gestão documental e arquivística (Lei 8.159/1991)","Recursos materiais e patrimoniais","Sustentabilidade e A3P","Atendimento ao público e Carta de Serviços ao Usuário","Segurança da informação no ambiente de trabalho","Redação oficial e comunicação administrativa","IFES: estrutura, autonomia universitária e colegiados","Estatuto e Regimento Geral da UFBA"],
+  ce: ["Estado, governo e Administração Pública: conceitos e princípios","Organização administrativa da União: direta e indireta","Agentes públicos: espécies, cargo, emprego e função","Poderes administrativos e uso/abuso do poder","Serviços públicos e delegação (concessão, permissão, autorização)","Controle da Administração e responsabilidade civil do Estado","Licitações (Lei 14.133/2021): modalidades, dispensa, inexigibilidade, fases","Organizações formais: estrutura e departamentalização","Processo organizacional: planejamento, direção, comunicação, controle","Gestão de processos","Gestão da qualidade","Gestão de projetos","Gestão de pessoas: conceitos e função do órgão de GP","Comportamento organizacional: motivação e liderança","Recursos materiais: classificação e gestão de estoques","Compras, modalidades e cadastro de fornecedores","Recebimento, conferência e armazenagem","Arquivologia: conceitos e gestão de documentos","Arquivos correntes, intermediários e permanentes","Protocolo e avaliação de documentos","Tipologias, suportes, microfilmagem e automação","Preservação, conservação e restauração","Atendimento ao público: qualidade e postura","Trabalho em equipe, relações interpessoais e comunicação"],
+};
+
+/* Banco de questões — autorais, estilo múltipla escolha A–E (5 alternativas, como a Avalia). */
+const Q_SEED = [
+// ---------- Língua Portuguesa
+{a:"lp",t:"Crase",e:"Assinale a alternativa que completa corretamente as lacunas:\n\"Refiro-me ___ servidoras que chegaram ___ pouco tempo ao setor.\"",o:["às – há","as – a","às – a","as – há","à – há"],c:0,x:"\"Referir-se a\" + \"as servidoras\" = às (crase). \"Há pouco tempo\" indica tempo decorrido (verbo haver)."},
+{a:"lp",t:"Concordância verbal e nominal",e:"Assinale a frase de acordo com a norma-padrão:",o:["Fazem cinco anos que ingressei na universidade.","Houveram muitos problemas no protocolo.","Faz cinco anos que ingressei na universidade.","Devem haver documentos pendentes.","Existe muitas dúvidas sobre o edital."],c:2,x:"\"Fazer\" indicando tempo decorrido é impessoal (fica no singular). \"Haver\" = existir também é impessoal, e contamina o auxiliar (\"Deve haver\"). \"Existir\" é pessoal: \"Existem muitas dúvidas\"."},
+{a:"lp",t:"Regência verbal e nominal",e:"Está correta quanto à regência verbal:",o:["Prefiro mais estudar do que sair.","O servidor assistiu a reunião inteira.","Os candidatos visavam o cargo de assistente.","Obedeça o regimento interno.","Prefiro estudar a sair."],c:4,x:"\"Preferir\" rege a preposição \"a\", sem \"mais\" nem \"do que\". \"Assistir\" (ver) pede \"a\": assistiu à reunião. \"Visar\" (almejar) pede \"a\": visavam ao cargo. \"Obedecer\" pede \"a\": obedeça ao regimento."},
+{a:"lp",t:"Pontuação e efeitos de sentido",e:"Assinale a alternativa pontuada corretamente:",o:["Os servidores do setor de protocolo, receberam o novo manual.","Os servidores do setor de protocolo receberam o novo manual.","Os servidores, do setor de protocolo receberam, o novo manual.","Os servidores do setor, de protocolo receberam o novo manual.","Os servidores do setor de protocolo receberam, o novo manual."],c:1,x:"Não se separa por vírgula o sujeito do verbo, nem o verbo de seu complemento."},
+{a:"lp",t:"Colocação pronominal",e:"Assinale a opção em que a colocação pronominal segue a norma-padrão:",o:["Nunca disseram-me a verdade.","Me informaram o horário da prova.","Não encontrou-se o processo.","Nunca me disseram a verdade.","Quem avisou-te do prazo?"],c:3,x:"Palavras negativas (nunca, não), pronomes interrogativos (quem) atraem o pronome (próclise). Não se inicia período com pronome oblíquo átono na norma-padrão."},
+{a:"lp",t:"Coesão e coerência: referência, conectores, progressão",e:"\"Os prazos foram prorrogados, porquanto houve instabilidade no sistema.\"\nO conectivo destacado expressa ideia de:",o:["concessão","causa/explicação","conclusão","finalidade","condição"],c:1,x:"\"Porquanto\" equivale a \"porque\", \"visto que\" — introduz causa/explicação."},
+{a:"lp",t:"Ortografia oficial e acentuação gráfica",e:"De acordo com o Acordo Ortográfico vigente, todas as palavras estão corretamente grafadas em:",o:["idéia – heróico – vôo","ideia – heroico – voo","idéia – heroico – voo","ideia – heróico – vôo","ideia – heroico – vôo"],c:1,x:"Caiu o acento dos ditongos abertos \"ei\" e \"oi\" em paroxítonas (ideia, heroico) e dos hiatos \"oo\"/\"ee\" (voo, leem)."},
+{a:"lp",t:"Ortografia oficial e acentuação gráfica",e:"Assinale o uso correto de \"por que / porque / porquê / por quê\":",o:["Não sei porque ele faltou.","Ele faltou por que estava doente.","Não sei por que ele faltou.","Você faltou porque?","Explique o por que da ausência."],c:2,x:"\"Por que\" separado e sem acento em interrogativas indiretas (= por qual motivo). \"Porque\" = explicação; \"por quê\" no fim de frase; \"o porquê\" substantivado."},
+{a:"lp",t:"Coordenação, subordinação, vozes verbais e pronomes relativos",e:"Em \"Publicou-se o resultado final\", a estrutura está na voz:",o:["ativa, com sujeito indeterminado","passiva analítica","passiva sintética, com sujeito \"o resultado final\"","reflexiva","ativa, com sujeito oculto"],c:2,x:"Verbo transitivo direto + \"se\" (partícula apassivadora) = passiva sintética. Equivale a \"O resultado final foi publicado\"."},
+{a:"lp",t:"Coordenação, subordinação, vozes verbais e pronomes relativos",e:"Assinale a frase com emprego correto do pronome relativo:",o:["O servidor cujo o processo foi arquivado recorreu.","O servidor cujo processo foi arquivado recorreu.","O servidor que o processo foi arquivado recorreu.","O servidor cujo qual processo foi arquivado recorreu.","O servidor onde o processo foi arquivado recorreu."],c:1,x:"\"Cujo\" indica posse e não admite artigo depois dele (\"cujo o\" é erro)."},
+// ---------- Informática
+{a:"inf",t:"Planilhas eletrônicas (Excel)",e:"No Excel, a célula C1 contém =A1*$B$1. Ao copiá-la para C2, a fórmula resultante será:",o:["=A1*$B$1","=A2*$B$2","=A2*$B$1","=B2*$B$1","=A2*B1"],c:2,x:"A referência relativa (A1) se ajusta à nova linha (A2). A referência absoluta ($B$1) permanece fixa."},
+{a:"inf",t:"Planilhas eletrônicas (Excel)",e:"A fórmula =SE(A1>=7;\"Aprovado\";\"Reprovado\"), com A1 = 7, retorna:",o:["Reprovado","VERDADEIRO","7","Aprovado","#VALOR!"],c:3,x:"A condição 7>=7 é verdadeira, então retorna o segundo argumento: \"Aprovado\"."},
+{a:"inf",t:"Correio eletrônico (Outlook) e colaboração online",e:"Ao enviar um e-mail, o campo que permite incluir destinatários sem que os demais saibam que eles receberam a mensagem é:",o:["Para","Cc","Cco","Assunto","Responder a todos"],c:2,x:"Cco (cópia carbono oculta) esconde esses endereços dos demais destinatários."},
+{a:"inf",t:"Segurança da informação: senhas, autenticação, engenharia social, phishing",e:"Mensagem que se passa por instituição confiável para induzir o usuário a informar senhas ou dados bancários caracteriza:",o:["spam","phishing","worm","firewall","backup"],c:1,x:"Phishing é a fraude de engenharia social que \"pesca\" dados se passando por fonte legítima."},
+{a:"inf",t:"Windows 10+: arquivos, pastas, programas e configurações",e:"No Windows, o atalho que abre diretamente o Gerenciador de Tarefas é:",o:["Ctrl + Shift + Esc","Alt + F4","Windows + D","Ctrl + Alt + T","Windows + L"],c:0,x:"Ctrl+Shift+Esc abre o Gerenciador de Tarefas. Win+D mostra a área de trabalho; Win+L bloqueia; Alt+F4 fecha a janela."},
+{a:"inf",t:"Antivírus, firewall, atualizações e backup",e:"O tipo de backup que copia apenas os arquivos alterados desde o último backup (de qualquer tipo) é o:",o:["completo","diferencial","incremental","espelho","normal"],c:2,x:"Incremental: desde o último backup de qualquer tipo. Diferencial: desde o último backup completo."},
+{a:"inf",t:"Processador de textos (Word)",e:"No Microsoft Word, o atalho Ctrl + Z executa:",o:["Refazer","Desfazer","Salvar","Recortar","Sublinhar"],c:1,x:"Ctrl+Z desfaz a última ação; Ctrl+Y refaz."},
+// ---------- Administração Pública
+{a:"ap",t:"CF/88: princípios e disposições gerais (Título III, Cap. VII)",e:"O princípio da eficiência foi incluído expressamente no caput do art. 37 da CF/88 pela:",o:["redação original de 1988","EC nº 19/1998","EC nº 20/1998","EC nº 45/2004","Lei nº 8.112/1990"],c:1,x:"A Reforma Administrativa (EC 19/1998) incluiu a eficiência no LIMPE."},
+{a:"ap",t:"Organização da Adm. Pública Federal: direta, indireta, descentralização",e:"Pessoa jurídica de direito público, criada por lei específica, para executar atividades típicas da Administração com gestão descentralizada — natureza jurídica das universidades federais como a UFBA:",o:["empresa pública","sociedade de economia mista","autarquia","órgão público","consórcio privado"],c:2,x:"Autarquia: pessoa jurídica de direito público, criada por lei (CF art. 37, XIX). A UFBA é autarquia federal vinculada ao MEC."},
+{a:"ap",t:"Processo administrativo federal (Lei 9.784/1999)",e:"A extinção de um ato administrativo válido por razões de conveniência e oportunidade denomina-se:",o:["anulação, com efeitos ex tunc","revogação, com efeitos ex nunc","cassação, com efeitos ex tunc","convalidação","caducidade"],c:1,x:"Revogação: ato válido, mérito (conveniência/oportunidade), efeitos ex nunc, só pela própria Administração. Anulação: ilegalidade, efeitos ex tunc (Súmula 473 STF)."},
+{a:"ap",t:"Processo administrativo federal (Lei 9.784/1999)",e:"Salvo disposição legal específica, o prazo para interposição de recurso administrativo na Lei 9.784/1999 é de:",o:["5 dias","10 dias","15 dias","30 dias","60 dias"],c:1,x:"Art. 59: 10 dias, contados da ciência ou divulgação oficial da decisão. A decisão do recurso: 30 dias, prorrogáveis por igual período."},
+{a:"ap",t:"Processo administrativo federal (Lei 9.784/1999)",e:"O direito da Administração de anular atos de que decorram efeitos favoráveis aos destinatários decai, salvo má-fé, em:",o:["1 ano","2 anos","3 anos","5 anos","10 anos"],c:3,x:"Art. 54 da Lei 9.784/1999: 5 anos, contados da data em que foram praticados."},
+{a:"ce",t:"Poderes administrativos e uso/abuso do poder",e:"A aplicação de penalidade a servidor que descumpriu dever funcional é manifestação do poder:",o:["de polícia","regulamentar","disciplinar","normativo","expropriatório"],c:2,x:"Poder disciplinar: apurar infrações e aplicar penalidades a servidores e a quem tem vínculo especial com a Administração."},
+{a:"ap",t:"CF/88: princípios e disposições gerais (Título III, Cap. VII)",e:"Segundo a CF/88, o servidor nomeado para cargo de provimento efetivo em virtude de concurso adquire estabilidade após:",o:["1 ano de efetivo exercício","2 anos de efetivo exercício","3 anos de efetivo exercício","5 anos de efetivo exercício","a posse"],c:2,x:"Art. 41 da CF (EC 19/1998): 3 anos de efetivo exercício + avaliação especial de desempenho. O edital prevê estágio probatório de 36 meses."},
+{a:"ap",t:"Lei 8.112/1990: provimento, vacância, direitos e vantagens",e:"NÃO é forma de provimento de cargo público prevista na Lei 8.112/1990:",o:["nomeação","readaptação","reversão","remoção","recondução"],c:3,x:"Art. 8º: nomeação, promoção, readaptação, reversão, aproveitamento, reintegração e recondução. Remoção é deslocamento do servidor, não provimento."},
+{a:"ap",t:"Lei 8.112/1990: provimento, vacância, direitos e vantagens",e:"Pela Lei 8.112/1990, a posse ocorrerá no prazo de ___ dias da publicação do ato de provimento, e o exercício em até ___ dias da posse.",o:["15 – 30","30 – 15","30 – 30","15 – 15","60 – 30"],c:1,x:"Art. 13, §1º: posse em 30 dias. Art. 15, §1º: exercício em 15 dias a contar da posse."},
+{a:"ap",t:"Lei 8.112/1990: deveres, proibições, regime disciplinar e PAD",e:"A penalidade de suspensão, na Lei 8.112/1990, não pode exceder:",o:["30 dias","60 dias","90 dias","120 dias","180 dias"],c:2,x:"Art. 130: suspensão de até 90 dias. Pode ser convertida em multa de 50% por dia de vencimento, se houver conveniência para o serviço."},
+{a:"ap",t:"LAI (Lei 12.527/2011 e Decreto 7.724/2012)",e:"Não sendo possível o acesso imediato, o órgão deve responder ao pedido de informação (LAI) em até:",o:["10 dias, prorrogáveis por 10","20 dias, prorrogáveis por 10","30 dias, prorrogáveis por 15","15 dias, improrrogáveis","5 dias úteis"],c:1,x:"Art. 11, §§1º e 2º: 20 dias, prorrogáveis por mais 10 mediante justificativa expressa."},
+{a:"ap",t:"Ética: Decreto 1.171/1994 e Decreto 6.029/2007",e:"Pelo Código de Ética Profissional do Servidor Público Civil do Poder Executivo Federal, a pena aplicável pela Comissão de Ética é a de:",o:["advertência","suspensão","censura","demissão","multa"],c:2,x:"Decreto 1.171/1994, item XXII: a pena aplicável pela Comissão de Ética é a censura."},
+{a:"ap",t:"Improbidade administrativa (Lei 8.429/1992 e alterações)",e:"Após a Lei 14.230/2021, a configuração de ato de improbidade administrativa exige:",o:["culpa grave","dolo","apenas dano ao erário","culpa ou dolo","responsabilidade objetiva"],c:1,x:"A nova redação exige conduta dolosa para todas as modalidades (arts. 9º, 10 e 11). Não existe mais improbidade culposa."},
+{a:"ap",t:"LGPD (Lei 13.709/2018) na Administração Pública",e:"Segundo a LGPD, é exemplo de dado pessoal SENSÍVEL:",o:["nome completo","endereço residencial","dado referente à saúde","número de matrícula","e-mail institucional"],c:2,x:"Art. 5º, II: origem racial ou étnica, convicção religiosa, opinião política, filiação sindical, dado de saúde, vida sexual, genético ou biométrico."},
+// ---------- Conhecimentos Específicos
+{a:"lp",t:"Redação Oficial (Manual da Presidência, 3ª ed.)",e:"Segundo o Manual de Redação da Presidência da República, o vocativo adequado para correspondência dirigida a reitor de universidade é:",o:["Excelentíssimo Senhor Reitor","Magnífico Reitor","Digníssimo Reitor","Ilustríssimo Senhor Reitor","Senhor Doutor Reitor"],c:1,x:"Para reitores: tratamento \"Vossa Magnificência\" e vocativo \"Magnífico Reitor\". \"Digníssimo\" e \"Ilustríssimo\" foram abolidos das comunicações oficiais."},
+{a:"lp",t:"Redação Oficial (Manual da Presidência, 3ª ed.)",e:"Na 3ª edição do Manual de Redação da Presidência, aviso, ofício e memorando passaram a ser tratados como:",o:["expedientes extintos","padrão ofício, sob a denominação única de \"ofício\"","modalidades de exposição de motivos","mensagens eletrônicas","atos normativos"],c:1,x:"A 3ª edição unificou os três no \"padrão ofício\", utilizando-se o nome ofício para todos."},
+{a:"lp",t:"Redação Oficial (Manual da Presidência, 3ª ed.)",e:"Em comunicações oficiais, o fecho \"Respeitosamente\" é utilizado para autoridades:",o:["de mesma hierarquia","de hierarquia inferior","de hierarquia superior","estrangeiras apenas","de qualquer nível"],c:2,x:"\"Respeitosamente\" para autoridades de hierarquia superior; \"Atenciosamente\" para mesma hierarquia ou inferior."},
+{a:"ce",t:"Arquivos correntes, intermediários e permanentes",e:"Pela teoria das três idades, documentos de valor histórico, probatório e informativo, que devem ser preservados definitivamente, integram o arquivo:",o:["corrente","intermediário","permanente","setorial","de protocolo"],c:2,x:"Corrente: uso frequente. Intermediário: uso eventual, aguardando destinação. Permanente: guarda definitiva (valor secundário)."},
+{a:"ce",t:"Protocolo e avaliação de documentos",e:"O instrumento arquivístico que define prazos de guarda e a destinação final (eliminação ou guarda permanente) dos documentos é:",o:["plano de classificação","tabela de temporalidade","inventário","guia de remessa","índice onomástico"],c:1,x:"A Tabela de Temporalidade e Destinação de Documentos fixa prazos nas fases corrente e intermediária e a destinação final."},
+{a:"ce",t:"Processo organizacional: planejamento, direção, comunicação, controle",e:"A função administrativa que consiste em definir objetivos e decidir antecipadamente o que fazer para alcançá-los é:",o:["organização","direção","controle","planejamento","coordenação"],c:3,x:"PODC: Planejamento (objetivos e meios), Organização (recursos e estrutura), Direção (pessoas), Controle (monitorar e corrigir)."},
+{a:"ce",t:"Processo organizacional: planejamento, direção, comunicação, controle",e:"O planejamento de longo prazo, que envolve a organização como um todo e é elaborado pela alta administração, é o:",o:["operacional","tático","estratégico","departamental","orçamentário"],c:2,x:"Estratégico: longo prazo, organização toda, alta cúpula. Tático: médio prazo, departamentos. Operacional: curto prazo, tarefas."},
+{a:"ce",t:"Recursos materiais: classificação e gestão de estoques",e:"Na curva ABC de estoques, os itens da classe A são aqueles que:",o:["representam muitos itens e pouco valor","representam poucos itens e grande parte do valor investido","são obsoletos","têm consumo irregular","são de uso exclusivo do almoxarifado"],c:1,x:"Classe A: ~20% dos itens, ~80% do valor — merecem controle mais rigoroso (Pareto)."},
+{a:"ce",t:"Comportamento organizacional: motivação e liderança",e:"Na teoria dos dois fatores de Herzberg, salário, condições de trabalho e políticas da organização são fatores:",o:["motivacionais","higiênicos","de autorrealização","intrínsecos","de estima"],c:1,x:"Fatores higiênicos (extrínsecos) evitam insatisfação, mas não motivam. Motivacionais (intrínsecos): reconhecimento, responsabilidade, crescimento."},
+{a:"ce",t:"Comportamento organizacional: motivação e liderança",e:"Na pirâmide de Maslow, a necessidade situada imediatamente acima das necessidades fisiológicas é a de:",o:["estima","autorrealização","segurança","sociais","reconhecimento"],c:2,x:"Base → topo: fisiológicas, segurança, sociais, estima, autorrealização."},
+{a:"ce",t:"Licitações (Lei 14.133/2021): modalidades, dispensa, inexigibilidade, fases",e:"NÃO é modalidade de licitação prevista na Lei 14.133/2021:",o:["pregão","concorrência","diálogo competitivo","tomada de preços","leilão"],c:3,x:"Art. 28: pregão, concorrência, concurso, leilão e diálogo competitivo. Tomada de preços e convite foram extintos."},
+{a:"ce",t:"Atendimento ao público: qualidade e postura",e:"Diante de um usuário irritado no balcão de atendimento, a conduta mais adequada do servidor é:",o:["encerrar o atendimento imediatamente","ouvir com atenção, manter a calma e buscar a solução ou o encaminhamento correto","pedir que retorne outro dia sem explicação","responder no mesmo tom para impor limites","transferir a demanda sem registrar"],c:1,x:"Escuta ativa, cordialidade, controle emocional e resolutividade são princípios do bom atendimento (e da Lei 13.460/2017, dos direitos do usuário)."},
+{a:"ce",t:"Organizações formais: estrutura e departamentalização",e:"A departamentalização que agrupa atividades segundo a especialidade (ex.: finanças, pessoal, compras) é a:",o:["geográfica","por clientela","funcional","por projetos","matricial"],c:2,x:"Funcional: por especialização técnica. É a mais comum em organogramas públicos."},
+{a:"ce",t:"Protocolo e avaliação de documentos",e:"Na gestão de documentos, a atividade de protocolo compreende, entre outras, as operações de:",o:["eliminação e microfilmagem","recebimento, registro, classificação, distribuição e controle da tramitação","restauração e conservação","descrição e difusão do acervo permanente","avaliação e recolhimento"],c:1,x:"Protocolo: recebimento, classificação, registro, distribuição, controle da tramitação e expedição."},
+{a:"ce",t:"Serviços públicos e delegação (concessão, permissão, autorização)",e:"A delegação da prestação de serviço público, a título precário, formalizada mediante contrato de adesão, à pessoa física ou jurídica que demonstre capacidade para seu desempenho, denomina-se:",o:["concessão","permissão","autorização","outorga legal","desconcentração"],c:1,x:"Lei 8.987/1995, art. 2º, IV e art. 40: permissão = delegação a título precário, por contrato de adesão, a pessoa física ou jurídica. Concessão: só PJ ou consórcio de empresas."},
+{a:"ce",t:"Controle da Administração e responsabilidade civil do Estado",e:"Pelo art. 37, §6º, da CF/88, a responsabilidade civil das pessoas jurídicas de direito público pelos danos que seus agentes, nessa qualidade, causarem a terceiros é:",o:["subjetiva, exigindo prova de culpa do agente","objetiva, assegurado o direito de regresso contra o agente em caso de dolo ou culpa","inexistente em atos lícitos","exclusiva do agente causador","solidária entre o Estado e a vítima"],c:1,x:"Teoria do risco administrativo: o Estado responde objetivamente; o agente responde perante o Estado (ação regressiva) se agiu com dolo ou culpa."},
+{a:"ce",t:"Licitações (Lei 14.133/2021): modalidades, dispensa, inexigibilidade, fases",e:"Na Lei 14.133/2021, a contratação direta fundada na inviabilidade de competição (ex.: fornecedor exclusivo) caracteriza:",o:["dispensa de licitação","licitação deserta","inexigibilidade de licitação","pregão eletrônico","diálogo competitivo"],c:2,x:"Art. 74: inexigibilidade = competição inviável. Dispensa (art. 75): a competição seria possível, mas a lei autoriza não licitar."},
+{a:"ce",t:"Poderes administrativos e uso/abuso do poder",e:"O agente público que, embora competente, pratica o ato visando finalidade diversa do interesse público incorre em:",o:["excesso de poder","desvio de finalidade","poder discricionário","poder vinculado","usurpação de função"],c:1,x:"Abuso de poder tem duas espécies: excesso de poder (vai além da competência) e desvio de finalidade/poder (competente, mas busca fim diverso)."},
+{a:"ce",t:"Controle da Administração e responsabilidade civil do Estado",e:"Em regra, no controle judicial dos atos administrativos, o Poder Judiciário:",o:["pode revogar atos da Administração por conveniência e oportunidade","examina a legalidade e a legitimidade, sem substituir o mérito administrativo","só atua mediante provocação do Tribunal de Contas","não pode anular atos discricionários em hipótese alguma","exerce controle prévio obrigatório de todos os atos"],c:1,x:"O Judiciário anula atos ilegais (inclusive discricionários com vício de legalidade), mas não revoga nem reexamina conveniência e oportunidade."},
+{a:"ap",t:"Lei 8.112/1990: provimento, vacância, direitos e vantagens",e:"Segundo a Lei 8.112/1990, é forma de vacância do cargo público:",o:["remoção","redistribuição","posse em outro cargo inacumulável","substituição","nomeação"],c:2,x:"Art. 33: exoneração, demissão, promoção, readaptação, aposentadoria, posse em outro cargo inacumulável e falecimento."},
+];
+
+const FC_SEED = [
+ ["ap","Princípios expressos do art. 37 da CF","LIMPE: Legalidade, Impessoalidade, Moralidade, Publicidade, Eficiência (esta pela EC 19/98)."],
+ ["ap","Anulação × Revogação","Anulação: ilegalidade, ex tunc, Administração ou Judiciário. Revogação: conveniência/oportunidade, ex nunc, só a Administração."],
+ ["ap","Formas de provimento (Lei 8.112, art. 8º)","Nomeação, promoção, readaptação, reversão, aproveitamento, reintegração e recondução."],
+ ["ap","Prazos: posse e exercício (Lei 8.112)","Posse: 30 dias da publicação do ato. Exercício: 15 dias da posse."],
+ ["ap","Penalidades da Lei 8.112 (art. 127)","Advertência, suspensão (até 90 dias), demissão, cassação de aposentadoria/disponibilidade, destituição de cargo em comissão e de função comissionada."],
+ ["ap","Prescrição da ação disciplinar (Lei 8.112, art. 142)","5 anos (demissão/cassação/destituição), 2 anos (suspensão), 180 dias (advertência)."],
+ ["ap","Lei 9.784: prazo de recurso","10 dias. Decisão: 30 dias (prorrogáveis). Máximo de 3 instâncias administrativas."],
+ ["ap","Lei 9.784: decadência para anular","5 anos para atos com efeitos favoráveis ao destinatário, salvo má-fé."],
+ ["ap","LAI: prazo de resposta","20 dias, prorrogáveis por mais 10 com justificativa."],
+ ["ap","LAI: prazos de sigilo","Ultrassecreta 25 anos; secreta 15 anos; reservada 5 anos."],
+ ["ap","Código de Ética (Dec. 1.171/94): pena","Censura, aplicada pela Comissão de Ética."],
+ ["ap","Improbidade após a Lei 14.230/2021","Exige dolo em todas as modalidades: enriquecimento ilícito (art. 9º), dano ao erário (art. 10) e violação de princípios (art. 11)."],
+ ["ap","Estabilidade (CF, art. 41)","3 anos de efetivo exercício + avaliação especial de desempenho por comissão."],
+ ["ce","Teoria das três idades","Corrente (uso frequente) → Intermediário (uso eventual) → Permanente (valor histórico, guarda definitiva)."],
+ ["ce","Tabela de temporalidade","Define prazos de guarda e destinação final (eliminação ou guarda permanente)."],
+ ["ce","Vocativo para Reitor","\"Magnífico Reitor\"; tratamento: Vossa Magnificência."],
+ ["ce","Fechos oficiais","Respeitosamente: autoridade superior. Atenciosamente: mesma hierarquia ou inferior."],
+ ["ce","Padrão ofício (3ª ed. do Manual)","Aviso, ofício e memorando unificados sob o nome \"ofício\"."],
+ ["ce","Funções administrativas","PODC: Planejar, Organizar, Dirigir, Controlar."],
+ ["ce","Níveis de planejamento","Estratégico (longo prazo, cúpula), tático (médio, gerências), operacional (curto, execução)."],
+ ["ce","Modalidades de licitação (Lei 14.133)","Pregão, concorrência, concurso, leilão, diálogo competitivo."],
+ ["ce","Herzberg","Higiênicos (salário, condições) evitam insatisfação. Motivacionais (reconhecimento, crescimento) geram satisfação."],
+ ["ce","Maslow (base → topo)","Fisiológicas, segurança, sociais, estima, autorrealização."],
+ ["ce","Dispensa × inexigibilidade (Lei 14.133)","Inexigibilidade (art. 74): competição inviável. Dispensa (art. 75): competição possível, mas a lei permite não licitar."],
+ ["ce","Concessão × permissão × autorização","Concessão: contrato, PJ ou consórcio. Permissão: precária, contrato de adesão, PF ou PJ. Autorização: ato unilateral e precário."],
+ ["ce","Responsabilidade civil do Estado (CF 37 §6º)","Objetiva (risco administrativo) + ação regressiva contra o agente com dolo ou culpa."],
+ ["ce","Abuso de poder","Excesso de poder (fora da competência) ou desvio de finalidade (fim diverso do interesse público)."],
+ ["ap","Formas de vacância (Lei 8.112, art. 33)","Exoneração, demissão, promoção, readaptação, aposentadoria, posse em outro cargo inacumulável, falecimento."],
+ ["ce","Curva ABC","A: poucos itens, maior valor. C: muitos itens, pouco valor."],
+ ["lp","\"Haver\" = existir","Impessoal, sempre no singular: \"Havia problemas\", \"Deve haver soluções\"."],
+ ["lp","Crase: casos proibidos","Antes de masculino, verbo, pronomes pessoais e de tratamento (salvo senhora/senhorita/dona), entre palavras repetidas (cara a cara)."],
+ ["lp","Fatores de próclise","Palavras negativas, advérbios, pronomes relativos, indefinidos, interrogativos e conjunções subordinativas."],
+ ["inf","Referência absoluta × relativa","$A$1 não muda ao copiar; A1 se ajusta. $A1 fixa a coluna; A$1 fixa a linha."],
+ ["inf","Backup incremental × diferencial","Incremental: desde o último backup de qualquer tipo. Diferencial: desde o último completo."],
+];
+
+/* =========================================================================
+   ESTADO (localStorage)
+   ========================================================================= */
+const KEY = "ufba-assistente:v1";
+const hoje = () => isoDate(new Date());
+function isoDate(d){ const z = n => String(n).padStart(2,"0"); return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}`; }
+function parseIso(s){ const [y,m,d] = s.split("-").map(Number); return new Date(y, m-1, d); }
+function addDias(iso, n){ const d = parseIso(iso); d.setDate(d.getDate()+n); return isoDate(d); }
+function diasEntre(a, b){ return Math.round((parseIso(b) - parseIso(a)) / 86400000); }
+function fmtData(iso, opts={day:"2-digit",month:"2-digit"}){ return parseIso(iso).toLocaleDateString("pt-BR", opts); }
+
+function estadoInicial(){
+  const topicos = {};
+  for (const a of AREAS) topicos[a.id] = TOPICOS_PADRAO[a.id].map((nome,i) => ({ id: a.id+"-"+i, nome, estudado:false, revisoes:0, ultima:null }));
+  return {
+    dataProva: EDITAL.dataProva, horasDia: 2, diasSemana: 6, meta: 60,
+    topicos, respostas: [], erros: {}, flash: {}, sessoes: [], simulados: [], redacoes: [],
+    qExtras: [], fcExtras: [], checklist: {},
+  };
+}
+let S;
+try { S = Object.assign(estadoInicial(), JSON.parse(localStorage.getItem(KEY) || "{}")); } catch { S = estadoInicial(); }
+function salvar(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} }
+
+const todasQuestoes = () => [...Q_SEED.map((q,i)=>({...q,id:"s"+i})), ...S.qExtras];
+const todosFlash = () => [...FC_SEED.map((f,i)=>({a:f[0],f:f[1],v:f[2],id:"f"+i})), ...S.fcExtras];
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+/* Repetição espaçada simples (caixas de Leitner) */
+const INTERVALOS = [1, 3, 7, 15, 30, 60];
+function agendar(item, acertou){
+  item.caixa = acertou ? Math.min((item.caixa||0)+1, INTERVALOS.length-1) : 0;
+  item.proxima = addDias(hoje(), acertou ? INTERVALOS[item.caixa] : 1);
+}
+
+/* =========================================================================
+   MÉTRICAS
+   ========================================================================= */
+function diasParaProva(){ return diasEntre(hoje(), S.dataProva); }
+function statsArea(){
+  const out = {};
+  for (const a of AREAS){
+    const tps = S.topicos[a.id] || [];
+    const rs = S.respostas.filter(r => r.a === a.id);
+    const ac = rs.filter(r => r.ok).length;
+    out[a.id] = { total: tps.length, estudados: tps.filter(t=>t.estudado).length, resp: rs.length, acertos: ac, taxa: rs.length ? ac/rs.length : null };
+  }
+  return out;
+}
+function statsTopico(area, nome){
+  const rs = S.respostas.filter(r => r.a === area && r.t === nome);
+  return { n: rs.length, taxa: rs.length ? rs.filter(r=>r.ok).length/rs.length : null };
+}
+function indiceProntidao(){
+  const st = statsArea(); let soma = 0;
+  for (const a of AREAS){
+    const s = st[a.id]; const peso = a.q*a.peso/TOTAL_OBJ;
+    const cob = s.total ? s.estudados/s.total : 0;
+    const des = s.taxa == null ? 0 : s.taxa;
+    soma += peso * (0.5*cob + 0.5*des);
+  }
+  return Math.round(soma*100);
+}
+function constancia(){
+  const dias = new Set([...S.sessoes.map(s=>s.data), ...S.respostas.map(r=>r.data)]);
+  let streak = 0; let d = hoje();
+  if (!dias.has(d)) d = addDias(d,-1);
+  while (dias.has(d)){ streak++; d = addDias(d,-1); }
+  return { streak, dias };
+}
+function minutosPorDia(n=14){
+  const out = [];
+  for (let i=n-1;i>=0;i--){ const d = addDias(hoje(),-i); out.push({ d, m: S.sessoes.filter(s=>s.data===d).reduce((x,s)=>x+s.min,0) }); }
+  return out;
+}
+function errosVencidos(){ return Object.entries(S.erros).filter(([,e]) => e.proxima <= hoje()); }
+function flashVencidos(){ return todosFlash().filter(f => { const s = S.flash[f.id]; return !s || s.proxima <= hoje(); }); }
+function proximoEvento(){ return DATAS.filter(d => d.fim >= hoje()).sort((a,b)=>a.fim.localeCompare(b.fim))[0]; }
+
+/* =========================================================================
+   NAVEGAÇÃO
+   ========================================================================= */
+const NAV = [
+  { s: "Minha Preparação", items: [
+    ["/inicio","Início","⌂"],["/hoje","Hoje","☀"],["/semana","Planejamento semanal","▦"],["/cronograma","Cronograma do edital","🗓"],["/prontidao","Prontidão","◎"],["/desempenho","Desempenho","📈"],["/foco","Modo foco","⏱"],
+  ]},
+  { s: "Estudar", items: [
+    ["/edital","Edital verticalizado","☰"],["/questoes","Questões","✎"],["/flashcards","Flashcards","❐"],["/redacao","Redação","✍"],
+  ]},
+  { s: "Praticar", items: [
+    ["/erros","Meus erros","⚠"],["/simulados","Simulados","⏲"],["/nota","Calculadora de nota","∑"],["/sobre","O concurso","ℹ"],
+  ]},
+];
+const BOTTOM = [["/inicio","Início","⌂"],["/edital","Edital","☰"],["/hoje","Hoje","☀"],["/questoes","Questões","✎"],["/cronograma","Datas","🗓"]];
+const ROTAS = {};
+const mainEl = document.getElementById("main");
+const appEl = document.getElementById("app");
+
+function pintarNav(path){
+  document.getElementById("nav").innerHTML = NAV.map(g => `<div class="nav-title">${g.s}</div>` + g.items.map(([p,l,i]) =>
+    `<a class="nav-link${p===path?" active":""}" href="#${p}"${p===path?' aria-current="page"':""}><span class="ic">${i}</span><span>${l}</span></a>`).join("")).join("");
+  document.getElementById("bottom-nav").innerHTML = BOTTOM.map(([p,l,i]) =>
+    `<a class="${p===path?"active":""}" href="#${p}"><span class="ic">${i}</span>${l}</a>`).join("");
+  const d = diasParaProva();
+  document.getElementById("side-count").innerHTML = d >= 0
+    ? `<b>${d} ${d===1?"dia":"dias"}</b><span>para a prova · ${fmtData(S.dataProva,{day:"2-digit",month:"short"})}</span>`
+    : `<b>Prova realizada</b><span>${fmtData(S.dataProva)}</span>`;
+}
+let limpar = null;
+function rotear(){
+  if (limpar){ limpar(); limpar = null; }
+  const path = (location.hash.replace(/^#/,"") || "/inicio").split("?")[0];
+  const fn = ROTAS[path] || ROTAS["/inicio"];
+  pintarNav(ROTAS[path] ? path : "/inicio");
+  appEl.classList.remove("nav-open");
+  mainEl.innerHTML = "";
+  fn(mainEl);
+  window.scrollTo(0,0);
+}
+window.addEventListener("hashchange", rotear);
+document.getElementById("menu-btn").onclick = () => appEl.classList.toggle("nav-open");
+document.getElementById("overlay").onclick = () => appEl.classList.remove("nav-open");
+
+/* Tema */
+function aplicarTema(t){ if (t) document.documentElement.setAttribute("data-theme", t); else document.documentElement.removeAttribute("data-theme"); }
+let tema = null; try { tema = localStorage.getItem(KEY+":tema"); } catch {}
+aplicarTema(tema);
+function alternarTema(){
+  const escuro = tema ? tema === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  tema = escuro ? "light" : "dark"; aplicarTema(tema);
+  try { localStorage.setItem(KEY+":tema", tema); } catch {}
+}
+document.getElementById("theme-btn").onclick = alternarTema;
+document.getElementById("theme-btn-2").onclick = alternarTema;
+
+const header = (eyebrow, titulo, desc) => `<div class="page-header"><div class="eyebrow">${eyebrow}</div><h1>${titulo}</h1>${desc?`<p class="desc">${desc}</p>`:""}</div>`;
+const pct = x => x == null ? "—" : Math.round(x*100)+"%";
+const areaTag = id => `<span class="row" style="gap:6px;display:inline-flex"><span class="area-dot" style="background:${AREA[id].cor}"></span>${AREA[id].nome}</span>`;
+const pillTaxa = t => t == null ? `<span class="pill pill-muted">sem dados</span>` : t >= .75 ? `<span class="pill pill-ok">${pct(t)}</span>` : t >= .5 ? `<span class="pill pill-warn">${pct(t)}</span>` : `<span class="pill pill-bad">${pct(t)}</span>`;
+const AVISO_ANEXO = `<div class="notice" style="background:var(--accent-soft);border-color:var(--accent-soft-border)"><b style="color:var(--accent)">Fonte:</b> Anexo II do Edital 007/2026 — Conhecimentos Comuns (Nível Médio) e Conhecimentos Específicos do cargo 201. Itens longos foram divididos em tópicos menores; você pode adicionar ou remover.</div>`;
+
+/* =========================================================================
+   VIEWS
+   ========================================================================= */
+ROTAS["/inicio"] = el => {
+  const d = diasParaProva(); const st = statsArea(); const c = constancia();
+  const semanas = Math.max(0, Math.floor(d/7));
+  const diasEstudo = Math.max(0, Math.round(d * S.diasSemana/7));
+  const horas = Math.round(diasEstudo * S.horasDia);
+  const totTop = AREAS.reduce((s,a)=>s+st[a.id].total,0), estTop = AREAS.reduce((s,a)=>s+st[a.id].estudados,0);
+  const faltam = totTop - estTop;
+  const ritmo = diasEstudo > 0 ? (faltam / Math.max(1, diasEstudo - 21)).toFixed(1) : "—";
+  const prox = proximoEvento();
+  const respHoje = S.respostas.filter(r=>r.data===hoje()).length;
+  const minHoje = S.sessoes.filter(s=>s.data===hoje()).reduce((x,s)=>x+s.min,0);
+  const totalResp = S.respostas.length, totalAc = S.respostas.filter(r=>r.ok).length;
+  const pendRev = errosVencidos().length + flashVencidos().length;
+  el.innerHTML = `<div class="container">
+    ${header("UFBA 2026 · Assistente em Administração","Minha Preparação","Onde você está, quanto falta e o que fazer agora.")}
+    <div class="hero">
+      <div>
+        <div class="sub">${d>=0?"Faltam":"A prova foi há"}</div>
+        <div class="big">${Math.abs(d)} ${Math.abs(d)===1?"dia":"dias"}</div>
+        <div class="sub">Prova objetiva + redação · ${fmtData(S.dataProva,{weekday:"long",day:"2-digit",month:"long",year:"numeric"})} · manhã (data provável)</div>
+      </div>
+      <div class="units">
+        <div><b>${semanas}</b><span>semanas</span></div>
+        <div><b>${diasEstudo}</b><span>dias de estudo</span></div>
+        <div><b>~${horas}h</b><span>disponíveis</span></div>
+      </div>
+    </div>
+    <div class="grid g4" style="margin-top:14px">
+      <div class="stat"><div class="v">${estTop}/${totTop}</div><div class="l">tópicos estudados</div><div class="bar" style="margin-top:8px"><i style="width:${totTop?estTop/totTop*100:0}%"></i></div></div>
+      <div class="stat"><div class="v">${indiceProntidao()}</div><div class="l">índice de prontidão (0–100)</div></div>
+      <div class="stat"><div class="v">${totalResp?pct(totalAc/totalResp):"—"}</div><div class="l">acerto em ${totalResp} questões</div></div>
+      <div class="stat"><div class="v">🔥 ${c.streak}</div><div class="l">dias seguidos estudando</div></div>
+    </div>
+    <div class="grid g2" style="margin-top:14px">
+      <div class="card">
+        <div class="row between"><h2>Hoje</h2><a class="btn btn-sm btn-primary" href="#/hoje">Montar agenda</a></div>
+        <ul class="list">
+          <li><span>⏱</span><span style="flex:1">Tempo estudado</span><b>${minHoje} / ${S.horasDia*60} min</b></li>
+          <li><span>✎</span><span style="flex:1">Questões respondidas</span><b>${respHoje}</b></li>
+          <li><span>↻</span><span style="flex:1">Revisões pendentes (erros + flashcards)</span><b>${pendRev}</b></li>
+          <li><span>☰</span><span style="flex:1">Ritmo necessário p/ fechar o edital (com 3 semanas finais de revisão)</span><b>${ritmo} tóp./dia</b></li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="row between"><h2>Próxima data do edital</h2><a class="btn btn-sm btn-secondary" href="#/cronograma">Ver todas</a></div>
+        ${prox ? `<p style="font-size:1.05rem;margin:6px 0 2px"><b>${esc(prox.t)}</b></p>
+          <p class="muted" style="margin:0">${prox.ini!==prox.fim?`${fmtData(prox.ini)} a `:""}${fmtData(prox.fim,{day:"2-digit",month:"long"})} · ${(()=>{const n=diasEntre(hoje(),prox.fim);return n===0?"hoje":n===1?"amanhã":`em ${n} dias`})()}</p>` : `<p class="muted">Sem datas futuras.</p>`}
+        <h3 style="margin:18px 0 8px">Peso na nota (objetiva = 90 pts)</h3>
+        ${AREAS.map(a=>`<div class="row" style="margin-bottom:6px"><span class="small" style="width:170px">${a.nome}</span><div class="bar" style="flex:1"><i style="width:${a.q*a.peso/TOTAL_OBJ*100}%;background:${a.cor}"></i></div><span class="small muted" style="width:52px;text-align:right">${a.q*a.peso} pts</span></div>`).join("")}
+        <p class="small muted" style="margin:8px 0 0">Conhecimentos Específicos valem 2 pts/questão = 2/3 da objetiva.</p>
+      </div>
+    </div>
+    <h3>Progresso por área</h3>
+    <div class="grid g4">${AREAS.map(a=>{const s=st[a.id];return `<a class="stat" style="text-decoration:none;color:inherit" href="#/edital">
+      <div class="small" style="font-weight:600">${areaTag(a.id)}</div>
+      <div class="v" style="margin-top:8px">${s.estudados}/${s.total}</div><div class="bar" style="margin:6px 0"><i style="width:${s.total?s.estudados/s.total*100:0}%;background:${a.cor}"></i></div>
+      <div class="l">${a.q} questões · acerto ${pct(s.taxa)}</div></a>`}).join("")}</div>
+  </div>`;
+};
+
+ROTAS["/hoje"] = el => {
+  el.innerHTML = `<div class="container">
+    ${header("Minha Preparação · Hoje","Quanto tempo você tem hoje?","Monto a sequência de maior impacto: revisões vencidas, tópicos com maior peso na nota que ainda não foram estudados, e questões da área mais fraca.")}
+    <div class="card">
+      <div class="field"><label for="h">Horas disponíveis hoje</label>
+      <div class="row"><input type="range" id="h" min="0.5" max="8" step="0.5" value="${S.horasDia}" style="flex:1"><output id="ho" style="width:44px;font-weight:700">${S.horasDia}h</output></div></div>
+      <div class="btn-row"><button class="btn btn-primary" id="gerar">Gerar agenda do dia</button><button class="btn btn-secondary" id="ruim">😩 Dia ruim — só 20 min</button></div>
+    </div>
+    <div id="plano" style="margin-top:14px"></div></div>`;
+  const r = el.querySelector("#h"), o = el.querySelector("#ho");
+  r.oninput = () => o.textContent = r.value+"h";
+  const gerar = min => { el.querySelector("#plano").innerHTML = renderPlano(gerarPlano(min)); };
+  el.querySelector("#gerar").onclick = () => { S.horasDia = Number(r.value); salvar(); gerar(S.horasDia*60); };
+  el.querySelector("#ruim").onclick = () => gerar(20);
+  gerar(S.horasDia*60);
+};
+function prioridadeTopicos(){
+  const lista = [];
+  for (const a of AREAS){
+    const tps = S.topicos[a.id]; const pesoTop = (a.q*a.peso)/Math.max(1,tps.length);
+    for (const t of tps){
+      const s = statsTopico(a.id, t.nome);
+      const fraqueza = s.taxa == null ? 0.6 : 1 - s.taxa;
+      const naoEst = t.estudado ? 0.35 : 1;
+      lista.push({ area:a.id, t, score: pesoTop * (0.5*naoEst + 0.5*fraqueza), taxa:s.taxa });
+    }
+  }
+  return lista.sort((x,y)=>y.score-x.score);
+}
+function gerarPlano(min){
+  const itens = []; let resto = min;
+  const ev = errosVencidos().length, fv = flashVencidos().length;
+  const tetoRev = Math.round(min*0.35);
+  if (fv){ const m = Math.min(tetoRev, Math.max(5, Math.ceil(fv*0.75))); itens.push({min:m, tit:`Revisar ${fv} flashcards vencidos`, link:"#/flashcards", tipo:"Revisão"}); resto -= m; }
+  if (ev && resto > 10){ const m = Math.min(Math.max(5, tetoRev - (itens[0]?.min||0)), ev*3); if (m>0){ itens.push({min:m, tit:`Refazer ${ev} questões erradas`, link:"#/erros", tipo:"Revisão"}); resto -= m; } }
+  const prio = prioridadeTopicos();
+  let i = 0;
+  while (resto >= 15 && i < prio.length){
+    const p = prio[i++];
+    const bloco = Math.min(resto, p.t.estudado ? 30 : 50);
+    if (bloco < 15) break;
+    const teoria = Math.round(bloco*0.6), quest = bloco - teoria;
+    itens.push({min:teoria, tit:`${p.t.estudado?"Revisar":"Estudar"}: ${p.t.nome}`, sub:AREA[p.area].nome + (p.taxa!=null?` · acerto atual ${pct(p.taxa)}`:""), tipo:"Teoria", link:"#/edital"});
+    itens.push({min:quest, tit:`Questões: ${p.t.nome}`, sub:`~${Math.max(3,Math.round(quest/2.5))} questões (QConcursos / banco do app)`, tipo:"Questões", link:`#/questoes?a=${p.area}`});
+    resto -= bloco;
+  }
+  if (resto >= 5) itens.push({min:resto, tit:"Redação ou leitura de lei seca", sub:"Alterne: 1 redação por semana (20–30 linhas, dissertativo)", tipo:"Extra", link:"#/redacao"});
+  return itens;
+}
+function renderPlano(itens){
+  const total = itens.reduce((s,i)=>s+i.min,0);
+  return `<div class="card"><div class="row between"><h2>Agenda de hoje</h2><span class="pill">${total} min</span></div>
+    ${itens.map(i=>`<div class="plan-item"><div class="min">${i.min} min</div><div style="flex:1"><div class="small muted">${i.tipo}</div><div style="font-weight:600">${esc(i.tit)}</div>${i.sub?`<div class="small muted">${esc(i.sub)}</div>`:""}</div><a class="btn btn-sm btn-ghost" href="${i.link}">Abrir →</a></div>`).join("")}
+    <div class="btn-row"><a class="btn btn-primary" href="#/foco">Iniciar modo foco</a></div></div>`;
+}
+
+ROTAS["/semana"] = el => {
+  const d = diasParaProva(); const semanas = Math.max(1, Math.ceil(d/7));
+  const semRevisao = Math.min(3, Math.max(0, semanas-1));
+  const semConteudo = Math.max(1, semanas - semRevisao);
+  const pend = prioridadeTopicos().filter(p=>!p.t.estudado);
+  const porSemana = Math.ceil(pend.length / semConteudo);
+  const blocos = [];
+  for (let s=0; s<semConteudo && s*porSemana<pend.length; s++) blocos.push(pend.slice(s*porSemana,(s+1)*porSemana));
+  const inicioSemana = i => addDias(hoje(), i*7);
+  el.innerHTML = `<div class="container">
+    ${header("Minha Preparação · Planejamento","Plano semana a semana","Distribui os tópicos ainda não estudados até a prova, do maior impacto na nota para o menor, reservando as últimas semanas para revisão e simulados.")}
+    <div class="grid g3"><div class="stat"><div class="v">${semanas}</div><div class="l">semanas até a prova</div></div>
+      <div class="stat"><div class="v">${pend.length}</div><div class="l">tópicos pendentes</div></div>
+      <div class="stat"><div class="v">${porSemana||0}</div><div class="l">tópicos por semana</div></div></div>
+    ${blocos.map((b,i)=>`<div class="card" style="margin-top:14px"><div class="row between"><h2>Semana ${i+1}</h2><span class="muted small">${fmtData(inicioSemana(i))} – ${fmtData(addDias(inicioSemana(i),6))}</span></div>
+      <ul class="list">${b.map(p=>`<li><span class="area-dot" style="background:${AREA[p.area].cor}"></span><span style="flex:1">${esc(p.t.nome)}</span><span class="small muted">${AREA[p.area].nome}</span></li>`).join("")}</ul></div>`).join("")}
+    ${semRevisao?`<div class="card" style="margin-top:14px;border-color:var(--accent-soft-border);background:var(--accent-soft)"><h2>Últimas ${semRevisao} semanas — reta final</h2>
+      <ul class="small" style="margin:0;padding-left:18px"><li>1 simulado completo por semana (60 questões + redação em 4h)</li><li>Revisar Meus Erros e flashcards todo dia</li><li>Lei seca: 8.112, 9.784, 11.091, art. 37–41 CF</li><li>2 redações corrigidas por semana</li></ul></div>`:""}
+    ${!blocos.length?`<div class="empty"><h2>Todos os tópicos marcados como estudados ✓</h2><p>Hora de focar em questões, erros e simulados.</p></div>`:""}
+  </div>`;
+};
+
+ROTAS["/cronograma"] = el => {
+  const lista = [...DATAS].sort((a,b)=>a.ini.localeCompare(b.ini)||a.fim.localeCompare(b.fim));
+  const prox = proximoEvento();
+  el.innerHTML = `<div class="container">
+    ${header("Minha Preparação · Cronograma","Datas do edital","Anexo III — Cronograma de execução (etapas que valem para Assistente em Administração). Pode ser alterado — acompanhe www.avalia.org.br.")}
+    <div class="card"><ul class="timeline">${lista.map(x=>{
+      const passado = x.fim < hoje(); const n = diasEntre(hoje(), x.fim);
+      const cls = x.prova ? "prova" : passado ? "passado" : x===prox ? "proximo" : "";
+      const quando = passado ? "encerrado" : x.ini <= hoje() ? (n===0?"termina hoje":`aberto · termina em ${n} dia${n>1?"s":""}`) : `em ${diasEntre(hoje(),x.ini)} dias`;
+      return `<li class="${cls}"><div class="d">${x.ini!==x.fim?fmtData(x.ini)+" – ":""}${fmtData(x.fim,{day:"2-digit",month:"2-digit",year:"numeric"})}${x.aprox?" (aprox.)":""}</div>
+        <div class="t" style="${x.prova?"font-weight:700;color:var(--danger)":""}">${esc(x.t)}</div><div class="small muted">${quando}</div></li>`;}).join("")}</ul></div>
+    <h3>Checklist do candidato</h3>
+    <div class="card"><ul class="list">${[
+      ["isencao","Decidir se vou pedir isenção da taxa (até 05/10)"],["inscricao","Fazer a inscrição no site da Avalia (até 29/10)"],["boleto","Pagar o boleto de R$ 100,00 (até 23h de 30/10)"],
+      ["deferida","Conferir se a inscrição foi deferida (06/11; pós-recurso 17/11)"],["estatuto","Ler o Estatuto e Regimento Geral da UFBA (ufba.br/arquivos/estatuto-e-regimento-geral)"],["cartao","Emitir o Cartão de Informação do Candidato (a partir de 11/12)"],
+      ["local","Conferir o local de prova e planejar o trajeto"],["caneta","Separar caneta esferográfica azul ou preta de tubo transparente + documento com foto"],
+    ].map(([k,t])=>`<li><input type="checkbox" class="chk" id="ck-${k}" data-k="${k}" ${S.checklist[k]?"checked":""}><label for="ck-${k}" style="flex:1;cursor:pointer">${t}</label></li>`).join("")}</ul></div></div>`;
+  el.querySelectorAll("[data-k]").forEach(c => c.onchange = () => { S.checklist[c.dataset.k] = c.checked; salvar(); });
+};
+
+ROTAS["/prontidao"] = el => {
+  const idx = indiceProntidao();
+  const cells = [];
+  for (const a of AREAS) for (const t of S.topicos[a.id]){
+    const s = statsTopico(a.id, t.nome);
+    const cls = s.taxa == null ? (t.estudado ? "c-yel" : "c-none") : s.taxa >= .75 ? "c-grn" : s.taxa >= .5 ? "c-yel" : "c-red";
+    cells.push({a, t, s, cls, ord: {"c-red":0,"c-yel":1,"c-none":2,"c-grn":3}[cls]});
+  }
+  cells.sort((x,y)=>x.ord-y.ord || (y.a.peso*y.a.q)-(x.a.peso*x.a.q));
+  el.innerHTML = `<div class="container">
+    ${header("Minha Preparação · Prontidão","Painel de prontidão","Cruza cobertura do edital e desempenho em questões, ponderado pelo peso de cada área. Não é previsão de nota.")}
+    <div class="card" style="text-align:center"><div style="font-size:3.4rem;font-weight:800;color:var(--accent);line-height:1">${idx}</div><div style="font-weight:600;margin-top:4px">Índice de prontidão</div>
+      <p class="small muted" style="max-width:520px;margin:8px auto 0">50% cobertura do conteúdo + 50% acerto em questões, com pesos 12/6/12/60. Sobe quando você estuda E acerta — principalmente em Conhecimentos Específicos.</p></div>
+    <h3>Mapa de calor por tópico</h3>
+    <p class="small muted" style="margin-top:-6px">🔴 acerto &lt; 50% · 🟡 50–74% ou estudado sem questões · 🟢 ≥ 75% · cinza: nada feito ainda</p>
+    <div class="heat">${cells.map(c=>`<div class="cell ${c.cls}"><b>${esc(c.t.nome)}</b><span class="muted">${c.a.nome}</span><br>${c.t.estudado?"estudado":"não estudado"} · ${c.s.n?`${pct(c.s.taxa)} em ${c.s.n}q`:"sem questões"}</div>`).join("")}</div>
+  </div>`;
+};
+
+ROTAS["/desempenho"] = el => {
+  const st = statsArea(); const mins = minutosPorDia(14); const maxM = Math.max(30, ...mins.map(m=>m.m));
+  const totMin = S.sessoes.reduce((s,x)=>s+x.min,0);
+  const porArea = AREAS.map(a=>({a, m:S.sessoes.filter(s=>s.a===a.id).reduce((x,s)=>x+s.min,0)}));
+  el.innerHTML = `<div class="container">
+    ${header("Minha Preparação · Desempenho","Análise de desempenho","Acerto por área, tempo de estudo e histórico de simulados.")}
+    <div class="grid g3"><div class="stat"><div class="v">${Math.floor(totMin/60)}h${String(totMin%60).padStart(2,"0")}</div><div class="l">tempo total registrado</div></div>
+      <div class="stat"><div class="v">${S.respostas.length}</div><div class="l">questões respondidas</div></div>
+      <div class="stat"><div class="v">${S.simulados.length}</div><div class="l">simulados feitos</div></div></div>
+    <div class="card" style="margin-top:14px"><h2>Minutos por dia (últimos 14 dias)</h2>
+      <div class="chart-bars">${mins.map(m=>`<div class="b" title="${fmtData(m.d)}: ${m.m} min"><span>${m.m||""}</span><i style="height:${m.m/maxM*100}%;min-height:${m.m?3:0}px"></i><span>${fmtData(m.d,{day:"2-digit"})}</span></div>`).join("")}</div></div>
+    <div class="card"><h2>Por área</h2><table><thead><tr><th>Área</th><th class="n">Questões</th><th class="n">Acerto</th><th class="n">Tempo</th><th class="n">Tópicos</th></tr></thead><tbody>
+      ${AREAS.map(a=>{const s=st[a.id];const m=porArea.find(p=>p.a===a).m;return `<tr><td>${areaTag(a.id)}</td><td class="n">${s.resp}</td><td class="n">${pillTaxa(s.taxa)}</td><td class="n">${m} min</td><td class="n">${s.estudados}/${s.total}</td></tr>`}).join("")}
+    </tbody></table></div>
+    <div class="card"><h2>Simulados</h2>${S.simulados.length?`<table><thead><tr><th>Data</th><th class="n">Acertos</th><th class="n">Nota proj. (0–90)</th><th>Situação</th></tr></thead><tbody>
+      ${S.simulados.slice().reverse().map(s=>`<tr><td>${fmtData(s.data,{day:"2-digit",month:"2-digit",year:"2-digit"})}</td><td class="n">${s.acertos}/${s.total}</td><td class="n">${s.proj.toFixed(1)}</td><td>${s.proj>=45?'<span class="pill pill-ok">acima do mínimo</span>':'<span class="pill pill-bad">abaixo de 45</span>'}</td></tr>`).join("")}</tbody></table>`:`<p class="muted">Nenhum simulado ainda. <a href="#/simulados">Fazer o primeiro →</a></p>`}</div>
+  </div>`;
+};
+
+ROTAS["/foco"] = el => {
+  let dur = 25*60, restante = dur, rodando = false, timer = null, inicio = null;
+  el.innerHTML = `<div class="container" style="max-width:640px">
+    ${header("Minha Preparação · Foco","Modo foco","Pomodoro que registra o tempo estudado por área — alimenta o Desempenho e a constância.")}
+    <div class="card">
+      <div class="grid g2"><div class="field"><label>Área</label><select id="fa">${AREAS.map(a=>`<option value="${a.id}">${a.nome}</option>`).join("")}<option value="red">Redação</option></select></div>
+      <div class="field"><label>Duração</label><select id="fd"><option value="25">25 min</option><option value="50">50 min</option><option value="15">15 min</option><option value="90">90 min</option></select></div></div>
+      <div class="timer" id="ft">25:00</div>
+      <div class="btn-row" style="justify-content:center"><button class="btn btn-primary" id="fs">Iniciar</button><button class="btn btn-secondary" id="fr">Zerar</button><button class="btn btn-ghost" id="fsave">Registrar tempo decorrido</button></div>
+      <p class="small muted" id="fmsg" style="text-align:center;margin-top:12px"></p>
+    </div>
+    <div class="card"><h2>Registrar manualmente</h2><div class="row"><input type="number" id="fm" min="1" max="600" placeholder="minutos" style="max-width:140px"><button class="btn btn-secondary" id="fadd">Adicionar</button></div></div></div>`;
+  const $ = s => el.querySelector(s);
+  const draw = () => { $("#ft").textContent = `${String(Math.floor(restante/60)).padStart(2,"0")}:${String(restante%60).padStart(2,"0")}`; };
+  const registrar = min => { if (min<1) return; S.sessoes.push({data:hoje(), min, a:$("#fa").value}); salvar(); $("#fmsg").textContent = `✓ ${min} min registrados em ${$("#fa").selectedOptions[0].text}.`; pintarNav(location.hash.slice(1)); };
+  const parar = () => { clearInterval(timer); rodando = false; $("#fs").textContent = "Continuar"; };
+  $("#fd").onchange = () => { if (rodando) return; dur = Number($("#fd").value)*60; restante = dur; draw(); };
+  $("#fs").onclick = () => {
+    if (rodando) return parar();
+    rodando = true; $("#fs").textContent = "Pausar"; const fimEm = Date.now() + restante*1000;
+    timer = setInterval(() => { restante = Math.max(0, Math.round((fimEm-Date.now())/1000)); draw();
+      if (!restante){ parar(); registrar(Math.round(dur/60)); restante = dur; draw(); $("#fs").textContent="Iniciar"; try{ new Audio("data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=").play(); }catch{} alert("Pomodoro concluído! Faça uma pausa de 5 min."); } }, 250);
+  };
+  $("#fr").onclick = () => { parar(); restante = dur; draw(); $("#fs").textContent = "Iniciar"; };
+  $("#fsave").onclick = () => { const m = Math.round((dur-restante)/60); parar(); registrar(m); restante = dur; draw(); $("#fs").textContent="Iniciar"; };
+  $("#fadd").onclick = () => { registrar(Math.round(Number($("#fm").value)||0)); $("#fm").value=""; };
+  limpar = () => clearInterval(timer);
+};
+
+ROTAS["/edital"] = el => {
+  const st = statsArea();
+  el.innerHTML = `<div class="container">
+    ${header("Estudar · Edital","Edital verticalizado","Conteúdo programático oficial (Anexo II). Marque o que já estudou — o planejador usa isso para priorizar.")}
+    ${AVISO_ANEXO}
+    ${AREAS.map(a=>{const s=st[a.id];return `<details class="disc" open data-area="${a.id}"><summary>
+      <span class="area-dot" style="background:${a.cor};width:12px;height:12px"></span>
+      <div style="flex:1"><div style="font-weight:700">${a.nome}</div><div class="small muted">${a.q} questões × ${a.peso} pt = ${a.q*a.peso} pts · acerto ${pct(s.taxa)}</div></div>
+      <div style="width:120px"><div class="small muted" style="text-align:right">${s.estudados}/${s.total}</div><div class="bar"><i style="width:${s.total?s.estudados/s.total*100:0}%;background:${a.cor}"></i></div></div></summary>
+      <div class="body"><ul class="list">${S.topicos[a.id].map((t,i)=>{const ts=statsTopico(a.id,t.nome);return `<li class="topic">
+        <input type="checkbox" class="chk" id="t-${t.id}" data-a="${a.id}" data-i="${i}" ${t.estudado?"checked":""}>
+        <label for="t-${t.id}">${esc(t.nome)}<br><span class="small muted">${t.revisoes?`${t.revisoes} revisão(ões) · última ${fmtData(t.ultima)}`:"sem revisões"}${ts.n?` · ${pct(ts.taxa)} em ${ts.n}q`:""}</span></label>
+        <button class="btn btn-sm btn-ghost" data-rev="${a.id}:${i}" title="Registrar revisão">↻ revisei</button>
+        <button class="btn btn-sm btn-ghost" data-del="${a.id}:${i}" title="Remover tópico" aria-label="Remover">✕</button></li>`}).join("")}</ul>
+        <div class="row" style="margin-top:10px"><input type="text" placeholder="Adicionar tópico do Anexo II…" data-add="${a.id}"><button class="btn btn-secondary btn-sm" data-addbtn="${a.id}">Adicionar</button></div></div></details>`}).join("")}
+    <div class="btn-row"><button class="btn btn-ghost" id="restaurar">Restaurar lista padrão de tópicos</button></div></div>`;
+  el.querySelectorAll(".chk[data-a]").forEach(c => c.onchange = () => { const t = S.topicos[c.dataset.a][c.dataset.i]; t.estudado = c.checked; if (c.checked && !t.ultima) t.ultima = hoje(); salvar(); ROTAS["/edital"](el); });
+  el.querySelectorAll("[data-rev]").forEach(b => b.onclick = () => { const [a,i] = b.dataset.rev.split(":"); const t = S.topicos[a][i]; t.revisoes++; t.estudado = true; t.ultima = hoje(); salvar(); ROTAS["/edital"](el); });
+  el.querySelectorAll("[data-del]").forEach(b => b.onclick = () => { const [a,i] = b.dataset.del.split(":"); if (confirm("Remover este tópico?")){ S.topicos[a].splice(i,1); salvar(); ROTAS["/edital"](el); } });
+  el.querySelectorAll("[data-addbtn]").forEach(b => b.onclick = () => { const a = b.dataset.addbtn; const inp = el.querySelector(`[data-add="${a}"]`); const nome = inp.value.trim(); if (!nome) return; S.topicos[a].push({id:a+"-"+Date.now(), nome, estudado:false, revisoes:0, ultima:null}); salvar(); ROTAS["/edital"](el); });
+  el.querySelector("#restaurar").onclick = () => { if (confirm("Substituir seus tópicos pela lista padrão? O progresso marcado será perdido.")){ S.topicos = estadoInicial().topicos; salvar(); ROTAS["/edital"](el); } };
+};
+
+/* ---------- Questões ---------- */
+function renderQuestao(q, onResp, opts={}){
+  const wrap = document.createElement("div"); wrap.className = "card";
+  wrap.innerHTML = `<div class="row between small"><span>${areaTag(q.a)}</span><span class="muted">${esc(q.t||"")}</span></div>
+    <div class="q-enun">${esc(q.e)}</div>
+    <div>${q.o.map((alt,i)=>`<button class="alt" data-i="${i}"><span class="letra">${"ABCDE"[i]}</span><span>${esc(alt)}</span></button>`).join("")}</div><div class="fb"></div>`;
+  wrap.querySelectorAll(".alt").forEach(b => b.onclick = () => {
+    const i = Number(b.dataset.i); const ok = i === q.c;
+    if (opts.semFeedback){ wrap.querySelectorAll(".alt").forEach(x=>x.classList.remove("sel")); b.classList.add("sel"); onResp(i, ok); return; }
+    wrap.querySelectorAll(".alt").forEach(x => { x.disabled = true; const xi = Number(x.dataset.i); if (xi===q.c) x.classList.add("ok"); else if (xi===i) x.classList.add("bad"); });
+    wrap.querySelector(".fb").innerHTML = `<div class="expl"><b>${ok?"✓ Correta":"✗ Incorreta — gabarito "+"ABCDE"[q.c]}.</b> ${esc(q.x||"")}</div>`;
+    onResp(i, ok);
+  });
+  return wrap;
+}
+function registrarResposta(q, ok){
+  S.respostas.push({ id:q.id, a:q.a, t:q.t, ok, data:hoje() });
+  if (!ok){ S.erros[q.id] = S.erros[q.id] || { caixa:0, vezes:0, desde:hoje() }; S.erros[q.id].vezes++; agendar(S.erros[q.id], false); }
+  else if (S.erros[q.id]) { agendar(S.erros[q.id], true); if (S.erros[q.id].caixa >= 3) delete S.erros[q.id]; }
+  salvar();
+}
+ROTAS["/questoes"] = el => {
+  const params = new URLSearchParams(location.hash.split("?")[1]||"");
+  let filtro = params.get("a") || "todas", modo = "nao";
+  function lista(){
+    let qs = todasQuestoes().filter(q => filtro==="todas" || q.a===filtro);
+    const resp = new Set(S.respostas.map(r=>r.id));
+    if (modo==="nao") { const n = qs.filter(q=>!resp.has(q.id)); if (n.length) qs = n; }
+    return qs.sort(()=>Math.random()-.5);
+  }
+  let fila = [], idx = 0, sessao = {ok:0,n:0};
+  function montar(){
+    fila = lista(); idx = 0; sessao = {ok:0,n:0};
+    el.innerHTML = `<div class="container" style="max-width:780px">
+      ${header("Estudar · Questões","Banco de questões",`${todasQuestoes().length} questões autorais no estilo da banca (5 alternativas). Erros vão automaticamente para <a href="#/erros">Meus erros</a>. Adicione questões de provas anteriores da Avalia/UFBA abaixo.`)}
+      <div class="row" style="flex-wrap:wrap;margin-bottom:14px">
+        <select id="qa" style="max-width:260px"><option value="todas">Todas as áreas</option>${AREAS.map(a=>`<option value="${a.id}" ${filtro===a.id?"selected":""}>${a.nome}</option>`).join("")}</select>
+        <select id="qm" style="max-width:220px"><option value="nao" ${modo==="nao"?"selected":""}>Priorizar não respondidas</option><option value="todas" ${modo==="todas"?"selected":""}>Todas, aleatório</option></select>
+        <span class="small muted" id="qs"></span></div>
+      <div id="qbox"></div>
+      <details class="card" style="margin-top:18px"><summary style="cursor:pointer;font-weight:600">+ Adicionar questão própria</summary>
+        <div style="margin-top:12px"><div class="grid g2"><div class="field"><label>Área</label><select id="na">${AREAS.map(a=>`<option value="${a.id}">${a.nome}</option>`).join("")}</select></div>
+        <div class="field"><label>Tópico</label><input type="text" id="nt" list="tl"><datalist id="tl"></datalist></div></div>
+        <div class="field"><label>Enunciado</label><textarea id="ne" style="min-height:80px"></textarea></div>
+        ${[0,1,2,3,4].map(i=>`<div class="field"><label>Alternativa ${"ABCDE"[i]}</label><input type="text" id="no${i}"></div>`).join("")}
+        <div class="grid g2"><div class="field"><label>Gabarito</label><select id="nc">${[0,1,2,3,4].map(i=>`<option value="${i}">${"ABCDE"[i]}</option>`).join("")}</select></div>
+        <div class="field"><label>Comentário (opcional)</label><input type="text" id="nx"></div></div>
+        <button class="btn btn-primary" id="nsave">Salvar questão</button></div></details></div>`;
+    const tl = () => el.querySelector("#tl").innerHTML = S.topicos[el.querySelector("#na").value].map(t=>`<option value="${esc(t.nome)}">`).join("");
+    tl(); el.querySelector("#na").onchange = tl;
+    el.querySelector("#qa").onchange = e => { filtro = e.target.value; montar(); };
+    el.querySelector("#qm").onchange = e => { modo = e.target.value; montar(); };
+    el.querySelector("#nsave").onclick = () => {
+      const g = id => el.querySelector(id).value.trim();
+      const o = [0,1,2,3,4].map(i=>g("#no"+i)); if (!g("#ne") || o.some(x=>!x)) return alert("Preencha o enunciado e as 5 alternativas.");
+      S.qExtras.push({ id:"u"+Date.now(), a:g("#na"), t:g("#nt"), e:g("#ne"), o, c:Number(g("#nc")), x:g("#nx") }); salvar(); montar();
+    };
+    proxima();
+  }
+  function proxima(){
+    const box = el.querySelector("#qbox");
+    el.querySelector("#qs").textContent = sessao.n ? `Sessão: ${sessao.ok}/${sessao.n} (${pct(sessao.ok/sessao.n)})` : "";
+    if (idx >= fila.length){ box.innerHTML = `<div class="empty card"><h2>Fim da lista ✓</h2><p>${sessao.n?`Você acertou ${sessao.ok} de ${sessao.n}.`:""}</p><button class="btn btn-primary" id="again">Recomeçar</button></div>`; box.querySelector("#again").onclick = montar; return; }
+    const q = fila[idx]; box.innerHTML = "";
+    const card = renderQuestao(q, (i, ok) => { registrarResposta(q, ok); sessao.n++; if (ok) sessao.ok++; el.querySelector("#qs").textContent = `Sessão: ${sessao.ok}/${sessao.n} (${pct(sessao.ok/sessao.n)})`;
+      const nb = document.createElement("div"); nb.className="btn-row"; nb.innerHTML = `<button class="btn btn-primary">Próxima →</button>`; nb.firstChild.onclick = () => { idx++; proxima(); }; card.appendChild(nb); });
+    const cont = document.createElement("div"); cont.className = "small muted"; cont.style.margin = "0 0 8px"; cont.textContent = `Questão ${idx+1} de ${fila.length}`;
+    box.append(cont, card);
+  }
+  montar();
+};
+
+ROTAS["/erros"] = el => {
+  const mapa = Object.fromEntries(todasQuestoes().map(q=>[q.id,q]));
+  const ents = Object.entries(S.erros).filter(([id])=>mapa[id]);
+  const venc = ents.filter(([,e])=>e.proxima<=hoje());
+  el.innerHTML = `<div class="container" style="max-width:780px">
+    ${header("Praticar · Meus erros","Meus erros","Cada questão errada volta em 1, 3, 7, 15… dias. Acerte 3 vezes seguidas e ela sai da lista.")}
+    <div class="grid g3"><div class="stat"><div class="v">${venc.length}</div><div class="l">para refazer hoje</div></div><div class="stat"><div class="v">${ents.length}</div><div class="l">na lista</div></div><div class="stat"><div class="v">${ents.length?Math.min(...ents.map(([,e])=>diasEntre(hoje(),e.proxima)).filter(n=>n>0).concat([99]))+"d":"—"}</div><div class="l">próxima revisão futura</div></div></div>
+    <div id="ebox" style="margin-top:14px"></div>
+    ${ents.length?`<h3>Todos os erros</h3><div class="card"><ul class="list">${ents.map(([id,e])=>`<li><span class="area-dot" style="background:${AREA[mapa[id].a].cor}"></span><span style="flex:1" class="small">${esc(mapa[id].e.slice(0,110))}…</span><span class="small muted">errou ${e.vezes}× · ${fmtData(e.proxima)}</span></li>`).join("")}</ul></div>`:""}</div>`;
+  let i = 0;
+  const box = el.querySelector("#ebox");
+  function prox(){
+    if (!venc.length){ box.innerHTML = `<div class="empty card"><h2>Nada para refazer hoje ✓</h2><p>${ents.length?"Os próximos erros voltam nas datas agendadas.":"Você ainda não errou nenhuma questão no app."}</p></div>`; return; }
+    if (i >= venc.length){ box.innerHTML = `<div class="empty card"><h2>Revisão de erros concluída ✓</h2></div>`; return; }
+    const q = mapa[venc[i][0]]; box.innerHTML = "";
+    const c = renderQuestao(q, (_, ok) => { registrarResposta(q, ok); const b = document.createElement("div"); b.className="btn-row"; b.innerHTML=`<button class="btn btn-primary">Próxima →</button>`; b.firstChild.onclick=()=>{i++;prox();}; c.appendChild(b); });
+    box.appendChild(c);
+  }
+  prox();
+};
+
+ROTAS["/flashcards"] = el => {
+  let fila = [], i = 0, verso = false, res = {n:0, ok:0};
+  function config(){
+    const venc = flashVencidos(); const tot = todosFlash().length;
+    el.innerHTML = `<div class="container" style="max-width:720px">
+      ${header("Estudar · Flashcards","Flashcards","Frente e verso com repetição espaçada — errou, volta amanhã; acertou, o intervalo cresce.")}
+      <div class="grid g3"><div class="stat"><div class="v">${venc.length}</div><div class="l">para revisar agora</div></div><div class="stat"><div class="v">${tot}</div><div class="l">cards no total</div></div><div class="stat"><div class="v">${tot-venc.length}</div><div class="l">ainda não vencidos</div></div></div>
+      <div class="btn-row">${venc.length?`<button class="btn btn-primary" id="go">Revisar ${venc.length} cards</button>`:`<span class="muted">Tudo revisado por hoje ✓</span>`}</div>
+      <details class="card" style="margin-top:18px"><summary style="cursor:pointer;font-weight:600">+ Criar flashcard</summary><div style="margin-top:12px">
+        <div class="field"><label>Área</label><select id="fa">${AREAS.map(a=>`<option value="${a.id}">${a.nome}</option>`).join("")}</select></div>
+        <div class="field"><label>Frente</label><input type="text" id="ff"></div><div class="field"><label>Verso</label><textarea id="fv" style="min-height:70px"></textarea></div>
+        <button class="btn btn-primary" id="fsave">Salvar</button></div></details></div>`;
+    const go = el.querySelector("#go"); if (go) go.onclick = () => { fila = venc.sort(()=>Math.random()-.5); i = 0; res={n:0,ok:0}; card(); };
+    el.querySelector("#fsave").onclick = () => { const f = el.querySelector("#ff").value.trim(), v = el.querySelector("#fv").value.trim(); if(!f||!v) return; S.fcExtras.push({id:"uf"+Date.now(), a:el.querySelector("#fa").value, f, v}); salvar(); config(); };
+  }
+  function card(){
+    if (i >= fila.length){ el.innerHTML = `<div class="container" style="max-width:720px">${header("Estudar · Flashcards","Sessão concluída")}<div class="card empty"><h2>${res.ok}/${res.n} lembrados</h2><button class="btn btn-primary" id="back">Voltar</button></div></div>`; el.querySelector("#back").onclick = config; return; }
+    const f = fila[i]; verso = false;
+    el.innerHTML = `<div class="container" style="max-width:720px">${header("Estudar · Flashcards",`Card ${i+1} de ${fila.length}`)}
+      <div class="card flash" id="fc"><div class="lado">${AREA[f.a].nome} · frente</div><div id="ftxt" style="font-weight:600">${esc(f.f)}</div><div class="small muted" style="margin-top:16px">toque para virar</div></div>
+      <div class="btn-row" id="fbtns" style="justify-content:center;visibility:hidden"><button class="btn btn-danger" data-q="0">Não lembrei</button><button class="btn btn-secondary" data-q="1">Lembrei</button><button class="btn btn-primary" data-q="2">Fácil</button></div></div>`;
+    el.querySelector("#fc").onclick = () => { verso = !verso; el.querySelector("#fc").innerHTML = verso ? `<div class="lado">verso</div><div>${esc(f.v)}</div><div class="small muted" style="margin-top:16px">${esc(f.f)}</div>` : `<div class="lado">${AREA[f.a].nome} · frente</div><div style="font-weight:600">${esc(f.f)}</div>`; el.querySelector("#fbtns").style.visibility = "visible"; };
+    el.querySelectorAll("[data-q]").forEach(b => b.onclick = () => { const q = Number(b.dataset.q); const s = S.flash[f.id] = S.flash[f.id] || {caixa:0}; agendar(s, q>0); if (q===2) { s.caixa = Math.min(s.caixa+1, INTERVALOS.length-1); s.proxima = addDias(hoje(), INTERVALOS[s.caixa]); } res.n++; if(q>0) res.ok++; S.sessoes.push({data:hoje(),min:0,a:f.a}); salvar(); i++; card(); });
+  }
+  config();
+};
+
+ROTAS["/redacao"] = el => {
+  const CRIT = ["Tema, informatividade e argumentação","Norma-padrão da Língua Portuguesa","Coerência e coesão","Tipologia dissertativa, estrutura e vocabulário"];
+  const TEMAS = ["A importância da transparência na gestão pública para o fortalecimento da cidadania","Desafios da permanência estudantil nas universidades públicas brasileiras","Transformação digital no serviço público: avanços e exclusões","Ética e responsabilidade do servidor público no atendimento à população","Inteligência artificial e o futuro do trabalho administrativo","O papel das universidades públicas no desenvolvimento regional","Políticas de ações afirmativas e diversidade no serviço público","Proteção de dados pessoais em tempos de serviços digitais"];
+  el.innerHTML = `<div class="container">
+    ${header("Estudar · Redação","Prova de redação","Vale 60 pontos (mais que os 30 da parte geral da objetiva). Mínimo 30 pontos. Texto dissertativo-argumentativo de 20 a 30 linhas, a caneta azul ou preta.")}
+    <div class="grid g2">
+      <div class="card"><h2>Critérios (Tabela 13.2)</h2><table><tbody>${CRIT.map(c=>`<tr><td>${c}</td><td class="n">15</td></tr>`).join("")}<tr><td><b>Total</b></td><td class="n"><b>60</b></td></tr></tbody></table></div>
+      <div class="card"><h2>Nota zero / eliminação se…</h2><ul class="small" style="margin:0;padding-left:18px"><li>fugir ao tema ou à tipologia dissertativa</li><li>desestruturação acentuada</li><li>escrever a lápis ou com cor que não seja azul/preta</li><li>deixar em branco, letra ilegível ou espaçamento excessivo</li><li>qualquer identificação (nome, sinais, desenhos)</li><li>fora do limite de 20–30 linhas: perde pontos; o que passar de 30 é desconsiderado</li></ul>
+      <p class="small muted" style="margin-bottom:0">Só é corrigida se você atingir 50% na objetiva e ficar entre os ${EDITAL.redacaoCorrigida.ac} primeiros da ampla concorrência (ou limite da sua cota).</p></div>
+    </div>
+    <div class="card"><div class="row between" style="flex-wrap:wrap"><h2>Treinar</h2><button class="btn btn-sm btn-secondary" id="sort">🎲 Sortear tema</button></div>
+      <div class="field"><label>Tema</label><input type="text" id="rt" value="${esc(TEMAS[Math.floor(Math.random()*TEMAS.length)])}"></div>
+      <textarea id="rtxt" class="redacao-area" placeholder="Escreva aqui. Conte ~10–12 palavras por linha, como na folha manuscrita."></textarea>
+      <div class="row between small" style="margin-top:8px;flex-wrap:wrap"><span id="rinfo" class="muted"></span><span id="rtime" class="muted"></span></div>
+      <h3 style="margin-top:18px">Autoavaliação (0–15 cada)</h3>
+      <div class="grid g4">${CRIT.map((c,i)=>`<div class="field"><label>${c}</label><input type="number" min="0" max="15" id="rc${i}" value="10"></div>`).join("")}</div>
+      <button class="btn btn-primary" id="rsave">Salvar redação</button></div>
+    <h3>Histórico</h3><div class="card">${S.redacoes.length?`<table><thead><tr><th>Data</th><th>Tema</th><th class="n">Linhas</th><th class="n">Nota</th></tr></thead><tbody>${S.redacoes.slice().reverse().map(r=>`<tr><td>${fmtData(r.data)}</td><td class="small">${esc(r.tema)}</td><td class="n">${r.linhas}</td><td class="n">${r.nota}/60</td></tr>`).join("")}</tbody></table>`:`<p class="muted">Nenhuma redação ainda. Meta sugerida: 1 por semana, 2 na reta final.</p>`}</div></div>`;
+  const $ = s => el.querySelector(s); const t0 = Date.now();
+  $("#sort").onclick = () => $("#rt").value = TEMAS[Math.floor(Math.random()*TEMAS.length)];
+  const info = () => { const txt = $("#rtxt").value.trim(); const palavras = txt ? txt.split(/\s+/).length : 0; const linhas = Math.round(palavras/11);
+    $("#rinfo").innerHTML = `${palavras} palavras · <b style="color:${linhas<20||linhas>30?"var(--danger)":"var(--success)"}">~${linhas} linhas manuscritas</b> (20–30)`; return linhas; };
+  $("#rtxt").oninput = info; info();
+  const tick = setInterval(()=>{ const m = Math.floor((Date.now()-t0)/60000); $("#rtime").textContent = `⏱ ${m} min (sugestão: até 60 min)`; }, 1000);
+  limpar = () => clearInterval(tick);
+  $("#rsave").onclick = () => { const nota = CRIT.reduce((s,_,i)=>s+Math.min(15,Math.max(0,Number($("#rc"+i).value)||0)),0);
+    S.redacoes.push({data:hoje(), tema:$("#rt").value, linhas:info(), nota, texto:$("#rtxt").value}); S.sessoes.push({data:hoje(),min:Math.round((Date.now()-t0)/60000),a:"red"}); salvar(); ROTAS["/redacao"](el); };
+};
+
+/* ---------- Simulados ---------- */
+ROTAS["/simulados"] = el => {
+  const todas = todasQuestoes();
+  const disp = Object.fromEntries(AREAS.map(a=>[a.id, todas.filter(q=>q.a===a.id).length]));
+  el.innerHTML = `<div class="container" style="max-width:780px">
+    ${header("Praticar · Simulados","Simulado proporcional","Mesma proporção da prova (12 LP · 6 Info · 12 AP · 30 CE com peso 2), com tempo corrido e correção só no final. A nota é projetada para a escala de 90 pontos.")}
+    <div class="card"><div class="grid g2">
+      <div class="field"><label>Tamanho</label><select id="sz"><option value="0.33">Mini — 20 questões (~25 min)</option><option value="0.5">Médio — 30 questões (~40 min)</option><option value="1">Completo — 60 questões (3h, se houver no banco)</option></select></div>
+      <div class="field"><label>Banco disponível</label><div class="small muted" style="padding-top:8px">${AREAS.map(a=>`${a.nome.split(" ")[0]}: ${disp[a.id]}`).join(" · ")}</div></div></div>
+      <button class="btn btn-primary" id="start">Iniciar simulado</button>
+      <p class="small muted" style="margin-bottom:0">Se o banco tiver menos questões que o necessário, o simulado usa o que houver — adicione questões de provas anteriores em <a href="#/questoes">Questões</a>.</p></div></div>`;
+  el.querySelector("#start").onclick = () => {
+    const f = Number(el.querySelector("#sz").value);
+    const qs = AREAS.flatMap(a => todas.filter(q=>q.a===a.id).sort(()=>Math.random()-.5).slice(0, Math.max(1, Math.round(a.q*f))));
+    rodarSimulado(el, qs);
+  };
+};
+function rodarSimulado(el, qs){
+  const resp = {}; const t0 = Date.now(); const limite = Math.round(qs.length * 3.2 * 60);
+  el.innerHTML = `<div class="container" style="max-width:780px"><div class="row between" style="position:sticky;top:0;background:var(--bg-subtle);padding:10px 0;z-index:5"><b>Simulado · ${qs.length} questões</b><span class="pill" id="st"></span></div><div id="sq"></div>
+    <div class="btn-row"><button class="btn btn-primary" id="fim">Entregar e corrigir</button></div></div>`;
+  const box = el.querySelector("#sq");
+  qs.forEach((q,i) => { const h = document.createElement("div"); h.className="small muted"; h.style.margin="18px 0 6px"; h.textContent=`${i+1}.`; box.append(h, renderQuestao(q, (alt) => { resp[q.id] = alt; }, {semFeedback:true})); });
+  const tick = setInterval(() => { const s = Math.round((Date.now()-t0)/1000); el.querySelector("#st").textContent = `⏱ ${Math.floor(s/60)}:${String(s%60).padStart(2,"0")} / ${Math.round(limite/60)} min`; }, 1000);
+  limpar = () => clearInterval(tick);
+  el.querySelector("#fim").onclick = () => {
+    const semResp = qs.filter(q=>resp[q.id]==null).length;
+    if (semResp && !confirm(`${semResp} questão(ões) sem resposta. Entregar mesmo assim?`)) return;
+    clearInterval(tick);
+    const porArea = Object.fromEntries(AREAS.map(a=>[a.id,{n:0,ok:0}]));
+    qs.forEach(q => { const ok = resp[q.id] === q.c; porArea[q.a].n++; if (ok) porArea[q.a].ok++; if (resp[q.id]!=null) registrarResposta(q, ok); });
+    const proj = AREAS.reduce((s,a)=>{ const p = porArea[a.id]; return s + (p.n ? p.ok/p.n : 0) * a.q * a.peso; }, 0);
+    const zerou = AREAS.filter(a=>porArea[a.id].n && !porArea[a.id].ok);
+    const acertos = qs.filter(q=>resp[q.id]===q.c).length;
+    const min = Math.round((Date.now()-t0)/60000);
+    S.simulados.push({data:hoje(), acertos, total:qs.length, proj, min}); S.sessoes.push({data:hoje(), min, a:"ce"}); salvar();
+    el.innerHTML = `<div class="container" style="max-width:780px">${header("Simulado · Resultado", `${acertos}/${qs.length} acertos`)}
+      <div class="grid g3"><div class="stat"><div class="v">${proj.toFixed(1)}</div><div class="l">nota projetada (0–90)</div></div><div class="stat"><div class="v">${min} min</div><div class="l">tempo usado</div></div>
+      <div class="stat"><div class="v">${proj>=45&&!zerou.length?"✓":"✗"}</div><div class="l">${proj>=45&&!zerou.length?"acima do mínimo (45 pts)":zerou.length?"zerou: "+zerou.map(a=>a.nome).join(", "):"abaixo de 45 pts"}</div></div></div>
+      <div class="card" style="margin-top:14px"><table><thead><tr><th>Área</th><th class="n">Acertos</th><th class="n">%</th><th class="n">Projeção</th></tr></thead><tbody>
+      ${AREAS.map(a=>{const p=porArea[a.id];return `<tr><td>${areaTag(a.id)}</td><td class="n">${p.ok}/${p.n}</td><td class="n">${p.n?pct(p.ok/p.n):"—"}</td><td class="n">${(p.n?p.ok/p.n*a.q*a.peso:0).toFixed(1)} / ${a.q*a.peso}</td></tr>`}).join("")}</tbody></table></div>
+      <h3>Gabarito comentado</h3>
+      ${qs.map((q,i)=>`<div class="card"><div class="small muted">${i+1}. ${AREA[q.a].nome}</div><div class="q-enun" style="margin-bottom:8px">${esc(q.e)}</div>
+        <div class="small">Sua resposta: <b style="color:${resp[q.id]===q.c?"var(--success)":"var(--danger)"}">${resp[q.id]!=null?"ABCDE"[resp[q.id]]:"—"}</b> · Gabarito: <b>${"ABCDE"[q.c]}) ${esc(q.o[q.c])}</b></div>${q.x?`<div class="expl">${esc(q.x)}</div>`:""}</div>`).join("")}
+      <div class="btn-row"><a class="btn btn-primary" href="#/erros">Ir para Meus erros</a><a class="btn btn-secondary" href="#/desempenho">Ver desempenho</a></div></div>`;
+  };
+}
+
+ROTAS["/nota"] = el => {
+  el.innerHTML = `<div class="container" style="max-width:780px">
+    ${header("Praticar · Nota","Calculadora de nota","Use depois de um simulado externo ou do gabarito preliminar. Regras do edital: ≥ 45 pts na objetiva (50%), nenhuma área zerada, e redação ≥ 30.")}
+    <div class="card">${AREAS.map(a=>`<div class="row" style="margin-bottom:10px"><span style="flex:1">${areaTag(a.id)} <span class="small muted">(${a.q}q × ${a.peso})</span></span><input type="number" min="0" max="${a.q}" value="0" data-n="${a.id}" style="max-width:100px"></div>`).join("")}
+      <div class="row" style="margin-bottom:10px"><span style="flex:1">Redação <span class="small muted">(0–60)</span></span><input type="number" min="0" max="60" value="0" id="nr" style="max-width:100px"></div></div>
+    <div id="nres" style="margin-top:14px"></div></div>`;
+  const calc = () => {
+    let obj = 0; const zer = [];
+    for (const a of AREAS){ const inp = el.querySelector(`[data-n="${a.id}"]`); const v = Math.min(a.q, Math.max(0, Number(inp.value)||0)); obj += v*a.peso; if (!v) zer.push(a.nome); }
+    const red = Math.min(60, Math.max(0, Number(el.querySelector("#nr").value)||0));
+    const okObj = obj >= 45 && !zer.length, okRed = red >= 30;
+    el.querySelector("#nres").innerHTML = `<div class="grid g3"><div class="stat"><div class="v">${obj}</div><div class="l">objetiva (de 90)</div></div><div class="stat"><div class="v">${red}</div><div class="l">redação (de 60)</div></div><div class="stat"><div class="v">${obj+red}</div><div class="l">nota final (de 150)</div></div></div>
+      <div class="card" style="margin-top:14px"><ul class="list"><li>${obj>=45?"✅":"❌"} Objetiva ≥ 45 pontos ${obj<45?`<span class="muted small">(faltam ${45-obj})</span>`:""}</li><li>${!zer.length?"✅":"❌"} Nenhuma área zerada ${zer.length?`<span class="muted small">(${zer.join(", ")})</span>`:""}</li><li>${okRed?"✅":"❌"} Redação ≥ 30 pontos</li></ul>
+      <p class="small muted" style="margin-bottom:0">${okObj&&okRed?"Habilitada nos critérios de nota. A correção da redação ainda depende de estar dentro do limite de classificação da Tabela 13.1.":"Ajuste os valores para ver o que falta."} Desempate: Conhecimentos Específicos → Língua Portuguesa → Informática → Redação.</p></div>`;
+  };
+  el.querySelectorAll("input").forEach(i => i.oninput = calc); calc();
+};
+
+ROTAS["/sobre"] = el => {
+  const v = EDITAL.vagas;
+  el.innerHTML = `<div class="container">
+    ${header("Praticar · O concurso","UFBA 2026 — Assistente em Administração","Resumo do Edital de Abertura nº 007/2026, de 25/09/2026.")}
+    <div class="grid g4"><div class="stat"><div class="v">${v.total}</div><div class="l">vagas (maior oferta do edital)</div></div><div class="stat"><div class="v">R$ 3.181</div><div class="l">vencimento básico</div></div><div class="stat"><div class="v">+ R$ 1.192</div><div class="l">auxílio-alimentação</div></div><div class="stat"><div class="v">40h</div><div class="l">semanais</div></div></div>
+    <div class="grid g2" style="margin-top:14px">
+      <div class="card"><h2>Vagas por modalidade</h2><table><thead><tr><th>Modalidade</th><th class="n">Vagas</th><th class="n">Redações corrigidas</th></tr></thead><tbody>
+        <tr><td>Ampla concorrência</td><td class="n">${v.ac}</td><td class="n">${EDITAL.redacaoCorrigida.ac}</td></tr><tr><td>Pretos e pardos</td><td class="n">${v.pp}</td><td class="n">${EDITAL.redacaoCorrigida.pp}</td></tr>
+        <tr><td>PcD</td><td class="n">${v.pcd}</td><td class="n">${EDITAL.redacaoCorrigida.pcd}</td></tr><tr><td>Indígenas</td><td class="n">${v.ind}</td><td class="n">${EDITAL.redacaoCorrigida.ind}</td></tr><tr><td>Quilombolas</td><td class="n">${v.quil}</td><td class="n">${EDITAL.redacaoCorrigida.quil}</td></tr></tbody></table></div>
+      <div class="card"><h2>A prova</h2><table><thead><tr><th>Área</th><th class="n">Questões</th><th class="n">Pts/q</th><th class="n">Total</th></tr></thead><tbody>
+        ${AREAS.map(a=>`<tr><td>${a.nome}</td><td class="n">${a.q}</td><td class="n">${a.peso}</td><td class="n">${a.q*a.peso}</td></tr>`).join("")}
+        <tr><td>Redação</td><td class="n">1</td><td class="n">—</td><td class="n">60</td></tr><tr><td><b>Total</b></td><td class="n"><b>60 + 1</b></td><td></td><td class="n"><b>150</b></td></tr></tbody></table>
+        <p class="small muted" style="margin-bottom:0">5 alternativas, 1 correta. ${EDITAL.duracao}. Turno: ${EDITAL.turno}.</p></div>
+    </div>
+    <div class="card"><h2>Pontos-chave</h2><ul style="margin:0;padding-left:18px">
+      <li>Banca: <b>${EDITAL.banca}</b> (www.avalia.org.br) · taxa R$ ${EDITAL.taxa},00</li>
+      <li>Cidades de prova: ${EDITAL.cidades}</li>
+      <li>Eliminação: menos de 50% da objetiva (45 pts), nota zero em qualquer área, ou redação abaixo de 30</li>
+      <li>Nota final = objetiva + redação (máx. 150)</li>
+      <li>Regime: Lei 8.112/1990 · carreira: Lei 11.091/2005 · estágio probatório de 36 meses</li>
+      <li>Benefícios: Incentivo à Qualificação, auxílio-creche (até R$ 526,64), vale-transporte, auxílio-saúde</li>
+      <li>Validade: 1 ano, prorrogável por igual período</li></ul></div>
+    <div class="card"><h2>Atribuições do cargo (Anexo I)</h2><p class="small muted" style="margin-top:0">Requisito: ensino médio completo ou médio profissionalizante.</p><ul class="small" style="margin:0;padding-left:18px">
+      <li>Suporte administrativo em administração, RH, finanças, patrimônio, materiais, compras, contratos, logística e atendimento</li>
+      <li>Organização, tramitação, controle e arquivamento de documentos e processos</li>
+      <li>Atendimento a usuários internos e externos</li>
+      <li>Elaborar e revisar relatórios, planilhas, ofícios, memorandos, despachos e formulários</li>
+      <li>Operar sistemas e plataformas institucionais</li>
+      <li>Apoio a compras, contratações, gestão de contratos, RH e controles financeiro-orçamentários</li>
+      <li>Apoio a ensino, pesquisa e extensão; organização de reuniões, eventos e agendas</li>
+      <li>Sigilo sobre informações restritas e zelo pelos recursos institucionais</li></ul></div></div>`;
+};
+
+ROTAS["/config"] = el => {
+  el.innerHTML = `<div class="container" style="max-width:720px">
+    ${header("Configurações","Configurações e backup","Seus dados ficam só neste navegador. Faça backup de vez em quando.")}
+    <div class="card"><div class="grid g2">
+      <div class="field"><label>Data da prova</label><input type="date" id="cd" value="${S.dataProva}"></div>
+      <div class="field"><label>Horas de estudo por dia</label><input type="number" id="ch" min="0.5" max="12" step="0.5" value="${S.horasDia}"></div>
+      <div class="field"><label>Dias de estudo por semana</label><input type="number" id="cs" min="1" max="7" value="${S.diasSemana}"></div></div>
+      <button class="btn btn-primary" id="csave">Salvar</button> <span class="small muted" id="cmsg"></span></div>
+    <div class="card"><h2>Backup</h2><div class="btn-row"><button class="btn btn-secondary" id="exp">Exportar (.json)</button><label class="btn btn-secondary">Importar<input type="file" id="imp" accept=".json" hidden></label><button class="btn btn-danger" id="reset">Apagar tudo</button></div></div></div>`;
+  const $ = s => el.querySelector(s);
+  $("#csave").onclick = () => { S.dataProva = $("#cd").value || EDITAL.dataProva; S.horasDia = Number($("#ch").value)||2; S.diasSemana = Math.min(7,Math.max(1,Number($("#cs").value)||6)); salvar(); pintarNav("/config"); $("#cmsg").textContent = "✓ Salvo"; };
+  $("#exp").onclick = () => { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify(S,null,1)],{type:"application/json"})); a.download = `ufba-assistente-backup-${hoje()}.json`; a.click(); };
+  $("#imp").onchange = e => { const f = e.target.files[0]; if (!f) return; f.text().then(t => { try { S = Object.assign(estadoInicial(), JSON.parse(t)); salvar(); alert("Backup importado."); rotear(); } catch { alert("Arquivo inválido."); } }); };
+  $("#reset").onclick = () => { if (confirm("Apagar todo o progresso? Não dá para desfazer.")){ S = estadoInicial(); salvar(); rotear(); } };
+};
+
+rotear();
+</script>
+</body>
+</html>
