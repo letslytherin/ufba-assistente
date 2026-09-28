@@ -149,6 +149,17 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
 .heat .cell b{display:block;font-size:.88rem;margin-bottom:4px}
 .c-red{background:var(--danger-soft)}.c-yel{background:var(--warning-soft)}.c-grn{background:var(--success-soft)}.c-none{background:var(--bg-subtle)}
 .redacao-area{font-family:"Courier New",monospace;line-height:28px;min-height:560px;background-image:repeating-linear-gradient(var(--surface),var(--surface) 27px,var(--border) 28px);background-attachment:local;padding-top:4px}
+.weekgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.daycard{border:1px solid var(--border);border-radius:var(--radius-md);padding:10px 12px;background:var(--bg-subtle);display:flex;flex-direction:column;gap:6px;font-size:.88rem}
+.daycard.today{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.daycard.prova{border-color:var(--danger);background:var(--danger-soft)}
+.daycard .blk{background:var(--surface);border-radius:8px;padding:6px 8px}
+.daycard .act{color:var(--text-2);text-decoration:none;border-top:1px dashed var(--border);padding-top:6px}
+.daycard .act:hover{color:var(--accent)}
+.resumo{margin:0;padding-left:20px}.resumo li{margin-bottom:8px}
+details.texto{background:var(--bg-subtle);border:1px solid var(--border);border-radius:var(--radius-md);padding:10px 14px;margin:8px 0 4px}
+details.texto summary{cursor:pointer;font-weight:600;font-size:.85rem}
+details.texto div{white-space:pre-line;margin-top:8px;line-height:1.7}
 .empty{text-align:center;padding:40px 20px;color:var(--text-2)}
 .empty h2{color:var(--text)}
 .bottom-nav{display:none}
@@ -363,6 +374,230 @@ const FC_SEED = [
  ["inf","Backup incremental × diferencial","Incremental: desde o último backup de qualquer tipo. Diferencial: desde o último completo."],
 ];
 
+/* ---------- Questões extras: estilo AOCP/Avalia (texto-base, situação-problema, "INCORRETA", lei literal) ---------- */
+const TXT_ATEND = "Quem chega pela primeira vez ao protocolo de uma universidade raramente sabe o caminho que seu pedido vai percorrer. Embora os sistemas eletrônicos tenham encurtado distâncias, o cidadão ainda depende de alguém que o oriente com paciência e clareza. É nesse ponto que o servidor faz diferença: ao explicar prazos, indicar documentos e acompanhar o andamento do processo, ele transforma uma engrenagem burocrática em serviço público de fato. Muitos processos atrasam não por má vontade, mas porque faltou uma informação simples no início. Por isso, atender bem não é gentileza opcional; é parte da eficiência que a Constituição exige da Administração.\n(Texto elaborado para fins de estudo.)";
+Q_SEED.push(
+{a:"lp",t:"Compreensão e interpretação de textos",txt:TXT_ATEND,e:"De acordo com o texto, é correto afirmar que",o:["os sistemas eletrônicos eliminaram a necessidade de orientação ao cidadão.","os atrasos nos processos decorrem, principalmente, da má vontade dos servidores.","a orientação clara no atendimento contribui para evitar atrasos nos processos.","o bom atendimento é uma gentileza que o servidor pode oferecer ou não.","o cidadão que chega ao protocolo costuma conhecer o trâmite do seu pedido."],c:2,x:"O texto afirma que muitos processos atrasam “porque faltou uma informação simples no início” — logo, orientar bem previne atrasos. As demais contrariam o texto (a D é o oposto da conclusão)."},
+{a:"lp",t:"Coesão e coerência: referência, conectores, progressão",txt:TXT_ATEND,e:"No trecho “Embora os sistemas eletrônicos tenham encurtado distâncias, o cidadão ainda depende de alguém [...]”, a oração introduzida por “Embora” estabelece relação de",o:["causa.","concessão.","conclusão.","finalidade.","condição."],c:1,x:"“Embora” é conjunção concessiva: apresenta um fato que não impede o da oração principal. Equivalentes: ainda que, mesmo que, apesar de que."},
+{a:"lp",t:"Coesão e coerência: referência, conectores, progressão",txt:TXT_ATEND,e:"Em “[...] ele transforma uma engrenagem burocrática em serviço público de fato.”, o pronome “ele” retoma",o:["“o cidadão”.","“o protocolo”.","“o servidor”.","“seu pedido”.","“o andamento”."],c:2,x:"Coesão referencial anafórica: “ele” retoma “o servidor”, mencionado logo antes (“É nesse ponto que o servidor faz diferença”)."},
+{a:"lp",t:"Reescrita de frases e equivalência de estruturas",txt:TXT_ATEND,e:"A expressão “Por isso”, no último período do texto, poderia ser substituída, sem prejuízo do sentido, por",o:["Contudo,","Embora","Portanto,","Caso","Enquanto isso,"],c:2,x:"“Por isso” introduz conclusão. Equivalentes: portanto, logo, assim, por conseguinte. “Contudo” = oposição; “Embora” = concessão; “Caso” = condição."},
+{a:"lp",t:"Tipologia textual e gêneros textuais",txt:TXT_ATEND,e:"Quanto ao modo de organização predominante, o texto é",o:["narrativo.","descritivo.","injuntivo.","dissertativo-argumentativo.","expositivo-instrucional."],c:3,x:"O texto defende uma tese (atender bem é parte da eficiência exigida pela Constituição) e a sustenta com argumentos — dissertação-argumentativa. A AOCP/Avalia costuma cobrar o “modo de organização” do texto-base."},
+{a:"lp",t:"Colocação pronominal",txt:TXT_ATEND,e:"Em “alguém que o oriente”, a próclise do pronome “o” justifica-se pela presença de",o:["advérbio de negação.","pronome relativo.","verbo no infinitivo.","conjunção coordenativa.","início de período."],c:1,x:"O pronome relativo “que” é fator de próclise. Outros atratores: palavras negativas, advérbios, pronomes indefinidos e interrogativos, conjunções subordinativas."},
+{a:"lp",t:"Semântica: denotação, conotação, sinonímia, paronímia, figuras de linguagem",e:"Assinale a alternativa que completa corretamente as lacunas: “O servidor precisou ______ o erro no ofício, e o reitor ______ a decisão anterior, confirmando-a.”",o:["ratificar – retificou","retificar – ratificou","retificar – retificou","ratificar – ratificou","rectificar – ratificou"],c:1,x:"Parônimos: retificar = corrigir; ratificar = confirmar. Outros clássicos: eminente/iminente, descrição/discrição, infringir/infligir, mandato/mandado, tráfego/tráfico."},
+{a:"lp",t:"Semântica: denotação, conotação, sinonímia, paronímia, figuras de linguagem",e:"Em “Nas férias, li todo o Machado de Assis”, ocorre a figura de linguagem denominada",o:["metáfora","hipérbole","metonímia","ironia","antítese"],c:2,x:"Metonímia: troca de um termo por outro com relação de proximidade — aqui, o autor pela obra."},
+{a:"lp",t:"Coordenação, subordinação, vozes verbais e pronomes relativos",e:"Assinale a transposição correta da frase “A comissão analisará os recursos” para a voz passiva analítica.",o:["Os recursos analisarão a comissão.","Os recursos serão analisados pela comissão.","Analisar-se-ão os recursos pela comissão.","Os recursos foram analisados pela comissão.","A comissão terá analisado os recursos."],c:1,x:"Na passiva analítica, o auxiliar “ser” fica no mesmo tempo do verbo da ativa (futuro do presente: analisará → serão analisados) e o sujeito vira agente da passiva."},
+{a:"lp",t:"Redação Oficial (Manual da Presidência, 3ª ed.)",e:"Assinale a alternativa que preenche corretamente as lacunas, segundo o Manual de Redação da Presidência da República: “Vossa Excelência ______ ciência de que ______ requerimento foi deferido.”",o:["tendes – vosso","tem – seu","tem – vosso","tendes – seu","têm – seus"],c:1,x:"Pronomes de tratamento levam verbo e possessivos na 3ª pessoa: “Vossa Excelência tem… seu requerimento”."},
+{a:"lp",t:"Redação Oficial (Manual da Presidência, 3ª ed.)",e:"Segundo o Manual de Redação da Presidência da República (3ª ed.), NÃO é característica da redação oficial:",o:["impessoalidade","clareza e precisão","concisão","uso de linguagem rebuscada e de jargões para demonstrar erudição","formalidade e padronização"],c:3,x:"Os atributos são: clareza e precisão, objetividade, concisão, coesão e coerência, impessoalidade, formalidade e padronização, uso da norma-padrão. Rebuscamento e jargão devem ser evitados."},
+{a:"inf",t:"Conceitos básicos de informática e TI",e:"Considerando as grandezas computacionais no sistema binário, 11 megabytes equivalem a",o:["11.000 KB","1.100 KB","11.264 KB","110.000 KB","1.024 KB"],c:2,x:"1 MB = 1.024 KB. Logo 11 × 1.024 = 11.264 KB. Essa conversão caiu na prova AOCP de Assistente em Administração (IF-MA 2023)."},
+{a:"inf",t:"Processador de textos (Word)",e:"No Microsoft Word (instalação padrão em português do Brasil), a combinação de teclas que abre o recurso “Substituir” é",o:["Ctrl+L","Ctrl+U","Ctrl+S","Ctrl+R","Shift+Del"],c:1,x:"No Word em português: Ctrl+L = Localizar; Ctrl+U = Substituir; Ctrl+S = Sublinhado; Ctrl+N = Negrito; Ctrl+B = Salvar."},
+{a:"inf",t:"Planilhas eletrônicas (Excel)",e:"Na planilha, a fórmula =PROCV(A2;D2:F20;3;0)",o:["soma os valores da coluna F","procura A2 na primeira coluna de D2:F20 e retorna o valor da 3ª coluna do intervalo, com correspondência exata","conta quantas vezes A2 aparece em D2:F20","retorna o valor da linha 3 do intervalo D2:F20","procura A2 na coluna F e retorna o valor da coluna D"],c:1,x:"PROCV(valor; matriz; nº da coluna; 0/FALSO = exato). Busca sempre na 1ª coluna da matriz e devolve a coluna indicada."},
+{a:"inf",t:"Planilhas eletrônicas (Excel)",e:"No Excel e no LibreOffice Calc, a tecla que coloca a célula selecionada em modo de edição é",o:["F1","F2","F4","F5","F7"],c:1,x:"F2 edita a célula. F4 alterna referências relativas/absolutas no Excel; F7 verifica ortografia; F1 abre a ajuda."},
+{a:"inf",t:"Ameaças: vírus, worms, malware, ransomware",e:"O malware que se propaga automaticamente pelas redes, explorando vulnerabilidades e enviando cópias de si mesmo de computador para computador, sem depender da execução de um arquivo hospedeiro, é o",o:["vírus","worm","cavalo de troia","spyware","adware"],c:1,x:"Worm: autopropagação pela rede. Vírus precisa de um hospedeiro e de execução. Trojan se disfarça de programa legítimo. Spyware coleta informações."},
+{a:"inf",t:"Ameaças: vírus, worms, malware, ransomware",e:"O código malicioso que torna inacessíveis os dados armazenados em um equipamento, geralmente usando criptografia, e exige pagamento de resgate para restabelecer o acesso é o",o:["keylogger","botnet","ransomware","rootkit","phishing"],c:2,x:"Ransomware “sequestra” os dados. Melhor defesa: backups frequentes e isolados, atualizações e cuidado com anexos."},
+{a:"inf",t:"Correio eletrônico (Outlook) e colaboração online",e:"O protocolo de recebimento de e-mails que mantém as mensagens sincronizadas no servidor, permitindo acessá-las de vários dispositivos, é o",o:["SMTP","POP3","IMAP","FTP","HTTP"],c:2,x:"IMAP sincroniza com o servidor. POP3 baixa as mensagens (em geral removendo-as do servidor). SMTP é para envio."},
+{a:"inf",t:"Ferramentas de busca e compartilhamento",e:"No Google, para buscar apenas arquivos PDF sobre “estatuto UFBA”, o operador adequado é",o:["estatuto UFBA -pdf","estatuto UFBA filetype:pdf","“pdf” estatuto UFBA","estatuto UFBA site:pdf","estatuto UFBA +pdf"],c:1,x:"filetype: restringe o tipo de arquivo; site: restringe o domínio; aspas buscam a frase exata; o sinal de menos exclui um termo."},
+{a:"inf",t:"Computação em nuvem",e:"Um serviço de e-mail e de edição de documentos usado diretamente pelo navegador, sem instalação local, é exemplo do modelo de nuvem",o:["IaaS","PaaS","SaaS","LAN","On-premises"],c:2,x:"SaaS (Software como Serviço): o usuário usa o software pronto (Gmail, Microsoft 365). PaaS = plataforma para desenvolver; IaaS = infraestrutura (servidores virtuais)."},
+{a:"ap",t:"CF/88: princípios e disposições gerais (Título III, Cap. VII)",e:"De acordo com a CF/88, o prazo de validade do concurso público será de",o:["até 1 ano, improrrogável","até 2 anos, prorrogável uma vez, por igual período","até 2 anos, prorrogável duas vezes","até 4 anos, prorrogável uma vez","exatamente 2 anos, prorrogável por 1 ano"],c:1,x:"Art. 37, III. O edital da UFBA fixou validade de 1 ano, prorrogável por igual período — dentro do limite constitucional."},
+{a:"ap",t:"CF/88: princípios e disposições gerais (Título III, Cap. VII)",e:"Segundo a CF/88, havendo compatibilidade de horários, é permitida a acumulação remunerada de",o:["dois cargos técnicos","dois cargos de professor","um cargo de assistente em administração com outro administrativo","três cargos de professor","qualquer cargo, desde que respeitado o teto"],c:1,x:"Art. 37, XVI: dois de professor; um de professor com outro técnico ou científico; dois privativos de profissionais de saúde com profissões regulamentadas."},
+{a:"ap",t:"Organização da Adm. Pública Federal: direta, indireta, descentralização",e:"A distribuição interna de competências entre órgãos de uma mesma pessoa jurídica, mantida a hierarquia, denomina-se",o:["descentralização por outorga","descentralização por delegação","desconcentração","concentração","privatização"],c:2,x:"Desconcentração = dentro da mesma pessoa jurídica (cria órgãos, há hierarquia). Descentralização = transfere para outra pessoa (há vinculação/controle, não hierarquia)."},
+{a:"ap",t:"Lei 8.112/1990: provimento, vacância, direitos e vantagens",e:"Nos termos da Lei 8.112/1990, o deslocamento de cargo de provimento efetivo, ocupado ou vago, no âmbito do quadro geral de pessoal, para outro órgão ou entidade do mesmo Poder denomina-se",o:["remoção","redistribuição","readaptação","recondução","reversão"],c:1,x:"Redistribuição (art. 37) desloca o CARGO. Remoção (art. 36) desloca o SERVIDOR, no mesmo quadro, com ou sem mudança de sede."},
+{a:"ap",t:"Lei 8.112/1990: deveres, proibições, regime disciplinar e PAD",e:"Da sindicância prevista na Lei 8.112/1990 poderá resultar, EXCETO:",o:["arquivamento do processo","aplicação de advertência","suspensão de até 30 dias","instauração de processo disciplinar","demissão"],c:4,x:"Art. 145: arquivamento; advertência ou suspensão de até 30 dias; instauração de PAD. Demissão exige PAD."},
+{a:"ap",t:"Lei 8.112/1990: deveres, proibições, regime disciplinar e PAD",e:"O prazo para conclusão do processo disciplinar, na Lei 8.112/1990, é de",o:["30 dias, prorrogável por igual período","60 dias, prorrogável por igual prazo","90 dias, improrrogável","120 dias, prorrogável por 60","180 dias"],c:1,x:"Art. 152: até 60 dias, prorrogável por igual prazo. Sindicância: 30 dias, prorrogável por igual período."},
+{a:"ap",t:"Lei 8.112/1990: deveres, proibições, regime disciplinar e PAD",e:"Configura abandono de cargo, na Lei 8.112/1990, a ausência intencional do servidor ao serviço por mais de",o:["15 dias consecutivos","30 dias consecutivos","30 dias interpolados em 12 meses","60 dias consecutivos","60 dias interpolados em 6 meses"],c:1,x:"Art. 138: abandono = mais de 30 dias consecutivos. Inassiduidade habitual (art. 139) = 60 dias interpolados em 12 meses, sem causa justificada."},
+{a:"ap",t:"Processo administrativo federal (Lei 9.784/1999)",e:"Conforme a Lei 9.784/1999, NÃO pode ser objeto de delegação:",o:["a instrução do processo","a decisão de recursos administrativos","a intimação dos interessados","a emissão de pareceres","o atendimento ao público"],c:1,x:"Art. 13: não se delegam a edição de atos normativos, a decisão de recursos e as matérias de competência exclusiva (mnemônico CE-NO-RE)."},
+{a:"ap",t:"LAI (Lei 12.527/2011 e Decreto 7.724/2012)",e:"Na Lei de Acesso à Informação, o prazo máximo de restrição de acesso à informação classificada como ultrassecreta é de",o:["5 anos","15 anos","25 anos","50 anos","100 anos"],c:2,x:"Art. 24: ultrassecreta 25, secreta 15, reservada 5 anos. Informações pessoais: até 100 anos (art. 31)."},
+{a:"ap",t:"LGPD (Lei 13.709/2018) na Administração Pública",e:"Na LGPD, a pessoa indicada pelo controlador e pelo operador para atuar como canal de comunicação entre o controlador, os titulares dos dados e a ANPD é o",o:["operador","encarregado","titular","controlador","auditor"],c:1,x:"Art. 5º, VIII: encarregado (DPO). Controlador toma as decisões; operador trata os dados em nome do controlador; titular é a pessoa a quem os dados se referem."},
+{a:"ap",t:"Improbidade administrativa (Lei 8.429/1992 e alterações)",e:"Após a Lei 14.230/2021, a ação para aplicação das sanções por improbidade prescreve em",o:["5 anos","8 anos","10 anos","12 anos","nunca prescreve"],c:1,x:"Art. 23: 8 anos, contados da ocorrência do fato (ou do dia em que cessou a permanência, nas infrações permanentes)."},
+{a:"ap",t:"Governança, integridade, controle e Decreto 9.830/2019",e:"De acordo com o Decreto 9.830/2019, que regulamenta a LINDB, o agente público responde pessoalmente por suas decisões ou opiniões técnicas em caso de",o:["qualquer erro","culpa leve","dolo ou erro grosseiro","divergência com o superior","decisão revogada"],c:2,x:"Art. 12: responsabilização por dolo (direto ou eventual) ou erro grosseiro — culpa grave, com negligência, imprudência ou imperícia graves."},
+{a:"ap",t:"Atendimento ao público e Carta de Serviços ao Usuário",e:"Segundo a Lei 13.460/2017, a ouvidoria deve apresentar decisão final sobre a manifestação do usuário no prazo de",o:["10 dias, prorrogável por 10","20 dias, prorrogável por 10","30 dias, prorrogável uma vez por igual período","45 dias, improrrogável","60 dias"],c:2,x:"Art. 16: 30 dias, prorrogável uma vez por igual período, mediante justificativa. A Carta de Serviços ao Usuário está no art. 7º."},
+{a:"ap",t:"Sustentabilidade e A3P",e:"NÃO é eixo temático da Agenda Ambiental na Administração Pública (A3P):",o:["uso racional dos recursos naturais e bens públicos","gestão adequada dos resíduos gerados","qualidade de vida no ambiente de trabalho","contratações públicas sustentáveis","privatização de serviços ambientais"],c:4,x:"Eixos da A3P: uso racional dos recursos, gestão de resíduos, qualidade de vida no trabalho, sensibilização e capacitação, contratações sustentáveis e construções sustentáveis."},
+{a:"ap",t:"IFES: estrutura, autonomia universitária e colegiados",e:"Segundo o art. 207 da CF/88, as universidades gozam de autonomia didático-científica, administrativa e de gestão financeira e patrimonial, e obedecerão ao princípio da",o:["gratuidade do ensino superior privado","indissociabilidade entre ensino, pesquisa e extensão","exclusividade do ensino presencial","centralização administrativa","vitaliciedade dos reitores"],c:1,x:"Art. 207: autonomia + indissociabilidade entre ensino, pesquisa e extensão. Pilar básico para as questões sobre IFES e sobre o Estatuto da UFBA."},
+{a:"ce",t:"Organização administrativa da União: direta e indireta",e:"A entidade dotada de personalidade jurídica de direito privado, com capital integralmente público, criada mediante autorização legal e que pode adotar qualquer forma societária, é a",o:["autarquia","fundação pública de direito público","empresa pública","sociedade de economia mista","agência reguladora"],c:2,x:"Empresa pública: capital 100% público, qualquer forma societária. Sociedade de economia mista: sempre S.A., maioria das ações com direito a voto em poder do Estado."},
+{a:"ce",t:"Agentes públicos: espécies, cargo, emprego e função",e:"O cidadão convocado para atuar como mesário nas eleições é classificado, pela doutrina, como",o:["agente político","servidor estatutário","empregado público","particular em colaboração com o Poder Público","agente militar"],c:3,x:"Particulares em colaboração: mesários, jurados, conscritos (requisitados), além de delegados como tabeliães e concessionários."},
+{a:"ce",t:"Poderes administrativos e uso/abuso do poder",e:"São atributos do poder de polícia:",o:["hierarquia, disciplina e subordinação","discricionariedade, autoexecutoriedade e coercibilidade","imperatividade, vitaliciedade e inamovibilidade","gratuidade, universalidade e continuidade","legalidade, publicidade e eficiência"],c:1,x:"Poder de polícia: discricionariedade (em regra), autoexecutoriedade e coercibilidade. Ciclo: ordem, consentimento, fiscalização e sanção."},
+{a:"ce",t:"Serviços públicos e delegação (concessão, permissão, autorização)",e:"Serviços prestados a toda a coletividade, sem usuários determinados, como a iluminação pública, são classificados como",o:["uti singuli","uti universi","impróprios","delegados","industriais"],c:1,x:"Uti universi = gerais, indivisíveis, custeados por impostos. Uti singuli = individuais, mensuráveis, podem ser remunerados por taxa ou tarifa (ex.: água, energia)."},
+{a:"ce",t:"Organizações formais: estrutura e departamentalização",e:"A estrutura organizacional caracterizada pela dupla subordinação — o empregado responde ao gerente funcional e ao gerente de projeto — é a",o:["linear","funcional","linha-staff","matricial","divisional"],c:3,x:"Matricial combina departamentalização funcional com a por projetos/produtos, gerando dupla autoridade. Linear: unidade de comando (Fayol)."},
+{a:"ce",t:"Processo organizacional: planejamento, direção, comunicação, controle",e:"Henry Mintzberg concluiu que os gerentes desempenham dez papéis, agrupados nas categorias",o:["técnicos, humanos e conceituais","interpessoais, informacionais e decisórios","estratégicos, táticos e operacionais","planejamento, organização e controle","formais, informais e mistos"],c:1,x:"Interpessoais (figura de proa, líder, ligação), informacionais (monitor, disseminador, porta-voz), decisórios (empreendedor, solucionador de distúrbios, alocador de recursos, negociador). Caiu na AOCP IF-MA 2023. Katz é quem fala de habilidades técnicas, humanas e conceituais."},
+{a:"ce",t:"Processo organizacional: planejamento, direção, comunicação, controle",e:"Quanto ao grau de familiaridade da organização com a situação, as decisões classificam-se em",o:["programadas e não programadas","otimizadas e não otimizadas","estratégicas e operacionais","individuais e coletivas","centralizadas e descentralizadas"],c:0,x:"Herbert Simon: decisões programadas (rotineiras, com regras) e não programadas (novas, sem estrutura). Caiu na AOCP IF-MA 2023."},
+{a:"ce",t:"Processo organizacional: planejamento, direção, comunicação, controle",e:"Na análise SWOT, oportunidades e ameaças referem-se",o:["ao ambiente interno da organização","ao ambiente externo da organização","apenas aos concorrentes diretos","aos recursos financeiros disponíveis","às competências dos servidores"],c:1,x:"Forças e fraquezas = ambiente interno (controláveis). Oportunidades e ameaças = ambiente externo."},
+{a:"ce",t:"Gestão da qualidade",e:"No ciclo PDCA, a etapa em que se comparam os resultados obtidos com as metas planejadas é a",o:["Plan","Do","Check","Act","Control"],c:2,x:"Plan (planejar), Do (executar), Check (verificar/checar), Act (agir corretivamente e padronizar)."},
+{a:"ce",t:"Gestão da qualidade",e:"No programa 5S, o senso de utilização (Seiri) consiste em",o:["limpar o ambiente de trabalho","separar o necessário do desnecessário, descartando o que não é útil","organizar os itens para fácil localização","padronizar e manter a saúde","desenvolver a autodisciplina"],c:1,x:"Seiri = utilização/descarte; Seiton = ordenação; Seisō = limpeza; Seiketsu = saúde/padronização; Shitsuke = autodisciplina."},
+{a:"ce",t:"Gestão da qualidade",e:"A ferramenta da qualidade que organiza as possíveis causas de um problema em categorias como método, máquina, mão de obra, material, meio ambiente e medida é o",o:["gráfico de Pareto","diagrama de Ishikawa","histograma","5W2H","fluxograma"],c:1,x:"Ishikawa (espinha de peixe, causa e efeito) usa os 6M. Pareto prioriza as poucas causas vitais (80/20). 5W2H é plano de ação."},
+{a:"ce",t:"Gestão de projetos",e:"Projeto é um esforço",o:["contínuo e repetitivo para manter as operações","temporário empreendido para criar um produto, serviço ou resultado único","permanente de controle orçamentário","exclusivo da alta administração","sem prazo definido de término"],c:1,x:"Definição do PMBOK. Projetos têm início e fim definidos; operações são contínuas. Restrição tripla: escopo, prazo e custo."},
+{a:"ce",t:"Gestão de pessoas: conceitos e função do órgão de GP",e:"É vantagem do recrutamento interno em relação ao externo:",o:["trazer novas ideias e experiências","renovar a cultura organizacional","ser mais rápido e econômico, além de motivar os funcionários","ampliar o capital intelectual com pessoas de fora","evitar totalmente conflitos internos"],c:2,x:"Interno: mais rápido, barato, motiva e aproveita quem já está adaptado. Externo: oxigena a organização, traz novas competências."},
+{a:"ce",t:"Comportamento organizacional: motivação e liderança",e:"Na liderança situacional de Hersey e Blanchard, diante de liderados com alta competência e alto comprometimento, o estilo indicado é",o:["determinar","persuadir","compartilhar","delegar","autocrático"],c:3,x:"Maturidade baixa → determinar; baixa/moderada → persuadir; moderada/alta → compartilhar; alta → delegar."},
+{a:"ce",t:"Comportamento organizacional: motivação e liderança",e:"O estilo de liderança em que o líder concede total liberdade ao grupo, participando minimamente das decisões, é o",o:["autocrático","democrático","liberal (laissez-faire)","situacional","transformacional"],c:2,x:"Autocrático: o líder decide sozinho. Democrático: decisões discutidas com o grupo. Liberal: liberdade total, líder pouco atuante."},
+{a:"ce",t:"Recursos materiais: classificação e gestão de estoques",e:"Como responsável pelo almoxarifado da UFBA, você registra consumo médio de 10 resmas de papel por dia, tempo de reposição de 5 dias e estoque de segurança de 20 resmas. O ponto de pedido é de",o:["30 resmas","50 resmas","70 resmas","100 resmas","150 resmas"],c:2,x:"PP = consumo médio × tempo de reposição + estoque de segurança = 10 × 5 + 20 = 70. Enunciado em situação-problema, como a AOCP/Avalia costuma fazer."},
+{a:"ce",t:"Recursos materiais: classificação e gestão de estoques",e:"O indicador que mostra quantas vezes o estoque se renovou em determinado período é o",o:["cobertura de estoque","giro de estoque","ponto de pedido","lote econômico","nível de serviço"],c:1,x:"Giro = consumo (ou saídas) no período ÷ estoque médio. Cobertura = por quanto tempo o estoque atende ao consumo. Caiu na AOCP IF-MA 2023."},
+{a:"ce",t:"Recursos materiais: classificação e gestão de estoques",e:"Na classificação XYZ, os materiais da classe Z são aqueles",o:["de baixo valor de consumo","de baixa criticidade, facilmente substituíveis","de máxima criticidade, imprescindíveis e sem substituto","de consumo irregular","obsoletos"],c:2,x:"XYZ mede a criticidade: X baixa, Y média, Z máxima (a falta paralisa atividades). ABC mede o valor de consumo."},
+{a:"ce",t:"Recebimento, conferência e armazenagem",e:"No recebimento de materiais, a etapa em que se verifica se a nota fiscal corresponde ao pedido de compra (fornecedor, quantidades, preços) é a",o:["armazenagem","conferência documental (entrada)","conferência qualitativa","distribuição","inventário"],c:1,x:"Sequência típica: entrada/conferência documental → conferência quantitativa → conferência qualitativa → regularização (aceite ou recusa) → armazenagem."},
+{a:"ce",t:"Arquivologia: conceitos e gestão de documentos",e:"Segundo a Lei 8.159/1991, a gestão de documentos compreende o conjunto de procedimentos e operações técnicas referentes à",o:["leitura, interpretação, guarda e descarte","produção, tramitação, uso, avaliação e arquivamento","representação, formação e destinação","digitalização e microfilmagem","restauração e difusão cultural"],c:1,x:"Art. 3º da Lei 8.159/1991: produção, tramitação, uso, avaliação e arquivamento em fase corrente e intermediária, visando à eliminação ou ao recolhimento. Caiu na AOCP IF-MA 2023."},
+{a:"ce",t:"Arquivologia: conceitos e gestão de documentos",e:"O princípio arquivístico segundo o qual os documentos de uma mesma entidade produtora não devem ser misturados aos de outras é o da",o:["organicidade","proveniência (respeito aos fundos)","unicidade","indivisibilidade","cumulatividade"],c:1,x:"Proveniência: respeitar a origem do fundo. Organicidade: os documentos refletem as funções do órgão. Unicidade: cada documento é único em seu contexto."},
+{a:"ce",t:"Arquivos correntes, intermediários e permanentes",e:"A passagem dos documentos do arquivo intermediário para o arquivo permanente denomina-se",o:["transferência","recolhimento","eliminação","avaliação","remessa"],c:1,x:"Transferência: corrente → intermediário. Recolhimento: → permanente."},
+{a:"ce",t:"Tipologias, suportes, microfilmagem e automação",e:"“Ata de reunião do Conselho Universitário” é exemplo de",o:["gênero documental","espécie documental","tipo documental","suporte documental","formato documental"],c:2,x:"Espécie = forma do documento (ata). Tipo = espécie + atividade que o gerou (ata de reunião do Conselho). Gênero = textual, iconográfico, audiovisual etc."},
+{a:"ce",t:"Preservação, conservação e restauração",e:"É medida de conservação preventiva em arquivos:",o:["usar clipes metálicos e fita adesiva para organizar os documentos","manter temperatura e umidade relativa estáveis e controladas","expor os documentos à luz solar para evitar fungos","plastificar documentos históricos","guardar os documentos no chão para facilitar o acesso"],c:1,x:"Controlar temperatura, umidade, luz, poeira e pragas; evitar metais, adesivos e plastificação. Restauração é a intervenção direta no documento já danificado."},
+{a:"ce",t:"Trabalho em equipe, relações interpessoais e comunicação",e:"Na Janela de Johari, a área que reúne aspectos conhecidos pelos outros, mas desconhecidos pela própria pessoa, é a área",o:["aberta","cega","oculta","desconhecida","pública"],c:1,x:"Aberta: conhecida por todos. Cega: só os outros veem (reduz-se com feedback). Oculta: só eu sei. Desconhecida: ninguém sabe."},
+{a:"ce",t:"Trabalho em equipe, relações interpessoais e comunicação",e:"No processo de comunicação, qualquer interferência que distorça ou prejudique a mensagem entre emissor e receptor é denominada",o:["código","canal","ruído","feedback","repertório"],c:2,x:"Elementos: emissor, mensagem, código, canal, receptor, feedback e ruído. O feedback permite verificar se a mensagem foi compreendida."},
+{a:"ce",t:"Atendimento ao público: qualidade e postura",e:"Um servidor que guarda reserva sobre informações pessoais do usuário atendido demonstra, no atendimento, a qualidade da",o:["presteza","discrição","objetividade","tolerância","comunicabilidade"],c:1,x:"Qualidades do edital: comunicabilidade, apresentação, atenção, cortesia, interesse, presteza, eficiência, tolerância, discrição, conduta e objetividade."},
+{a:"ce",t:"Controle da Administração e responsabilidade civil do Estado",e:"O controle externo da Administração Pública Federal é exercido pelo Congresso Nacional com o auxílio do",o:["Ministério Público","Tribunal de Contas da União","Supremo Tribunal Federal","Controladoria-Geral da União","Advocacia-Geral da União"],c:1,x:"CF, arts. 70 e 71. A CGU faz controle INTERNO do Executivo federal."},
+);
+
+FC_SEED.push(
+ ["inf","Word pt-BR: atalhos cobrados","Ctrl+N negrito · Ctrl+I itálico · Ctrl+S sublinhado · Ctrl+B salvar · Ctrl+O novo · Ctrl+A abrir · Ctrl+T selecionar tudo · Ctrl+L localizar · Ctrl+U substituir · Ctrl+E centralizar · Ctrl+J justificar."],
+ ["inf","Windows: atalhos","Win+E Explorador · Win+D área de trabalho · Win+L bloquear · Win+R Executar · Win+V histórico da área de transferência · Win+Shift+S captura · F2 renomear · Shift+Del excluir sem Lixeira."],
+ ["inf","Conversões binárias","1 KB = 1.024 bytes · 1 MB = 1.024 KB · 1 GB = 1.024 MB. Ex.: 11 MB = 11.264 KB."],
+ ["inf","Protocolos de e-mail","SMTP envia · POP3 baixa · IMAP sincroniza com o servidor."],
+ ["inf","Malwares","Vírus: precisa de hospedeiro · Worm: se autopropaga · Trojan: disfarçado · Ransomware: sequestra dados · Spyware/keylogger: espionam · Bot: controle remoto (botnet)."],
+ ["inf","Pilares da segurança","Confidencialidade, Integridade, Disponibilidade (CID) + Autenticidade e Não repúdio."],
+ ["ap","Validade do concurso (CF 37, III)","Até 2 anos, prorrogável UMA vez por igual período."],
+ ["ap","Acumulação lícita (CF 37, XVI)","2 de professor · professor + técnico/científico · 2 de saúde (profissões regulamentadas). Sempre com compatibilidade de horários."],
+ ["ap","Desconcentração × descentralização","Desconcentração: órgãos, mesma pessoa, hierarquia. Descentralização: outra pessoa jurídica, vinculação (sem hierarquia)."],
+ ["ap","Sindicância (8.112)","30 dias + 30. Resultado: arquivamento, advertência, suspensão até 30 dias ou PAD."],
+ ["ap","PAD (8.112)","60 dias + 60. Comissão de 3 servidores estáveis. Afastamento preventivo até 60 + 60 dias."],
+ ["ap","Abandono × inassiduidade","Abandono: mais de 30 dias consecutivos. Inassiduidade: 60 dias interpolados em 12 meses."],
+ ["ap","Indelegáveis (9.784, art. 13)","CE-NO-RE: Competência Exclusiva, atos NOrmativos, decisão de REcursos."],
+ ["ap","LAI: recurso","10 dias da ciência; a autoridade superior decide em 5 dias. Não se exige motivo do pedido."],
+ ["ap","Improbidade: sanções e prescrição","Suspensão de direitos políticos: até 14 anos (art. 9º), até 12 (art. 10). Art. 11: multa e proibição de contratar. Prescrição: 8 anos."],
+ ["ap","Lei 13.460/2017 (usuário)","Carta de Serviços (art. 7º). Ouvidoria decide em 30 + 30 dias. Manifestações: reclamação, denúncia, sugestão, elogio."],
+ ["ap","Decreto 9.830/2019","Regulamenta a LINDB; o agente responde por dolo ou erro grosseiro; as decisões devem considerar as consequências práticas."],
+ ["ap","CF art. 207","Autonomia didático-científica, administrativa e de gestão financeira e patrimonial + indissociabilidade entre ensino, pesquisa e extensão."],
+ ["ce","Papéis de Mintzberg","Interpessoais (figura de proa, líder, ligação) · Informacionais (monitor, disseminador, porta-voz) · Decisórios (empreendedor, solucionador de distúrbios, alocador, negociador)."],
+ ["ce","PDCA / 5S","PDCA: Plan, Do, Check, Act. 5S: Seiri (utilização), Seiton (ordenação), Seisō (limpeza), Seiketsu (saúde), Shitsuke (disciplina)."],
+ ["ce","Ponto de pedido / giro","PP = consumo médio × tempo de reposição + estoque de segurança. Giro = consumo ÷ estoque médio."],
+ ["ce","ABC × XYZ","ABC = valor (A: poucos itens, muito valor). XYZ = criticidade (Z: imprescindível)."],
+ ["ce","Transferência × recolhimento","Transferência: corrente → intermediário. Recolhimento: intermediário → permanente."],
+ ["ce","Espécie × tipo documental","Espécie: ata, ofício, certidão. Tipo: espécie + atividade (ata de reunião do Conselho)."],
+ ["ce","Hersey-Blanchard","Determinar → Persuadir → Compartilhar → Delegar, conforme cresce a maturidade do liderado."],
+ ["ce","Janela de Johari","Aberta · Cega (só os outros sabem) · Oculta (só eu sei) · Desconhecida."],
+ ["lp","Parônimos clássicos","retificar (corrigir) × ratificar (confirmar) · eminente × iminente · descrição × discrição · infringir × infligir · mandato × mandado."],
+ ["lp","Conectores","Concessão: embora, ainda que · Oposição: mas, porém, contudo · Causa: porque, visto que · Conclusão: logo, portanto, por isso · Condição: se, caso."],
+);
+
+/* ---------- Resumos por tópico (chave = nome exato do tópico) ---------- */
+const RESUMOS = {
+"Crase":["Regra: preposição “a” + artigo “a(s)” (ou pronome “aquela”, “a qual”).","Obrigatória: locuções adverbiais femininas (às vezes, à noite), prepositivas (à frente de) e conjuntivas (à medida que); hora exata (às 8h); “à moda de” (arroz à grega).","Proibida: antes de masculino, verbo, pronomes pessoais e de tratamento (exceto senhora, senhorita, dona), artigo indefinido, entre palavras repetidas (cara a cara) e com “a” no singular antes de plural (a pessoas).","Facultativa: antes de possessivo feminino no singular (à/a sua sala), de nome próprio feminino e depois de “até”.","Truque: troque por uma palavra masculina — se virar “ao”, há crase."],
+"Concordância verbal e nominal":["O verbo concorda com o núcleo do sujeito; sujeito composto anteposto → plural.","Impessoais (sempre no singular): haver = existir/tempo decorrido; fazer = tempo/clima. Contaminam o auxiliar: “Deve haver soluções”.","VTD + se (partícula apassivadora) → concorda: “Vendem-se casas”. VTI + se (índice de indeterminação) → singular: “Precisa-se de técnicos”.","Coletivo partitivo (a maioria de, parte de) + plural: verbo no singular ou no plural.","Nominal: anexo, obrigado, mesmo, incluso e quite concordam; “meio” advérbio é invariável (meio cansada); “é proibido entrada” × “é proibida a entrada” (com artigo, concorda)."],
+"Regência verbal e nominal":["Assistir (ver) → a: assistiu ao filme. Assistir (ajudar) → TD: assistiu o paciente.","Aspirar (desejar) → a · Visar (almejar) → a · Visar (mirar, rubricar) → TD.","Obedecer/desobedecer → a · Preferir → a (sem “mais” nem “do que”) · Implicar (acarretar) → TD.","Chegar/ir → a (não “em”) · Pagar/perdoar: coisa TD, pessoa TI · Esquecer/lembrar: com “se” pedem “de”.","Onde (lugar em que) × aonde (lugar a que — verbos de movimento): “Aonde você vai?”"],
+"Colocação pronominal":["Próclise (pronome antes): palavras negativas, advérbios sem vírgula, pronomes relativos, indefinidos e interrogativos, conjunções subordinativas.","Mesóclise: futuro do presente/pretérito sem atrator (far-se-á, dir-lhe-ia).","Ênclise: início de período, imperativo afirmativo, gerúndio (sem “em”), após pausa.","Nunca ênclise com particípio (“tinha-se dado”, e não “tinha dado-se”).","Na norma-padrão não se inicia período com pronome oblíquo átono."],
+"Pontuação e efeitos de sentido":["Não se separam por vírgula sujeito e verbo, nem verbo e complemento.","Vírgula obrigatória: vocativo, aposto explicativo, orações adjetivas explicativas, expressões explicativas (isto é, ou seja), adjunto adverbial deslocado longo, elipse do verbo, conjunções adversativas (mas, porém).","“Pois” conclusivo e “porém/contudo” deslocados ficam entre vírgulas.","Oração adjetiva restritiva (sem vírgula) × explicativa (com vírgula): a vírgula muda o sentido.","A AOCP/Avalia pergunta se a vírgula é “opcional” ou se “altera o sentido”."],
+"Coesão e coerência: referência, conectores, progressão":["Coesão referencial: anáfora retoma o que já foi dito; catáfora antecipa.","Mecanismos: pronomes, sinônimos, hiperônimos, elipse, repetição.","Adição: e, além disso · Oposição: mas, porém, contudo, todavia, no entanto · Concessão: embora, ainda que, apesar de.","Causa: porque, visto que, já que, porquanto · Conclusão: logo, portanto, por isso · Condição: se, caso · Finalidade: para que, a fim de que · Conformidade: conforme, segundo · Proporção: à medida que.","A banca pede a relação entre orações (adição, tempo, oposição…) e a troca de conectores sem mudar o sentido."],
+"Coordenação, subordinação, vozes verbais e pronomes relativos":["Coordenadas: aditivas, adversativas, alternativas, conclusivas e explicativas.","Subordinadas: substantivas (funcionam como sujeito ou objeto…), adjetivas (restritivas/explicativas) e adverbiais (causais, concessivas, condicionais…).","Voz passiva analítica: ser + particípio (o tempo do “ser” = tempo do verbo da ativa). Sintética: VTD + se.","Relativos: que, quem (sempre com preposição), o qual, cujo (posse, sem artigo depois), onde (lugar físico).","Preposição exigida pelo verbo da oração adjetiva vai antes do relativo: “o cargo a que aspiro”."],
+"Ortografia oficial e acentuação gráfica":["Oxítonas: acentuam-se as terminadas em a(s), e(s), o(s), em, ens (café, também).","Paroxítonas: acentuam-se as terminadas em l, n, r, x, ps, ã(s), ão(s), i(s), us, um, uns e ditongo (fácil, órfão, vírus).","Todas as proparoxítonas são acentuadas.","Acordo: caiu o acento dos ditongos abertos ei/oi em paroxítonas (ideia, heroico), dos hiatos oo/ee (voo, leem) e o trema.","Diferenciais mantidos: pôde/pode, pôr/por, têm/tem, vêm/vem. Hífen: vogal igual separa (micro-ondas); vogal diferente junta (autoestima); r/s dobram (antirrugas)."],
+"Semântica: denotação, conotação, sinonímia, paronímia, figuras de linguagem":["Denotação = sentido literal; conotação = sentido figurado.","Parônimos (parecidos): retificar/ratificar, eminente/iminente, descrição/discrição, infringir/infligir, mandato/mandado, tráfego/tráfico.","Homônimos (iguais): sessão/seção/cessão, concerto/conserto, cela/sela.","Metáfora (comparação implícita) · Metonímia (autor pela obra, parte pelo todo) · Hipérbole (exagero) · Ironia · Antítese (ideias opostas).","Ambiguidade: frase com duplo sentido — a banca pede a reescrita que a desfaz."],
+"Redação Oficial (Manual da Presidência, 3ª ed.)":["Atributos: clareza e precisão, objetividade, concisão, coesão e coerência, impessoalidade, formalidade e padronização, uso da norma-padrão.","Vossa Excelência: Presidente, Vice, ministros, parlamentares, magistrados, governadores, prefeitos etc. Vossa Magnificência: reitores (vocativo “Magnífico Reitor”). Vossa Senhoria: demais autoridades e particulares.","Pronomes de tratamento: verbo e possessivos na 3ª pessoa (Vossa Senhoria tem… seu). Aboliram-se “Digníssimo”, “Ilustríssimo” e “Doutor” como tratamento.","Fechos: “Respeitosamente” (autoridade superior) e “Atenciosamente” (mesma hierarquia ou inferior).","Padrão ofício (aviso, memorando e ofício unificados como “ofício”): cabeçalho, identificação (OFÍCIO Nº 12/2026/SIGLA), local e data, endereçamento, assunto, texto, fecho, assinatura. O e-mail é aceito como documento oficial."],
+"Tipologia textual e gêneros textuais":["Tipos (modos de organização): narração (fatos no tempo, personagens), descrição (características), dissertação-argumentativa (tese + argumentos), exposição (informar/explicar), injunção (instruir: receitas, manuais).","Gêneros: crônica, notícia, artigo de opinião, editorial, ofício, e-mail, relatório, charge…","A AOCP/Avalia costuma usar crônica ou reportagem e perguntar o “modo de organização predominante”."],
+"Variação linguística e adequação de registro":["Variação: regional (diatópica), social (diastrática), situacional (diafásica) e histórica (diacrônica).","Registro formal para documentos oficiais; informal para situações cotidianas.","Não existe “erro” na variação; existe inadequação ao contexto. Em documentos oficiais, vale a norma-padrão."],
+"Reescrita de frases e equivalência de estruturas":["Verifique sempre: o sentido se manteve? A correção gramatical se manteve?","Trocas seguras: portanto ↔ logo ↔ por isso; mas ↔ porém ↔ contudo; embora + subjuntivo ↔ apesar de + infinitivo.","Voz ativa ↔ passiva: mantenha o tempo verbal.","Cuidado ao trocar preposições (“abraçado às pernas” não admite qualquer preposição)."],
+"Compreensão e interpretação de textos":["Leia o comando antes do texto: “segundo o texto” pede o que está escrito; “infere-se” pede conclusão lógica.","Descarte alternativas com generalizações (sempre, nunca, todos) que o texto não sustenta.","Na AOCP/Avalia as ~10 questões de Português costumam estar TODAS ligadas a um único texto — gramática contextualizada."],
+"Morfossintaxe: classes e formação de palavras, termos da oração":["10 classes: substantivo, adjetivo, artigo, numeral, pronome, verbo, advérbio, preposição, conjunção, interjeição.","Formação: derivação (prefixal, sufixal, parassintética, regressiva, imprópria) e composição (justaposição: girassol; aglutinação: planalto). “Ofegante” = ofegar + sufixo -nte (agente).","Termos essenciais: sujeito e predicado. Integrantes: objetos direto/indireto, complemento nominal, agente da passiva. Acessórios: adjunto adnominal, adjunto adverbial, aposto (e vocativo, à parte).","A AOCP pediu formação de palavras (sufixo -ículo, prefixo des-) direto no texto-base."],
+"Organização de arquivos, diretórios e integridade de documentos":["Estrutura em árvore: unidade (C:) → pastas → subpastas → arquivos. Caminho: C:\\Users\\nome\\Documentos\\oficio.docx.","Extensões: .docx/.odt (texto), .xlsx/.ods (planilha), .pptx/.odp (apresentação), .pdf, .txt, .zip, .jpg/.png, .exe.","Nomes não podem conter \\ / : * ? \" < > |.","Integridade: backup, controle de versões, permissões de acesso, PDF para documentos finais, nomes padronizados (data_assunto_versão)."],
+"Apresentações (PowerPoint)":["F5 inicia do primeiro slide; Shift+F5 do slide atual; Esc encerra.","Modos: Normal, Classificação de Slides, Anotações, Modo de Exibição de Leitura; Slide Mestre padroniza o layout.","Transição (entre slides) × Animação (objetos dentro do slide).","Ctrl+M novo slide (Office em inglês e português). Impress (LibreOffice) = equivalente livre."],
+"Planilhas eletrônicas (Excel)":["Toda fórmula começa com =. Operadores: ^ depois * / depois + −; & concatena.","SOMA, MÉDIA, MÁXIMO, MÍNIMO; CONT.NÚM (números), CONT.VALORES (não vazias), CONTAR.VAZIO; CONT.SE e SOMASE com critério.","SE(teste;verdadeiro;falso) · PROCV(valor;matriz;coluna;0) · E/OU.","Referências: A1 relativa; $A$1 absoluta; $A1 fixa a coluna; A$1 fixa a linha. F4 alterna (Excel).","Erros: #DIV/0!, #N/D (não encontrado), #REF! (referência inválida), #NOME? (função errada), #VALOR! (tipo errado)."],
+"Processador de textos (Word)":["Atalhos no Word em português: Ctrl+N negrito, Ctrl+I itálico, Ctrl+S sublinhado, Ctrl+B salvar, Ctrl+O novo, Ctrl+A abrir, Ctrl+P imprimir.","Ctrl+T selecionar tudo · Ctrl+L localizar · Ctrl+U substituir · Ctrl+K hiperlink · F7 ortografia · Ctrl+Enter quebra de página.","Alinhamento: Ctrl+Q esquerda, Ctrl+E centralizar, Ctrl+G direita, Ctrl+J justificar.","Guias: Página Inicial, Inserir, Design, Layout, Referências (sumário, notas), Correspondências (mala direta), Revisão (controlar alterações), Exibir."],
+"Windows 10+: arquivos, pastas, programas e configurações":["Win+E Explorador · Win+D área de trabalho · Win+L bloquear · Win+R Executar · Win+I Configurações · Alt+Tab alterna janelas.","Ctrl+Shift+Esc Gerenciador de Tarefas · Win+V histórico da área de transferência · Win+Shift+S captura de tela.","F2 renomear · Delete manda para a Lixeira · Shift+Delete exclui definitivamente · Ctrl+Shift+N nova pasta.","Arrastar entre unidades diferentes copia; na mesma unidade, move (Ctrl força cópia; Shift força mover)."],
+"Segurança da informação: senhas, autenticação, engenharia social, phishing":["Princípios: confidencialidade, integridade, disponibilidade (+ autenticidade, não repúdio).","Autenticação: algo que você sabe (senha), tem (token/celular) ou é (biometria); 2FA combina dois fatores.","Engenharia social explora a confiança humana; phishing = mensagem falsa que “pesca” dados; pharming = redireciona por DNS falso.","Senha forte: longa, única por serviço, com gerenciador de senhas."],
+"Ameaças: vírus, worms, malware, ransomware":["Vírus: se anexa a arquivos e precisa ser executado.","Worm: se propaga sozinho pela rede, explorando vulnerabilidades.","Trojan: parece legítimo e abre portas. Backdoor: garante retorno do invasor. Rootkit: esconde a invasão.","Ransomware: criptografa os dados e pede resgate. Spyware/keylogger: espionam. Bot/botnet: rede de máquinas “zumbis”."],
+"Antivírus, firewall, atualizações e backup":["Antivírus detecta e remove malware; firewall filtra o tráfego de rede (não é antivírus).","Atualizações corrigem vulnerabilidades — mantenha sistema e programas em dia.","Backup completo (tudo), incremental (desde o último backup de qualquer tipo), diferencial (desde o último completo).","Regra 3-2-1: 3 cópias, 2 mídias, 1 fora do local."],
+"Correio eletrônico (Outlook) e colaboração online":["Para (principal), Cc (cópia visível), Cco (cópia oculta).","“Responder a todos” não inclui quem estava em Cco.","SMTP envia; POP3 baixa; IMAP sincroniza.","Colaboração: OneDrive/SharePoint/Teams, Google Drive — edição simultânea, histórico de versões, compartilhamento por link."],
+"Internet, intranet e navegadores":["Internet: rede pública mundial. Intranet: rede privada da organização com tecnologias da internet. Extranet: intranet aberta a parceiros.","HTTPS = HTTP com criptografia (cadeado). URL = endereço do recurso. DNS traduz nomes em IP.","Navegação anônima não guarda histórico local, mas não esconde você do site nem da rede.","Cookies guardam preferências e sessões; cache guarda cópias para carregar mais rápido."],
+"Computação em nuvem":["SaaS: software pronto via navegador (Gmail, Microsoft 365). PaaS: plataforma de desenvolvimento. IaaS: infraestrutura (servidores virtuais).","Nuvem pública, privada e híbrida.","Vantagens: acesso de qualquer lugar, escalabilidade, colaboração. Risco: depende de conexão e da segurança do provedor."],
+"Redes de computadores: noções":["LAN (local), MAN (metropolitana), WAN (longa distância).","Roteador interliga redes; switch conecta dispositivos na mesma rede local; access point = Wi-Fi.","Endereço IP identifica a máquina; DNS resolve nomes; DHCP distribui IPs automaticamente."],
+"Ferramentas de busca e compartilhamento":["Aspas: frase exata · - exclui um termo · site: restringe o domínio · filetype: tipo de arquivo · OR alterna termos.","Compartilhe por link com permissão adequada (leitor, comentarista, editor)."],
+"Conceitos básicos de informática e TI":["Hardware (físico) × software (programas). Sistema operacional gerencia os recursos.","Memória RAM (volátil) × armazenamento (HD/SSD). ROM guarda o firmware.","1 byte = 8 bits; KB, MB, GB e TB crescem de 1.024 em 1.024.","Periféricos: entrada (teclado, mouse), saída (monitor, impressora), entrada e saída (pendrive, multifuncional)."],
+"CF/88: princípios e disposições gerais (Título III, Cap. VII)":["LIMPE: Legalidade, Impessoalidade, Moralidade, Publicidade, Eficiência (EC 19/98).","Concurso: validade de até 2 anos, prorrogável uma vez por igual período. Durante o prazo, o aprovado tem prioridade sobre novos concursados.","Funções de confiança: só para servidores efetivos. Cargos em comissão: livre nomeação, para direção, chefia e assessoramento.","Acumulação: 2 cargos de professor; professor + técnico/científico; 2 de saúde.","Art. 37, §6º: responsabilidade objetiva do Estado + regresso. Art. 41: estabilidade após 3 anos + avaliação especial de desempenho; perda por sentença transitada, PAD ou avaliação periódica."],
+"Organização da Adm. Pública Federal: direta, indireta, descentralização":["Direta: União e seus órgãos (ministérios). Indireta: autarquias, fundações públicas, empresas públicas e sociedades de economia mista.","Autarquia (direito público, criada por lei — ex.: UFBA). Fundação pública. Empresa pública (capital 100% público). SEM (S.A., maioria votante do Estado).","Desconcentração: órgãos na mesma pessoa (hierarquia). Descentralização: outra pessoa (outorga por lei ou delegação por contrato/ato).","Órgão não tem personalidade jurídica; entidade tem."],
+"Agentes públicos, atendimento ao cidadão, inclusão e acessibilidade":["Espécies: agentes políticos, servidores (estatutários), empregados públicos (CLT), temporários (art. 37, IX), particulares em colaboração, militares.","Atendimento: urbanidade, presunção de boa-fé, igualdade, acessibilidade, linguagem simples (Lei 13.460/2017).","Inclusão: atendimento prioritário (idosos, PcD, gestantes, lactantes, pessoas com crianças de colo, obesos, TEA); Lei 13.146/2015 (Estatuto da Pessoa com Deficiência)."],
+"Lei 8.112/1990: provimento, vacância, direitos e vantagens":["Provimento (art. 8º): nomeação, promoção, readaptação, reversão, aproveitamento, reintegração, recondução.","Posse em 30 dias da publicação; exercício em 15 dias da posse. Estágio probatório: a lei fala em 24 meses, mas prevalecem os 3 anos da CF (o edital fixa 36 meses).","Vacância (art. 33): exoneração, demissão, promoção, readaptação, aposentadoria, posse em outro cargo inacumulável, falecimento.","Remoção desloca o servidor (mesmo quadro); redistribuição desloca o cargo (outro órgão do mesmo Poder).","Férias: 30 dias, acumuláveis até 2 períodos. Licença para capacitação: até 3 meses a cada 5 anos. Licença para tratar de interesses particulares: até 3 anos, sem remuneração."],
+"Lei 8.112/1990: deveres, proibições, regime disciplinar e PAD":["Penalidades (art. 127): advertência, suspensão (até 90 dias), demissão, cassação de aposentadoria/disponibilidade, destituição de cargo em comissão e de função comissionada.","Prescrição: 5 anos (demissão, cassação, destituição), 2 anos (suspensão), 180 dias (advertência).","Cancelamento dos registros: advertência após 3 anos; suspensão após 5 anos sem nova infração.","Sindicância: 30 + 30 dias → arquivamento, advertência, suspensão até 30 dias ou PAD. PAD: 60 + 60 dias; comissão de 3 servidores estáveis; afastamento preventivo até 60 + 60 dias.","Abandono: mais de 30 dias consecutivos. Inassiduidade: 60 dias interpolados em 12 meses."],
+"Ética: Decreto 1.171/1994 e Decreto 6.029/2007":["Decreto 1.171: regras deontológicas, deveres e vedações do servidor; cada órgão tem Comissão de Ética.","Pena aplicável pela Comissão de Ética: CENSURA (com parecer fundamentado).","Decreto 6.029/2007: Sistema de Gestão da Ética do Executivo Federal, coordenado pela Comissão de Ética Pública (CEP): 7 membros designados pelo Presidente, mandato de 3 anos, uma recondução.","Vedações típicas: usar o cargo para obter favores, receber presentes, retardar trabalho, prejudicar a imagem do serviço."],
+"Improbidade administrativa (Lei 8.429/1992 e alterações)":["Após a Lei 14.230/2021, só há improbidade DOLOSA.","Art. 9º enriquecimento ilícito · Art. 10 lesão ao erário · Art. 11 violação de princípios (rol taxativo).","Sanções: perda de bens, ressarcimento, perda da função, suspensão de direitos políticos (até 14 anos no art. 9º; até 12 anos no art. 10), multa e proibição de contratar. No art. 11 não há suspensão de direitos políticos.","Prescrição: 8 anos. Ação: Ministério Público e a pessoa jurídica interessada (legitimidade reconhecida pelo STF em 2022)."],
+"Processo administrativo federal (Lei 9.784/1999)":["Princípios (art. 2º): legalidade, finalidade, motivação, razoabilidade, proporcionalidade, moralidade, ampla defesa, contraditório, segurança jurídica, interesse público, eficiência.","Prazos: atos em 5 dias (até o dobro, justificado); intimação com 3 dias úteis de antecedência; decisão em 30 dias após a instrução; recurso em 10 dias; reconsideração em 5 dias; julgamento do recurso em 30 dias.","Recurso: no máximo 3 instâncias. Indelegáveis: atos normativos, decisão de recursos, competência exclusiva.","Impedimento (interesse direto, participou como perito/testemunha, litígio) → dever de comunicar. Suspeição (amizade íntima/inimizade notória) → pode ser arguida.","Anulação (ilegalidade) e revogação (conveniência); decadência de 5 anos para anular atos favoráveis, salvo má-fé."],
+"LAI (Lei 12.527/2011 e Decreto 7.724/2012)":["Transparência ativa (divulga sem pedido) × passiva (responde a pedidos).","Qualquer interessado pode pedir; é vedado exigir o motivo do pedido.","Resposta: imediata ou em até 20 dias + 10. Recurso: 10 dias; a autoridade superior decide em 5.","Sigilo: ultrassecreta 25, secreta 15, reservada 5 anos. Informação pessoal: até 100 anos.","Serviço gratuito, salvo custo de reprodução."],
+"LGPD (Lei 13.709/2018) na Administração Pública":["Dado pessoal: identifica ou torna identificável uma pessoa. Sensível: origem racial, religião, opinião política, sindicato, saúde, vida sexual, genético, biométrico.","Agentes: controlador (decide), operador (executa), encarregado (canal com titulares e ANPD).","Princípios: finalidade, adequação, necessidade, livre acesso, qualidade, transparência, segurança, prevenção, não discriminação, responsabilização.","Poder público: trata dados para executar políticas públicas e competências legais (art. 23), sem depender de consentimento.","LAI + LGPD: transparência é a regra; dados pessoais têm acesso restrito."],
+"Licitações e contratos (Lei 14.133/2021)":["Modalidades: pregão, concorrência, concurso, leilão, diálogo competitivo (tomada de preços e convite foram extintos).","Critérios de julgamento: menor preço, maior desconto, melhor técnica ou conteúdo artístico, técnica e preço, maior lance, maior retorno econômico.","Fases: preparatória → divulgação do edital → propostas e lances → julgamento → habilitação → recursal → homologação (em regra, julga-se antes de habilitar).","Contratação direta: dispensa (art. 75, competição possível) e inexigibilidade (art. 74, competição inviável).","Agente de contratação conduz a licitação; fiscal e gestor acompanham o contrato."],
+"Governança, integridade, controle e Decreto 9.830/2019":["Governança: liderança, estratégia e controle para avaliar, direcionar e monitorar a gestão.","Gestão de riscos e controles internos; programas de integridade; accountability (prestar contas e ser responsabilizado).","Decreto 9.830/2019 (regulamenta a LINDB): decisões motivadas, considerando consequências práticas; o agente responde por dolo ou erro grosseiro."],
+"Governo Digital (Lei 14.129/2021)":["Busca desburocratizar, modernizar e simplificar a relação do poder público com a sociedade, com serviços digitais.","Plataforma única de acesso (gov.br), interoperabilidade e compartilhamento de dados entre órgãos, dados abertos, laboratórios de inovação.","Atendimento digital sem excluir quem não tem acesso: deve haver canais presenciais."],
+"Gestão documental e arquivística (Lei 8.159/1991)":["Gestão de documentos (art. 3º): produção, tramitação, uso, avaliação e arquivamento nas fases corrente e intermediária.","Arquivos públicos (art. 8º): correntes, intermediários e permanentes.","Permanentes: inalienáveis e imprescritíveis. Eliminação só com autorização da instituição arquivística pública.","CONARQ define a política nacional de arquivos."],
+"Recursos materiais e patrimoniais":["Almoxarifado guarda materiais de consumo; patrimônio controla bens permanentes (tombamento, plaqueta, termo de responsabilidade).","Inventário: conferência física periódica (anual, de transferência, de extinção, eventual).","Desfazimento de bens inservíveis: ocioso, recuperável, antieconômico, irrecuperável."],
+"Sustentabilidade e A3P":["A3P (Ministério do Meio Ambiente) — 6 eixos: uso racional dos recursos, gestão de resíduos, qualidade de vida no trabalho, sensibilização e capacitação, contratações sustentáveis e construções sustentáveis.","Política dos 5 Rs: repensar, recusar, reduzir, reutilizar, reciclar.","A Lei 14.133 tem como princípio o desenvolvimento nacional sustentável."],
+"Atendimento ao público e Carta de Serviços ao Usuário":["Lei 13.460/2017: direitos do usuário — urbanidade, respeito, presunção de boa-fé, igualdade, acessibilidade, linguagem simples.","Carta de Serviços (art. 7º): informa os serviços, requisitos, prazos, formas de acesso e padrões de qualidade.","Ouvidoria: decisão em 30 dias + 30. Manifestações: reclamação, denúncia, sugestão, elogio, solicitação de providências."],
+"Segurança da informação no ambiente de trabalho":["Bloqueie a tela ao sair (Win+L); mesa limpa; não compartilhe senhas.","E-mail institucional só para o serviço; desconfie de links e anexos inesperados.","Dados pessoais só para a finalidade do serviço (LGPD); comunique incidentes."],
+"Redação oficial e comunicação administrativa":["Veja o resumo de Redação Oficial em Língua Portuguesa — o conteúdo é o mesmo do Manual 3ª ed.","Documentos do dia a dia: ofício, despacho, e-mail institucional, ata, relatório, requerimento, certidão."],
+"IFES: estrutura, autonomia universitária e colegiados":["CF art. 207: autonomia didático-científica, administrativa e de gestão financeira e patrimonial; indissociabilidade entre ensino, pesquisa e extensão.","Universidades federais são autarquias (ou fundações) vinculadas ao MEC.","Reitor: nomeado pelo Presidente da República a partir de lista tríplice, mandato de 4 anos com uma recondução.","Gestão colegiada: conselhos superiores deliberativos; unidades (institutos, faculdades, escolas) com congregação e departamentos/colegiados de curso."],
+"Estatuto e Regimento Geral da UFBA":["Leia o texto oficial: ufba.br/arquivos/estatuto-e-regimento-geral — a banca cobra literalidade.","Foque em: finalidades e princípios da UFBA; órgãos da Administração Superior (conselhos e Reitoria) e suas competências; Unidades Universitárias; comunidade universitária (direitos e deveres); regime disciplinar.","Monte uma tabela “órgão → composição → competências”: é o formato que mais cai."],
+"Estado, governo e Administração Pública: conceitos e princípios":["Elementos do Estado: povo, território e governo soberano.","Poderes: Legislativo, Executivo e Judiciário, com funções típicas e atípicas.","Governo = função política (decide). Administração = função executiva (executa).","Sentido subjetivo/orgânico = quem exerce (órgãos, entidades, agentes). Sentido objetivo/material = a atividade (serviço público, polícia administrativa, fomento, intervenção)."],
+"Organização administrativa da União: direta e indireta":["Veja também o resumo da Adm. Pública (direta, indireta, descentralização).","Autarquia e fundação pública de direito público: criadas por lei. Empresa pública, SEM e fundação de direito privado: lei autoriza a criação.","Controle da indireta: supervisão ministerial/tutela (vinculação, não hierarquia)."],
+"Agentes públicos: espécies, cargo, emprego e função":["Cargo: regime estatutário (servidor). Emprego: regime celetista (empregado público). Função: atribuições sem cargo (temporários ou funções de confiança).","Particulares em colaboração: mesários, jurados, delegados (concessionários, tabeliães).","Deveres: agir, eficiência, probidade, prestar contas. Prerrogativas decorrem do cargo."],
+"Poderes administrativos e uso/abuso do poder":["Hierárquico: ordenar, fiscalizar, delegar, avocar, rever atos. Disciplinar: punir servidores e quem tem vínculo especial.","Regulamentar: decretos para fiel execução das leis (CF 84, IV); decreto autônomo (84, VI).","Polícia: limita direitos em favor do interesse público; atributos: discricionariedade, autoexecutoriedade, coercibilidade; ciclo: ordem, consentimento, fiscalização e sanção.","Abuso: excesso de poder (fora da competência) ou desvio de finalidade (fim diverso). A omissão também pode ser abuso."],
+"Serviços públicos e delegação (concessão, permissão, autorização)":["Princípios (Lei 8.987, art. 6º): regularidade, continuidade, eficiência, segurança, atualidade, generalidade, cortesia, modicidade das tarifas.","Uti universi (gerais, indivisíveis) × uti singuli (individuais, mensuráveis).","Concessão: contrato, licitação (concorrência ou diálogo competitivo), PJ ou consórcio, prazo determinado.","Permissão: contrato de adesão, precária, PF ou PJ. Autorização: ato unilateral, discricionário e precário."],
+"Controle da Administração e responsabilidade civil do Estado":["Quanto ao órgão: administrativo (autotutela — Súmula 473), legislativo (Congresso + TCU) e judicial (só legalidade).","Quanto ao momento: prévio, concomitante e posterior. Interno × externo.","Responsabilidade objetiva (risco administrativo): basta ato, dano e nexo causal. Excludentes: culpa exclusiva da vítima, caso fortuito/força maior, fato de terceiro. Culpa concorrente atenua.","Regresso contra o agente com dolo ou culpa; a vítima aciona o Estado, não o agente (STF, Tema 940).","Omissão genérica: em regra, responsabilidade subjetiva (falha do serviço)."],
+"Licitações (Lei 14.133/2021): modalidades, dispensa, inexigibilidade, fases":["Pregão: bens e serviços comuns (menor preço ou maior desconto). Concorrência: bens e serviços especiais e obras/serviços de engenharia. Concurso: trabalho técnico, científico ou artístico (prêmio). Leilão: alienação (maior lance). Diálogo competitivo: soluções inovadoras.","Inexigibilidade (art. 74): fornecedor exclusivo, artista consagrado, serviço técnico de notória especialização, credenciamento, imóvel singular.","Dispensa (art. 75): baixo valor, emergência, licitação deserta/fracassada, entre outros. Licitação dispensada (art. 76): alienações.","Revogação por interesse público (fato superveniente); anulação por ilegalidade — sempre com contraditório."],
+"Organizações formais: estrutura e departamentalização":["Organização formal: planejada, oficial, com organograma. Informal: relações espontâneas.","Estruturas: linear (unidade de comando), funcional (especialistas, multiplicidade de comando), linha-staff (assessoria), divisional, matricial (dupla subordinação), em rede.","Departamentalização: funcional, por produto/serviço, geográfica, por clientela, por processo, por projeto, matricial.","Conceitos: cadeia de comando, amplitude de controle, centralização × descentralização, formalização."],
+"Processo organizacional: planejamento, direção, comunicação, controle":["Planejamento: estratégico (longo prazo, cúpula), tático (médio, gerências), operacional (curto, execução). Missão, visão, valores; SWOT.","Direção: liderança, motivação, comunicação, tomada de decisão (programadas × não programadas).","Controle: estabelecer padrões → medir → comparar → corrigir.","Mintzberg: papéis interpessoais, informacionais e decisórios. Katz: habilidades técnicas, humanas e conceituais."],
+"Gestão de processos":["Processo: atividades que transformam entradas em saídas de valor para um cliente.","Mapeamento: fluxograma, BPMN, SIPOC (fornecedores, entradas, processo, saídas, clientes).","Melhoria: redesenho, eliminação de etapas sem valor, indicadores, PDCA."],
+"Gestão da qualidade":["PDCA: Plan, Do, Check, Act. 5S: utilização, ordenação, limpeza, saúde, autodisciplina.","Ferramentas: Ishikawa (6M), Pareto (80/20), histograma, folha de verificação, fluxograma, diagrama de dispersão, carta de controle, 5W2H.","Deming, Juran (trilogia: planejamento, controle, melhoria), Crosby (zero defeito); ISO 9001."],
+"Gestão de projetos":["Projeto: esforço temporário, resultado único. Operação: contínua.","Grupos de processos (PMBOK): iniciação, planejamento, execução, monitoramento e controle, encerramento.","Restrição tripla: escopo, prazo e custo. EAP decompõe o escopo; Gantt mostra o cronograma; caminho crítico = sequência sem folga.","Stakeholders: todos os afetados pelo projeto."],
+"Gestão de pessoas: conceitos e função do órgão de GP":["Chiavenato — 6 processos: agregar (recrutar/selecionar), aplicar (desenho de cargos, avaliação), recompensar, desenvolver (treinamento), manter (higiene, qualidade de vida), monitorar (sistemas de informação).","Recrutamento interno (rápido, barato, motiva) × externo (novas ideias).","Treinamento: diagnóstico (levantamento de necessidades) → programação → execução → avaliação.","Avaliação de desempenho: 360°, escalas gráficas, incidentes críticos, autoavaliação."],
+"Comportamento organizacional: motivação e liderança":["Maslow: fisiológicas → segurança → sociais → estima → autorrealização.","Herzberg: fatores higiênicos (evitam insatisfação) × motivacionais (geram satisfação). McGregor: Teoria X (pessimista) × Y (otimista).","McClelland: realização, afiliação, poder. Vroom: expectativa × instrumentalidade × valência.","Liderança: autocrática, democrática, liberal; situacional (determinar, persuadir, compartilhar, delegar); transacional × transformacional."],
+"Recursos materiais: classificação e gestão de estoques":["Atributos da classificação: abrangência, flexibilidade, praticidade.","ABC (valor) e XYZ (criticidade; Z = imprescindível).","Ponto de pedido = consumo médio × tempo de reposição + estoque de segurança. Giro = consumo ÷ estoque médio.","Métodos de saída: PEPS/FIFO (primeiro que entra, primeiro que sai), UEPS, custo médio."],
+"Compras, modalidades e cadastro de fornecedores":["Ciclo de compras: requisição → pesquisa de preços → seleção do fornecedor → pedido/contrato → acompanhamento → recebimento.","Na Administração Pública, as compras seguem a Lei 14.133 (modalidades e contratação direta). Sistema de Registro de Preços para compras frequentes.","Cadastro de fornecedores: habilitação jurídica, fiscal, econômica e técnica. No governo federal: SICAF."],
+"Recebimento, conferência e armazenagem":["Etapas: entrada (conferência documental: nota × pedido) → conferência quantitativa → conferência qualitativa → regularização (aceite ou devolução).","Armazenagem: itens de maior giro perto da saída; pesados embaixo; perigosos e inflamáveis isolados; FIFO; boa identificação e endereçamento.","Técnicas: carga unitária, paletes, estantes, empilhamento."],
+"Arquivologia: conceitos e gestão de documentos":["Arquivo: documentos produzidos e recebidos por uma entidade no exercício de suas funções.","Princípios: proveniência (respeito aos fundos), organicidade, unicidade, indivisibilidade, cumulatividade.","Gestão de documentos: produção, tramitação, uso, avaliação e arquivamento.","Diagnóstico: levantamento da situação dos arquivos (volume, estado, espaço, organização) antes de intervir."],
+"Arquivos correntes, intermediários e permanentes":["Corrente: uso frequente, junto ao setor produtor. Intermediário: uso eventual, aguardando destinação. Permanente: valor histórico, probatório e informativo; guarda definitiva.","Transferência (corrente → intermediário); recolhimento (→ permanente).","Métodos de arquivamento: alfabético, geográfico (diretos); numéricos (simples, cronológico, dígito-terminal) e por assunto (indiretos, precisam de índice)."],
+"Protocolo e avaliação de documentos":["Protocolo: recebimento, classificação, registro, distribuição, controle da tramitação e expedição.","Avaliação: define prazos de guarda e destinação — feita pela Comissão Permanente de Avaliação de Documentos (CPAD).","Tabela de temporalidade: prazos nas fases corrente e intermediária e destinação final (eliminação ou guarda permanente).","Valor primário (administrativo, para o produtor) × secundário (histórico/informativo, para a sociedade)."],
+"Tipologias, suportes, microfilmagem e automação":["Espécie (ata, ofício) × tipo (ata de reunião do Conselho) × gênero (textual, iconográfico, cartográfico, audiovisual, sonoro, micrográfico, digital).","Suporte: papel, filme, meio magnético ou óptico.","Microfilme tem o mesmo valor legal do original (Lei 5.433/1968; Decreto 1.799/1996); documentos de valor permanente não devem ser eliminados após a microfilmagem.","Automação: GED, digitalização, processo eletrônico (SEI). Documento digital (nasce digital) × digitalizado (convertido do papel)."],
+"Preservação, conservação e restauração":["Preservação: política ampla que garante a integridade. Conservação preventiva: controla o ambiente (temperatura e umidade estáveis, luz, poeira, pragas). Restauração: intervenção direta no documento danificado.","Evite clipes metálicos, grampos, fita adesiva e plastificação.","Agentes de deterioração: físicos (luz, calor), químicos (acidez, poluição) e biológicos (fungos, insetos, roedores)."],
+"Atendimento ao público: qualidade e postura":["Qualidades cobradas: comunicabilidade, apresentação, atenção, cortesia, interesse, presteza, eficiência, tolerância, discrição, conduta e objetividade.","Escuta ativa, linguagem clara, não prometer o que não pode cumprir, encaminhar corretamente.","Usuário irritado: calma, empatia, foco na solução, registro da demanda."],
+"Trabalho em equipe, relações interpessoais e comunicação":["Empatia, compreensão mútua, feedback construtivo; comportamento receptivo × defensivo.","Janela de Johari: aberta, cega, oculta, desconhecida.","Comunicação: emissor, mensagem, código, canal, receptor, feedback, ruído. Formal × informal; vertical (descendente/ascendente) e horizontal.","Opinião pública: a imagem do órgão depende da conduta de cada servidor."],
+};
+
+/* ---------- Temas de redação ---------- */
+const TEMAS_REDACAO = [
+ ["Serviço público","A importância da transparência na gestão pública para o fortalecimento da cidadania",["LAI e portais de transparência","controle social e combate à corrupção","linguagem simples como condição de acesso"]],
+ ["Serviço público","Ética e responsabilidade do servidor público no atendimento à população",["Código de Ética (Dec. 1.171/94)","confiança da sociedade nas instituições","impessoalidade versus favorecimento"]],
+ ["Serviço público","Desafios para a melhoria da qualidade dos serviços públicos no Brasil",["eficiência (art. 37 da CF)","capacitação dos servidores","ouvidorias e participação do usuário"]],
+ ["Serviço público","A valorização do servidor público como condição para um Estado eficiente",["concurso e meritocracia","estabilidade como garantia da impessoalidade","carreira e qualificação"]],
+ ["Serviço público","Burocracia: entre a garantia de direitos e o excesso de exigências",["segurança jurídica","simplificação administrativa","Governo Digital (Lei 14.129/21)"]],
+ ["Serviço público","O combate à corrupção e o papel da sociedade civil",["Lei de Improbidade","controle social e imprensa","educação para a cidadania"]],
+ ["Serviço público","Participação social na formulação de políticas públicas",["conselhos e audiências públicas","consultas online","legitimidade democrática"]],
+ ["Educação e universidade","O papel das universidades públicas no desenvolvimento regional",["ensino, pesquisa e extensão (art. 207)","interiorização do ensino superior","inovação e economia local"]],
+ ["Educação e universidade","Desafios da permanência estudantil nas universidades públicas brasileiras",["assistência estudantil (PNAES)","trabalho e estudo","evasão e desigualdade"]],
+ ["Educação e universidade","Políticas de ações afirmativas e a democratização do ensino superior",["Lei de Cotas (12.711/2012)","reparação histórica","diversidade e excelência acadêmica"]],
+ ["Educação e universidade","A importância da ciência e da pesquisa para a sociedade brasileira",["financiamento público","divulgação científica e combate à desinformação","soberania tecnológica"]],
+ ["Educação e universidade","Educação a distância: ampliação de acesso ou precarização do ensino?",["alcance geográfico","exclusão digital","qualidade e evasão"]],
+ ["Educação e universidade","A valorização dos profissionais da educação no Brasil",["remuneração e carreira","formação continuada","reconhecimento social"]],
+ ["Educação e universidade","O analfabetismo funcional como obstáculo à cidadania",["leitura e interpretação","mercado de trabalho","acesso a direitos"]],
+ ["Tecnologia e sociedade","Transformação digital no serviço público: avanços e exclusões",["gov.br e serviços online","exclusão digital de idosos e da população rural","atendimento presencial como garantia"]],
+ ["Tecnologia e sociedade","Inteligência artificial e o futuro do trabalho administrativo",["automação de tarefas repetitivas","requalificação profissional","ética e supervisão humana"]],
+ ["Tecnologia e sociedade","Proteção de dados pessoais em tempos de serviços digitais",["LGPD","vazamentos e golpes","consentimento e transparência"]],
+ ["Tecnologia e sociedade","Desinformação e fake news: ameaças à democracia",["redes sociais e algoritmos","educação midiática","responsabilidade das plataformas"]],
+ ["Tecnologia e sociedade","Os impactos do uso excessivo de telas na saúde mental",["hiperconectividade","juventude e redes sociais","direito à desconexão"]],
+ ["Tecnologia e sociedade","Golpes virtuais e a vulnerabilidade da população",["engenharia social e phishing","idosos como alvo","educação digital"]],
+ ["Trabalho e economia","A informalidade no mercado de trabalho brasileiro",["plataformas digitais (uberização)","ausência de proteção previdenciária","qualificação profissional"]],
+ ["Trabalho e economia","Desafios da inserção dos jovens no mercado de trabalho",["primeiro emprego","educação profissional","nem-nem"]],
+ ["Trabalho e economia","A desigualdade salarial entre homens e mulheres no Brasil",["Lei 14.611/2023 (igualdade salarial)","dupla jornada","representatividade em cargos de chefia"]],
+ ["Trabalho e economia","Saúde mental e qualidade de vida no ambiente de trabalho",["síndrome de burnout","assédio moral","qualidade de vida no trabalho"]],
+ ["Trabalho e economia","O endividamento das famílias brasileiras",["crédito fácil e juros","educação financeira","apostas online"]],
+ ["Meio ambiente","Sustentabilidade na administração pública: do discurso à prática",["A3P","compras sustentáveis","consumo consciente de papel e energia"]],
+ ["Meio ambiente","Os desafios da gestão de resíduos sólidos nas cidades brasileiras",["Política Nacional de Resíduos Sólidos","catadores e reciclagem","lixões"]],
+ ["Meio ambiente","Mudanças climáticas e eventos extremos: como preparar as cidades?",["enchentes e secas","planejamento urbano","populações vulneráveis"]],
+ ["Meio ambiente","A preservação dos recursos hídricos no semiárido baiano",["convivência com o semiárido","cisternas","uso racional da água"]],
+ ["Direitos e diversidade","Acessibilidade e inclusão da pessoa com deficiência no Brasil",["Estatuto da Pessoa com Deficiência","barreiras arquitetônicas e atitudinais","mercado de trabalho"]],
+ ["Direitos e diversidade","O combate ao racismo estrutural na sociedade brasileira",["Salvador como cidade negra","Lei 10.639/2003 (ensino de história afro-brasileira)","ações afirmativas"]],
+ ["Direitos e diversidade","A violência contra a mulher e os desafios para sua superação",["Lei Maria da Penha","rede de proteção","educação e cultura"]],
+ ["Direitos e diversidade","O envelhecimento da população e os desafios para o Brasil",["previdência","cuidado e saúde","inclusão digital dos idosos"]],
+ ["Direitos e diversidade","Intolerância religiosa no Brasil",["liberdade de crença (art. 5º, VI)","religiões de matriz africana","educação para o respeito"]],
+ ["Direitos e diversidade","Assédio moral e sexual no ambiente de trabalho",["impactos na saúde","canais de denúncia","cultura organizacional"]],
+ ["Saúde","A importância do SUS para a garantia do direito à saúde",["universalidade e integralidade","atenção básica","financiamento"]],
+ ["Saúde","Os desafios da saúde mental no Brasil contemporâneo",["ansiedade e depressão","rede de atenção psicossocial (CAPS)","estigma"]],
+ ["Saúde","Vacinação: a queda da cobertura vacinal e seus riscos",["desinformação","retorno de doenças","confiança na ciência"]],
+ ["Bahia e cidadania","Cultura e identidade: o patrimônio cultural baiano como bem público",["patrimônio material e imaterial","turismo e economia","preservação"]],
+ ["Bahia e cidadania","Mobilidade urbana nas grandes cidades brasileiras",["transporte público","tempo de deslocamento e qualidade de vida","planejamento urbano"]],
+ ["Bahia e cidadania","Segurança pública e juventude: caminhos para reduzir a violência",["prevenção e oportunidades","juventude negra","políticas integradas"]],
+ ["Bahia e cidadania","Voluntariado e responsabilidade social",["solidariedade","terceiro setor","extensão universitária"]],
+];
+
+
 /* =========================================================================
    ESTADO (localStorage)
    ========================================================================= */
@@ -450,10 +685,10 @@ const NAV = [
     ["/inicio","Início","⌂"],["/hoje","Hoje","☀"],["/semana","Planejamento semanal","▦"],["/cronograma","Cronograma do edital","🗓"],["/prontidao","Prontidão","◎"],["/desempenho","Desempenho","📈"],["/foco","Modo foco","⏱"],
   ]},
   { s: "Estudar", items: [
-    ["/edital","Edital verticalizado","☰"],["/questoes","Questões","✎"],["/flashcards","Flashcards","❐"],["/redacao","Redação","✍"],
+    ["/edital","Edital verticalizado","☰"],["/conteudo","Conteúdo (resumos)","📖"],["/questoes","Questões","✎"],["/flashcards","Flashcards","❐"],["/redacao","Redação","✍"],
   ]},
   { s: "Praticar", items: [
-    ["/erros","Meus erros","⚠"],["/simulados","Simulados","⏲"],["/nota","Calculadora de nota","∑"],["/sobre","O concurso","ℹ"],
+    ["/erros","Meus erros","⚠"],["/simulados","Simulados","⏲"],["/banca","Análise da banca","🔎"],["/nota","Calculadora de nota","∑"],["/sobre","O concurso","ℹ"],
   ]},
 ];
 const BOTTOM = [["/inicio","Início","⌂"],["/edital","Edital","☰"],["/hoje","Hoje","☀"],["/questoes","Questões","✎"],["/cronograma","Datas","🗓"]];
@@ -542,7 +777,7 @@ ROTAS["/inicio"] = el => {
     </div>
     <div class="grid g2" style="margin-top:14px">
       <div class="card">
-        <div class="row between"><h2>Hoje</h2><a class="btn btn-sm btn-primary" href="#/hoje">Montar agenda</a></div>
+        <div class="row between"><h2>Hoje</h2><a class="btn btn-sm btn-primary" href="#/hoje">Ver agenda</a></div>
         <ul class="list">
           <li><span>⏱</span><span style="flex:1">Tempo estudado</span><b>${minHoje} / ${S.horasDia*60} min</b></li>
           <li><span>✎</span><span style="flex:1">Questões respondidas</span><b>${respHoje}</b></li>
@@ -567,22 +802,6 @@ ROTAS["/inicio"] = el => {
   </div>`;
 };
 
-ROTAS["/hoje"] = el => {
-  el.innerHTML = `<div class="container">
-    ${header("Minha Preparação · Hoje","Quanto tempo você tem hoje?","Monto a sequência de maior impacto: revisões vencidas, tópicos com maior peso na nota que ainda não foram estudados, e questões da área mais fraca.")}
-    <div class="card">
-      <div class="field"><label for="h">Horas disponíveis hoje</label>
-      <div class="row"><input type="range" id="h" min="0.5" max="8" step="0.5" value="${S.horasDia}" style="flex:1"><output id="ho" style="width:44px;font-weight:700">${S.horasDia}h</output></div></div>
-      <div class="btn-row"><button class="btn btn-primary" id="gerar">Gerar agenda do dia</button><button class="btn btn-secondary" id="ruim">😩 Dia ruim — só 20 min</button></div>
-    </div>
-    <div id="plano" style="margin-top:14px"></div></div>`;
-  const r = el.querySelector("#h"), o = el.querySelector("#ho");
-  r.oninput = () => o.textContent = r.value+"h";
-  const gerar = min => { el.querySelector("#plano").innerHTML = renderPlano(gerarPlano(min)); };
-  el.querySelector("#gerar").onclick = () => { S.horasDia = Number(r.value); salvar(); gerar(S.horasDia*60); };
-  el.querySelector("#ruim").onclick = () => gerar(20);
-  gerar(S.horasDia*60);
-};
 function prioridadeTopicos(){
   const lista = [];
   for (const a of AREAS){
@@ -596,54 +815,187 @@ function prioridadeTopicos(){
   }
   return lista.sort((x,y)=>y.score-x.score);
 }
-function gerarPlano(min){
-  const itens = []; let resto = min;
-  const ev = errosVencidos().length, fv = flashVencidos().length;
-  const tetoRev = Math.round(min*0.35);
-  if (fv){ const m = Math.min(tetoRev, Math.max(5, Math.ceil(fv*0.75))); itens.push({min:m, tit:`Revisar ${fv} flashcards vencidos`, link:"#/flashcards", tipo:"Revisão"}); resto -= m; }
-  if (ev && resto > 10){ const m = Math.min(Math.max(5, tetoRev - (itens[0]?.min||0)), ev*3); if (m>0){ itens.push({min:m, tit:`Refazer ${ev} questões erradas`, link:"#/erros", tipo:"Revisão"}); resto -= m; } }
+
+/* =========================================================================
+   PLANO DE ESTUDOS DIVERSIFICADO
+   Cada dia de estudo tem 2 blocos de áreas DIFERENTES (Específicos quase
+   todo dia, alternando com LP / AP / Informática) + uma atividade fixa do
+   dia da semana. As 3 últimas semanas são de reta final (revisão e simulados).
+   ========================================================================= */
+const CURTO = { lp: "Português", inf: "Informática", ap: "Adm. Pública", ce: "Específicos" };
+const DIAS_SEM = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
+const DIAS_SEM_LONGO = ["Domingo","Segunda","Terça","Quarta","Quinta","Sexta","Sábado"];
+const ATIV_DIA = {
+  1: { t: "Lei seca: Lei 8.112/1990 (20 min)", l: "#/conteudo?a=ap" },
+  2: { t: "Flashcards + Meus erros (20 min)", l: "#/flashcards" },
+  3: { t: "Redação da semana (60 min)", l: "#/redacao" },
+  4: { t: "Lei seca: 9.784, LAI e LGPD (20 min)", l: "#/conteudo?a=ap" },
+  5: { t: "20 questões mistas das 4 áreas", l: "#/questoes" },
+  6: { t: "Mini simulado + correção dos erros", l: "#/simulados" },
+  0: { t: "Revisão leve: erros e flashcards da semana", l: "#/erros" },
+};
+const PESO_ROD = { ce: 1.5, ap: 1.1, lp: 1.1, inf: 0.8 };
+function diasAtivos(){
+  const n = S.diasSemana;
+  return new Set(n >= 7 ? [0,1,2,3,4,5,6] : n === 6 ? [1,2,3,4,5,6] : n === 5 ? [1,2,3,4,5] : n === 4 ? [1,2,4,6] : n === 3 ? [1,3,5] : n === 2 ? [2,6] : [6]);
+}
+function temaDaSemana(data){
+  const idx = Math.floor(diasEntre("2026-09-28", data) / 7);
+  return TEMAS_REDACAO[((idx % TEMAS_REDACAO.length) + TEMAS_REDACAO.length) % TEMAS_REDACAO.length];
+}
+function gerarPlanoEstudos(){
+  const ativos = diasAtivos();
+  const inicioReta = addDias(S.dataProva, -21);
   const prio = prioridadeTopicos();
-  let i = 0;
-  while (resto >= 15 && i < prio.length){
-    const p = prio[i++];
-    const bloco = Math.min(resto, p.t.estudado ? 30 : 50);
-    if (bloco < 15) break;
-    const teoria = Math.round(bloco*0.6), quest = bloco - teoria;
-    itens.push({min:teoria, tit:`${p.t.estudado?"Revisar":"Estudar"}: ${p.t.nome}`, sub:AREA[p.area].nome + (p.taxa!=null?` · acerto atual ${pct(p.taxa)}`:""), tipo:"Teoria", link:"#/edital"});
-    itens.push({min:quest, tit:`Questões: ${p.t.nome}`, sub:`~${Math.max(3,Math.round(quest/2.5))} questões (QConcursos / banco do app)`, tipo:"Questões", link:`#/questoes?a=${p.area}`});
-    resto -= bloco;
+  const fila = Object.fromEntries(AREAS.map(a => [a.id, prio.filter(p => p.area === a.id && !p.t.estudado)]));
+  const fracos = Object.fromEntries(AREAS.map(a => [a.id, prio.filter(p => p.area === a.id && p.t.estudado)]));
+  // Hoje fica "congelado" para não mudar enquanto você marca tópicos ao longo do dia
+  const cache = S.planoHoje && S.planoHoje.data === hoje() ? S.planoHoje : null;
+  if (cache) for (const b of cache.blocos) if (fila[b.area]) fila[b.area] = fila[b.area].filter(p => !b.topicos.includes(p.t.nome));
+
+  // Quantos blocos de conteúdo existem até a reta final → tópicos por bloco
+  let blocosDisp = 0;
+  for (let d = hoje(); d < inicioReta; d = addDias(d, 1)) { const w = parseIso(d).getDay(); if (ativos.has(w) && w !== 0) blocosDisp += w === 6 ? 1 : 2; }
+  const pend = AREAS.reduce((s, a) => s + fila[a.id].length, 0);
+  const porBloco = Math.min(3, Math.max(1, Math.ceil(pend / Math.max(1, blocosDisp))));
+
+  // Ritmo proporcional: cada área avança na proporção do que falta nela, para
+  // todas terminarem juntas (Específicos com peso extra) → mistura real de matérias.
+  const quota = Object.fromEntries(AREAS.map(a => [a.id, fila[a.id].length * (a.id === "ce" ? 1.25 : 1)]));
+  const somaQuota = Object.values(quota).reduce((x, y) => x + y, 0) || 1;
+  const feitos = Object.fromEntries(AREAS.map(a => [a.id, 0])); let nBlocosConteudo = 0;
+  const ultimoUso = Object.fromEntries(AREAS.map(a => [a.id, -99])); let diaIdx = 0;
+  const dias = []; let ontem = []; const rodizioRev = { i: 0 };
+  const pegaRevisao = excl => {
+    const ordem = AREAS.map(a => a.id).filter(a => !excl.includes(a));
+    for (let k = 0; k < ordem.length; k++) {
+      const a = ordem[(rodizioRev.i + k) % ordem.length]; const lst = fracos[a];
+      if (lst.length) { rodizioRev.i++; const p = lst.shift(); lst.push(p); return { area: a, topicos: [p.t.nome], tipo: "Revisão" }; }
+    }
+    return null;
+  };
+  for (let d = hoje(); d <= S.dataProva; d = addDias(d, 1)) {
+    const w = parseIso(d).getDay();
+    if (d === S.dataProva) { dias.push({ data: d, w, fase: "prova", blocos: [] }); break; }
+    if (d === addDias(S.dataProva, -1)) { dias.push({ data: d, w, fase: "vespera", blocos: [] }); continue; }
+    if (!ativos.has(w)) { dias.push({ data: d, w, fase: "folga", blocos: [] }); continue; }
+    const reta = d >= inicioReta;
+    let blocos = [];
+    if (d === hoje() && cache) blocos = cache.blocos;
+    else if (w === 0) blocos = [];
+    else {
+      const nBlocos = w === 6 ? 1 : 2; const usadas = [];
+      for (let k = 0; k < nBlocos; k++) {
+        if (!reta) {
+          const cand = AREAS.map(a => a.id).filter(a => fila[a].length && !usadas.includes(a))
+            .map(a => ({ a, s: (quota[a] / somaQuota) * (nBlocosConteudo + 1) - feitos[a] + 0.12 * Math.min(4, diaIdx - ultimoUso[a]) }))
+            .sort((x, y) => y.s - x.s);
+          if (cand.length) {
+            const a = cand[0].a; usadas.push(a); nBlocosConteudo++; feitos[a]++; ultimoUso[a] = diaIdx;
+            const tps = fila[a].splice(0, porBloco);
+            tps.forEach(p => fracos[a].push(p)); // entra na fila de revisão da reta final
+            blocos.push({ area: a, topicos: tps.map(p => p.t.nome), tipo: "Teoria + questões" }); continue;
+          }
+        }
+        const r = pegaRevisao(usadas); if (r) { usadas.push(r.area); blocos.push(r); }
+      }
+    }
+    if (d === hoje() && !cache) { S.planoHoje = { data: d, blocos }; salvar(); }
+    ontem = blocos.map(b => b.area); diaIdx++;
+    dias.push({ data: d, w, fase: reta ? "reta" : "conteudo", blocos });
   }
-  if (resto >= 5) itens.push({min:resto, tit:"Redação ou leitura de lei seca", sub:"Alterne: 1 redação por semana (20–30 linhas, dissertativo)", tipo:"Extra", link:"#/redacao"});
+  return { dias, porBloco, pend };
+}
+function atividadeDoDia(dia){
+  if (dia.fase === "prova") return { t: "PROVA — chegue cedo, documento com foto e caneta azul/preta transparente", l: "#/cronograma" };
+  if (dia.fase === "vespera") return { t: "Véspera: revisão leve dos flashcards, separar documentos, dormir cedo", l: "#/flashcards" };
+  if (dia.fase === "reta" && (dia.w === 6 || dia.w === 3)) return { t: "Simulado COMPLETO cronometrado (objetiva + redação em 4h)", l: "#/simulados" };
+  const a = ATIV_DIA[dia.w];
+  if (dia.w === 3) return { t: `Redação: “${temaDaSemana(dia.data)[1]}”`, l: "#/redacao?tema=" + encodeURIComponent(temaDaSemana(dia.data)[1]) };
+  return a;
+}
+
+ROTAS["/hoje"] = el => {
+  const { dias } = gerarPlanoEstudos();
+  const dia = dias[0];
+  el.innerHTML = `<div class="container">
+    ${header("Minha Preparação · Hoje", `${DIAS_SEM_LONGO[dia.w]}, ${fmtData(dia.data,{day:"2-digit",month:"long"})}`, "A agenda segue o plano semanal (matérias alternadas) e encaixa antes as revisões vencidas. Ajuste o tempo que você tem hoje.")}
+    <div class="card">
+      <div class="field"><label for="h">Horas disponíveis hoje</label>
+      <div class="row"><input type="range" id="h" min="0.5" max="8" step="0.5" value="${S.horasDia}" style="flex:1"><output id="ho" style="width:44px;font-weight:700">${S.horasDia}h</output></div></div>
+      <div class="btn-row"><button class="btn btn-primary" id="gerar">Atualizar agenda</button><button class="btn btn-secondary" id="ruim">😩 Dia ruim — só 20 min</button><a class="btn btn-ghost" href="#/semana">Ver a semana →</a></div>
+    </div>
+    <div id="plano" style="margin-top:14px"></div></div>`;
+  const r = el.querySelector("#h"), o = el.querySelector("#ho");
+  r.oninput = () => o.textContent = r.value + "h";
+  const gerar = min => { el.querySelector("#plano").innerHTML = renderPlano(montarAgenda(dia, min)); };
+  el.querySelector("#gerar").onclick = () => { S.horasDia = Number(r.value); salvar(); gerar(S.horasDia * 60); };
+  el.querySelector("#ruim").onclick = () => gerar(20);
+  gerar(S.horasDia * 60);
+};
+function montarAgenda(dia, min){
+  const itens = []; let resto = min;
+  if (dia.fase === "prova" || dia.fase === "vespera") { const a = atividadeDoDia(dia); return [{ min, tit: a.t, tipo: dia.fase === "prova" ? "Dia da prova" : "Véspera", link: a.l }]; }
+  const ev = errosVencidos().length, fv = flashVencidos().length; const teto = Math.round(min * 0.25);
+  if (fv && resto >= 10) { const m = Math.min(teto, Math.max(5, Math.ceil(fv * 0.6))); itens.push({ min: m, tit: `Revisar ${fv} flashcards vencidos`, link: "#/flashcards", tipo: "Revisão espaçada" }); resto -= m; }
+  if (ev && resto >= 15) { const m = Math.max(5, Math.min(teto, ev * 3)); itens.push({ min: m, tit: `Refazer ${ev} questões erradas`, link: "#/erros", tipo: "Revisão espaçada" }); resto -= m; }
+  if (min <= 20) return itens.length ? itens : [{ min, tit: "Flashcards de lei seca", tipo: "Mínimo do dia", link: "#/flashcards" }];
+  const extra = dia.fase === "folga" ? null : atividadeDoDia(dia);
+  const minExtra = extra ? Math.min(resto * 0.35, /Redação|Simulado/.test(extra.t) ? 60 : 20) : 0;
+  const blocos = dia.blocos.length ? dia.blocos : [];
+  const porBloco = blocos.length ? Math.floor((resto - minExtra) / blocos.length) : 0;
+  for (const b of blocos) {
+    if (porBloco < 15) break;
+    const teoria = Math.round(porBloco * 0.55), quest = porBloco - teoria;
+    const nomes = b.topicos.join(" · ");
+    itens.push({ min: teoria, tit: `${b.tipo === "Revisão" ? "Revisar" : "Estudar"}: ${nomes}`, sub: AREA[b.area].nome, tipo: `Teoria · ${AREA[b.area].nome}`, link: `#/resumo?a=${b.area}&t=${encodeURIComponent(b.topicos[0])}`, cor: AREA[b.area].cor });
+    itens.push({ min: quest, tit: `Questões: ${nomes}`, sub: `~${Math.max(4, Math.round(quest / 2.5))} questões (app + QConcursos filtrando AOCP/Avalia)`, tipo: "Questões", link: `#/questoes?a=${b.area}`, cor: AREA[b.area].cor });
+    resto -= porBloco;
+  }
+  if (extra && resto >= 5) itens.push({ min: Math.round(resto), tit: extra.t, tipo: "Atividade do dia", link: extra.l });
+  if (dia.fase === "folga" && !itens.length) itens.push({ min, tit: "Dia de folga no plano — descanse. Se quiser, faça só os flashcards.", tipo: "Folga", link: "#/flashcards" });
   return itens;
 }
 function renderPlano(itens){
-  const total = itens.reduce((s,i)=>s+i.min,0);
+  const total = itens.reduce((s, i) => s + i.min, 0);
   return `<div class="card"><div class="row between"><h2>Agenda de hoje</h2><span class="pill">${total} min</span></div>
-    ${itens.map(i=>`<div class="plan-item"><div class="min">${i.min} min</div><div style="flex:1"><div class="small muted">${i.tipo}</div><div style="font-weight:600">${esc(i.tit)}</div>${i.sub?`<div class="small muted">${esc(i.sub)}</div>`:""}</div><a class="btn btn-sm btn-ghost" href="${i.link}">Abrir →</a></div>`).join("")}
+    ${itens.map(i => `<div class="plan-item"><div class="min">${i.min} min</div><div style="flex:1"><div class="small muted">${i.cor ? `<span class="area-dot" style="background:${i.cor};margin-right:6px"></span>` : ""}${esc(i.tipo)}</div><div style="font-weight:600">${esc(i.tit)}</div>${i.sub ? `<div class="small muted">${esc(i.sub)}</div>` : ""}</div><a class="btn btn-sm btn-ghost" href="${i.link}">Abrir →</a></div>`).join("")}
     <div class="btn-row"><a class="btn btn-primary" href="#/foco">Iniciar modo foco</a></div></div>`;
 }
 
 ROTAS["/semana"] = el => {
-  const d = diasParaProva(); const semanas = Math.max(1, Math.ceil(d/7));
-  const semRevisao = Math.min(3, Math.max(0, semanas-1));
-  const semConteudo = Math.max(1, semanas - semRevisao);
-  const pend = prioridadeTopicos().filter(p=>!p.t.estudado);
-  const porSemana = Math.ceil(pend.length / semConteudo);
-  const blocos = [];
-  for (let s=0; s<semConteudo && s*porSemana<pend.length; s++) blocos.push(pend.slice(s*porSemana,(s+1)*porSemana));
-  const inicioSemana = i => addDias(hoje(), i*7);
+  const { dias, porBloco, pend } = gerarPlanoEstudos();
+  // agrupa por semana (segunda a domingo)
+  const semanas = [];
+  for (const d of dias) {
+    const seg = addDias(d.data, -((d.w + 6) % 7));
+    let s = semanas.find(x => x.seg === seg); if (!s) { s = { seg, dias: [] }; semanas.push(s); }
+    s.dias.push(d);
+  }
+  const chip = b => `<div class="blk" style="border-left:3px solid ${AREA[b.area].cor}"><div class="small" style="font-weight:600;color:${AREA[b.area].cor}">${CURTO[b.area]}${b.tipo === "Revisão" ? " · revisão" : ""}</div><div class="small">${b.topicos.map(esc).join("<br>")}</div></div>`;
+  const cardDia = d => {
+    const a = d.fase === "folga" ? null : atividadeDoDia(d);
+    const isHoje = d.data === hoje();
+    return `<div class="daycard${isHoje ? " today" : ""}${d.fase === "prova" ? " prova" : ""}">
+      <div class="row between"><b>${DIAS_SEM[d.w]} ${fmtData(d.data)}</b>${isHoje ? '<span class="pill">hoje</span>' : d.fase === "reta" ? '<span class="pill pill-warn">reta final</span>' : ""}</div>
+      ${d.fase === "folga" ? '<div class="small muted" style="margin-top:6px">Folga</div>' : d.blocos.map(chip).join("")}
+      ${a ? `<a class="small act" href="${a.l}">★ ${esc(a.t)}</a>` : ""}</div>`;
+  };
+  const resumoAreas = s => { const c = {}; s.dias.forEach(d => d.blocos.forEach(b => c[b.area] = (c[b.area] || 0) + 1)); return AREAS.filter(a => c[a.id]).map(a => `<span class="row small" style="display:inline-flex;gap:4px;margin-right:10px"><span class="area-dot" style="background:${a.cor}"></span>${CURTO[a.id]} ×${c[a.id]}</span>`).join(""); };
   el.innerHTML = `<div class="container">
-    ${header("Minha Preparação · Planejamento","Plano semana a semana","Distribui os tópicos ainda não estudados até a prova, do maior impacto na nota para o menor, reservando as últimas semanas para revisão e simulados.")}
-    <div class="grid g3"><div class="stat"><div class="v">${semanas}</div><div class="l">semanas até a prova</div></div>
-      <div class="stat"><div class="v">${pend.length}</div><div class="l">tópicos pendentes</div></div>
-      <div class="stat"><div class="v">${porSemana||0}</div><div class="l">tópicos por semana</div></div></div>
-    ${blocos.map((b,i)=>`<div class="card" style="margin-top:14px"><div class="row between"><h2>Semana ${i+1}</h2><span class="muted small">${fmtData(inicioSemana(i))} – ${fmtData(addDias(inicioSemana(i),6))}</span></div>
-      <ul class="list">${b.map(p=>`<li><span class="area-dot" style="background:${AREA[p.area].cor}"></span><span style="flex:1">${esc(p.t.nome)}</span><span class="small muted">${AREA[p.area].nome}</span></li>`).join("")}</ul></div>`).join("")}
-    ${semRevisao?`<div class="card" style="margin-top:14px;border-color:var(--accent-soft-border);background:var(--accent-soft)"><h2>Últimas ${semRevisao} semanas — reta final</h2>
-      <ul class="small" style="margin:0;padding-left:18px"><li>1 simulado completo por semana (60 questões + redação em 4h)</li><li>Revisar Meus Erros e flashcards todo dia</li><li>Lei seca: 8.112, 9.784, 11.091, art. 37–41 CF</li><li>2 redações corrigidas por semana</li></ul></div>`:""}
-    ${!blocos.length?`<div class="empty"><h2>Todos os tópicos marcados como estudados ✓</h2><p>Hora de focar em questões, erros e simulados.</p></div>`:""}
+    ${header("Minha Preparação · Planejamento", "Plano semana a semana", "Matérias diversificadas: todo dia de estudo tem duas áreas diferentes (Conhecimentos Específicos, que valem 60 pts, aparecem quase diariamente), alternando com Português, Administração Pública e Informática. Cada dia tem uma atividade fixa (lei seca, redação, simulado…). As 3 últimas semanas são de revisão dos pontos fracos e simulados completos.")}
+    <div class="grid g4"><div class="stat"><div class="v">${semanas.length}</div><div class="l">semanas até a prova</div></div>
+      <div class="stat"><div class="v">${pend}</div><div class="l">tópicos ainda não estudados</div></div>
+      <div class="stat"><div class="v">${porBloco}</div><div class="l">tópico(s) por bloco para fechar o edital</div></div>
+      <div class="stat"><div class="v">${S.diasSemana}</div><div class="l">dias de estudo/semana <a href="#/config" class="small">alterar</a></div></div></div>
+    <div class="card" style="margin-top:14px"><h2>Rotina fixa da semana</h2><div class="grid g4 small">${[1,2,3,4,5,6,0].map(w => `<div><b>${DIAS_SEM_LONGO[w]}</b><br><span class="muted">${w === 3 ? "Redação do tema da semana" : ATIV_DIA[w].t}</span></div>`).join("")}</div></div>
+    ${semanas.map((s, i) => `<details class="disc" ${i < 2 ? "open" : ""}><summary><div style="flex:1"><div style="font-weight:700">Semana ${i + 1} · ${fmtData(s.seg)} a ${fmtData(addDias(s.seg, 6))}</div>
+      <div class="small muted">Redação: ${esc(temaDaSemana(s.dias[0].data)[1])}</div><div style="margin-top:4px">${resumoAreas(s)}</div></div></summary>
+      <div class="body"><div class="weekgrid">${s.dias.map(cardDia).join("")}</div></div></details>`).join("")}
+    <p class="small muted">O plano se recalcula conforme você marca tópicos no <a href="#/edital">Edital verticalizado</a>. A agenda de hoje fica fixa até amanhã.</p>
   </div>`;
 };
+
 
 ROTAS["/cronograma"] = el => {
   const lista = [...DATAS].sort((a,b)=>a.ini.localeCompare(b.ini)||a.fim.localeCompare(b.fim));
@@ -743,7 +1095,7 @@ ROTAS["/edital"] = el => {
       <div style="width:120px"><div class="small muted" style="text-align:right">${s.estudados}/${s.total}</div><div class="bar"><i style="width:${s.total?s.estudados/s.total*100:0}%;background:${a.cor}"></i></div></div></summary>
       <div class="body"><ul class="list">${S.topicos[a.id].map((t,i)=>{const ts=statsTopico(a.id,t.nome);return `<li class="topic">
         <input type="checkbox" class="chk" id="t-${t.id}" data-a="${a.id}" data-i="${i}" ${t.estudado?"checked":""}>
-        <label for="t-${t.id}">${esc(t.nome)}<br><span class="small muted">${t.revisoes?`${t.revisoes} revisão(ões) · última ${fmtData(t.ultima)}`:"sem revisões"}${ts.n?` · ${pct(ts.taxa)} em ${ts.n}q`:""}</span></label>
+        <label for="t-${t.id}">${esc(t.nome)}${RESUMOS[t.nome]?` <a class="small" href="#/resumo?a=${a.id}&t=${encodeURIComponent(t.nome)}" onclick="event.stopPropagation()">📖 resumo</a>`:""}<br><span class="small muted">${t.revisoes?`${t.revisoes} revisão(ões) · última ${fmtData(t.ultima)}`:"sem revisões"}${ts.n?` · ${pct(ts.taxa)} em ${ts.n}q`:""}</span></label>
         <button class="btn btn-sm btn-ghost" data-rev="${a.id}:${i}" title="Registrar revisão">↻ revisei</button>
         <button class="btn btn-sm btn-ghost" data-del="${a.id}:${i}" title="Remover tópico" aria-label="Remover">✕</button></li>`}).join("")}</ul>
         <div class="row" style="margin-top:10px"><input type="text" placeholder="Adicionar tópico do Anexo II…" data-add="${a.id}"><button class="btn btn-secondary btn-sm" data-addbtn="${a.id}">Adicionar</button></div></div></details>`}).join("")}
@@ -759,6 +1111,7 @@ ROTAS["/edital"] = el => {
 function renderQuestao(q, onResp, opts={}){
   const wrap = document.createElement("div"); wrap.className = "card";
   wrap.innerHTML = `<div class="row between small"><span>${areaTag(q.a)}</span><span class="muted">${esc(q.t||"")}</span></div>
+    ${q.txt?`<details class="texto" ${opts.semFeedback?"":"open"}><summary>Texto-base</summary><div class="small">${esc(q.txt)}</div></details>`:""}
     <div class="q-enun">${esc(q.e)}</div>
     <div>${q.o.map((alt,i)=>`<button class="alt" data-i="${i}"><span class="letra">${"ABCDE"[i]}</span><span>${esc(alt)}</span></button>`).join("")}</div><div class="fb"></div>`;
   wrap.querySelectorAll(".alt").forEach(b => b.onclick = () => {
@@ -875,33 +1228,156 @@ ROTAS["/flashcards"] = el => {
   config();
 };
 
+/* ---------- Conteúdo / resumos ---------- */
+ROTAS["/conteudo"] = el => {
+  const params = new URLSearchParams(location.hash.split("?")[1] || "");
+  const filtro = params.get("a") || "todas";
+  const lista = AREAS.filter(a => filtro === "todas" || a.id === filtro);
+  el.innerHTML = `<div class="container">
+    ${header("Estudar · Conteúdo", "Resumos por tópico", "Pontos-chave de cada tópico do Anexo II, com o que a AOCP/Avalia mais cobra. É material de revisão: para lei seca, leia também o texto oficial.")}
+    <div class="row" style="flex-wrap:wrap;gap:8px;margin-bottom:14px"><a class="btn btn-sm ${filtro === "todas" ? "btn-primary" : "btn-secondary"}" href="#/conteudo">Todas</a>${AREAS.map(a => `<a class="btn btn-sm ${filtro === a.id ? "btn-primary" : "btn-secondary"}" href="#/conteudo?a=${a.id}">${a.nome}</a>`).join("")}</div>
+    ${lista.map(a => `<h3>${areaTag(a.id)}</h3><div class="card"><ul class="list">${S.topicos[a.id].map(t => { const r = RESUMOS[t.nome]; const nq = todasQuestoes().filter(q => q.t === t.nome).length;
+      return `<li><span style="flex:1">${r ? `<a href="#/resumo?a=${a.id}&t=${encodeURIComponent(t.nome)}">${esc(t.nome)}</a>` : `<span class="muted">${esc(t.nome)}</span>`}</span><span class="small muted">${nq ? nq + " questões" : ""}</span>${t.estudado ? '<span class="pill pill-ok">estudado</span>' : ""}</li>`; }).join("")}</ul></div>`).join("")}
+  </div>`;
+};
+ROTAS["/resumo"] = el => {
+  const params = new URLSearchParams(location.hash.split("?")[1] || "");
+  const a = params.get("a"), nome = params.get("t");
+  const r = RESUMOS[nome]; const topico = (S.topicos[a] || []).find(t => t.nome === nome);
+  const qs = todasQuestoes().filter(q => q.t === nome); const st = statsTopico(a, nome);
+  el.innerHTML = `<div class="container" style="max-width:780px">
+    <a class="small" href="#/conteudo?a=${a}">← Conteúdo</a>
+    ${header(AREA[a] ? AREA[a].nome : "Resumo", esc(nome || ""), "")}
+    ${r ? `<div class="card"><ul class="resumo">${r.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>` : `<div class="card empty"><p>Ainda sem resumo para este tópico.</p></div>`}
+    <div class="grid g3" style="margin-top:14px"><div class="stat"><div class="v">${qs.length}</div><div class="l">questões no app</div></div><div class="stat"><div class="v">${pct(st.taxa)}</div><div class="l">seu acerto (${st.n}q)</div></div><div class="stat"><div class="v">${topico && topico.revisoes || 0}</div><div class="l">revisões registradas</div></div></div>
+    <div class="btn-row">${topico ? `<button class="btn btn-primary" id="rv">✓ Marcar como estudado / revisado</button>` : ""}<a class="btn btn-secondary" href="#/questoes?a=${a}">Fazer questões de ${AREA[a] ? AREA[a].nome : ""}</a></div>
+    <p class="small muted" id="rvmsg"></p></div>`;
+  const b = el.querySelector("#rv");
+  if (b) b.onclick = () => { topico.estudado = true; topico.revisoes++; topico.ultima = hoje(); salvar(); el.querySelector("#rvmsg").textContent = "✓ Registrado."; };
+};
+
+/* ---------- Análise da banca ---------- */
+ROTAS["/banca"] = el => {
+  const barra = (l, v, max, cor) => `<div class="row" style="margin-bottom:6px"><span class="small" style="width:210px">${l}</span><div class="bar" style="flex:1"><i style="width:${v / max * 100}%;background:${cor}"></i></div><span class="small muted" style="width:60px;text-align:right">${v}</span></div>`;
+  el.innerHTML = `<div class="container">
+    ${header("Praticar · Banca", "Análise da banca: Instituto Avalia", "O que esperar da prova e como treinar. Baseado no perfil publicado da banca e na leitura de uma prova real de Assistente em Administração da AOCP (IF-MA 2023) — a Avalia nasceu de uma cisão da AOCP e herdou banco de questões e padrão de elaboração.")}
+    <div class="grid g4"><div class="stat"><div class="v">AOCP</div><div class="l">origem: herdou equipe, banco de questões e padrão</div></div><div class="stat"><div class="v">A–E</div><div class="l">5 alternativas, 1 correta</div></div><div class="stat"><div class="v">0</div><div class="l">desconto por erro: nunca deixe em branco</div></div><div class="stat"><div class="v">~4,9 mil</div><div class="l">questões da banca no TEC Concursos</div></div></div>
+
+    <div class="card" style="margin-top:14px"><h2>Perfil geral</h2><ul class="resumo">
+      <li><b>Literal e direta.</b> Enunciados curtos, sem “enigmas”. Cobra a teoria e a lei <i>como estão escritas</i>.</li>
+      <li><b>Pegadinha clássica:</b> copia o texto da lei e troca <b>uma palavra, um prazo ou uma expressão</b> (ex.: 10 → 15 dias; “poderá” → “deverá”; “consecutivos” → “interpolados”).</li>
+      <li><b>“INCORRETA”, “NÃO” e “EXCETO”</b> em caixa alta aparecem com frequência. Sublinhe o comando antes de ler as alternativas.</li>
+      <li><b>Nível:</b> fácil a moderado. O desafio real é o <b>tempo e a concentração</b>: 60 questões + redação em 4 horas.</li>
+      <li><b>Distratores fracos:</b> muitas vezes 2 alternativas são absurdas (ex.: “o princípio de que o comércio precisa ser bom para todos”). Elimine primeiro.</li></ul></div>
+
+    <h3>Disciplina por disciplina (o que a prova da AOCP para Assistente em Administração mostrou)</h3>
+    <div class="grid g2">
+      <div class="card"><h2>${areaTag("lp")}</h2><ul class="resumo small">
+        <li><b>Um único texto</b> (crônica/reportagem) sustenta praticamente todas as questões. Gramática <b>contextualizada</b>, não interpretação profunda.</li>
+        <li>Temas vistos: colocação pronominal (ênclise × próclise no trecho), relação sintático-semântica entre orações (adição, tempo, oposição), regência em reescrita (onde × aonde), formação de palavras (sufixos, derivação), modo de organização do texto (narrativo, argumentativo…), preposições substituíveis, vírgula “opcional ou não”, referente de pronome.</li>
+        <li>No edital da UFBA, <b>Redação Oficial</b> está dentro de Português: pronomes de tratamento, fechos, padrão ofício.</li></ul></div>
+      <div class="card"><h2>${areaTag("inf")}</h2><ul class="resumo small">
+        <li><b>Memorização operacional:</b> atalhos com versão e idioma especificados (“Word 2013 em português — Substituir”), relacionar colunas de atalhos do LibreOffice Calc (F2, Ctrl+H, Ctrl+X, Ctrl+V).</li>
+        <li><b>Conversão de unidades</b> binárias (MB → KB × 1.024).</li>
+        <li>Recursos específicos de navegador (ex.: acessibilidade do Chrome) e <b>tipos de malware</b> (worm, bot, backdoor, spyware, keylogger).</li>
+        <li>Estude os atalhos do Office em <b>português</b> e do LibreOffice: a banca cita a versão.</li></ul></div>
+      <div class="card"><h2>${areaTag("ap")}</h2><ul class="resumo small">
+        <li><b>Uma questão por lei</b>, quase sempre literal: CF, 8.112, Decreto 1.171 (com “INCORRETA”), LAI, LGPD, 14.133, 8.429.</li>
+        <li>Pede prazos, competências, penalidades, exceções e classificações — exatamente onde a banca troca uma palavra.</li>
+        <li>O Anexo II da UFBA tem 20 itens em AP (inclui Estatuto da UFBA, A3P, Governo Digital, Decreto 9.830). Espere 12 questões espalhadas: <b>largura &gt; profundidade</b>.</li></ul></div>
+      <div class="card"><h2>${areaTag("ce")}</h2><ul class="resumo small">
+        <li><b>Situação-problema:</b> “Como responsável pelos materiais do IFMA, você…”, “Ao elaborar um plano de classificação…”. Na UFBA, espere “Como servidor da UFBA, você…”.</li>
+        <li><b>Conceitos de manual</b> (Chiavenato, Mintzberg, Simon): papéis do gerente, decisões programadas × não programadas, desenho de cargos, giro de estoque, gestão de documentos (produção, tramitação, uso, avaliação).</li>
+        <li>No edital da UFBA, os Específicos têm <b>Direito Administrativo</b> (Estado, poderes, serviços públicos, controle, responsabilidade civil, licitações) + noções de Administração, Pessoas, Materiais, Arquivologia e Atendimento.</li>
+        <li>Cada questão vale 2 pontos: <b>uma questão de Específicos = duas de Português</b>.</li></ul></div>
+    </div>
+
+    <div class="card" style="margin-top:14px"><h2>Onde estão os pontos (objetiva = 90)</h2>
+      ${barra("Conhecimentos Específicos", 60, 60, "var(--c-ce)")}${barra("Língua Portuguesa", 12, 60, "var(--c-lp)")}${barra("Administração Pública", 12, 60, "var(--c-ap)")}${barra("Noções de Informática", 6, 60, "var(--c-inf)")}
+      <p class="small muted" style="margin-bottom:0">Mínimo: 45 pts e nenhuma área zerada. Desempate: Específicos → Português → Informática → Redação. Como só as ${EDITAL.redacaoCorrigida.ac} primeiras redações da ampla concorrência são corrigidas (94 vagas no total), o corte real deve ficar bem acima de 45.</p></div>
+
+    <div class="grid g2" style="margin-top:14px">
+      <div class="card"><h2>Estratégia de estudo para a banca</h2><ol class="resumo small">
+        <li><b>Lei seca todo dia</b> (20 min): 8.112, 9.784, LAI, LGPD, 8.429, 14.133, Decreto 1.171, CF arts. 37–41 e 207. Grife prazos e exceções.</li>
+        <li><b>Resolver provas antigas da AOCP para TAE</b> no QConcursos: filtre banca “Instituto AOCP” + cargo “Assistente em Administração” (IF-MA 2023, IF-MS 2025, UFPB 2019, UNIR 2018) e depois “Instituto Avalia” (2025–2026).</li>
+        <li><b>Flashcards de prazos e listas</b> (o app já tem): é o que a banca troca nas alternativas.</li>
+        <li><b>Português pela gramática</b>: colocação, regência, crase, concordância, conectores e reescrita, sempre em cima de um texto.</li>
+        <li><b>Informática decorada</b>: atalhos PT-BR do Word/Excel/Calc, malwares, conversões.</li>
+        <li><b>Simulado de 4h</b> nas últimas 3 semanas, com redação dentro do tempo.</li></ol></div>
+      <div class="card"><h2>Estratégia no dia da prova (4h)</h2><ol class="resumo small">
+        <li><b>0:00–0:10</b> — leia o tema da redação e rascunhe o esquema (tese + 2 argumentos). Deixe a ideia amadurecendo.</li>
+        <li><b>0:10–2:10</b> — objetiva: Específicos primeiro (peso 2), depois Português, AP e Informática. ~2 min por questão; pulou, marque e siga.</li>
+        <li><b>2:10–3:25</b> — redação: rascunho completo e passe a limpo (20–30 linhas, caneta azul/preta).</li>
+        <li><b>3:25–3:50</b> — preencha o gabarito com calma. <b>Não deixe nenhuma em branco</b>: não há desconto por erro.</li>
+        <li><b>3:50–4:00</b> — margem de segurança. Só pode sair com o caderno no fim do tempo.</li></ol></div>
+    </div>
+
+    <div class="card" style="margin-top:14px"><h2>Pegadinhas para treinar o olho</h2><table><thead><tr><th>A banca escreve…</th><th>Mas a lei diz…</th></tr></thead><tbody>
+      <tr><td>recurso administrativo em <b>15</b> dias</td><td>10 dias (Lei 9.784, art. 59)</td></tr>
+      <tr><td>posse em <b>15</b> dias; exercício em <b>30</b></td><td>posse 30, exercício 15 (8.112)</td></tr>
+      <tr><td>abandono: 30 dias <b>interpolados</b></td><td>mais de 30 dias <b>consecutivos</b></td></tr>
+      <tr><td>suspensão de até <b>120</b> dias</td><td>até 90 dias</td></tr>
+      <tr><td>LAI: resposta em 20 dias <b>improrrogáveis</b></td><td>20 + 10 com justificativa</td></tr>
+      <tr><td>Comissão de Ética aplica <b>advertência</b></td><td>censura</td></tr>
+      <tr><td>improbidade <b>culposa</b></td><td>só dolosa (Lei 14.230/2021)</td></tr>
+      <tr><td>concurso válido por 2 anos, prorrogável <b>duas vezes</b></td><td>uma vez, por igual período</td></tr>
+      <tr><td><b>tomada de preços</b> como modalidade</td><td>extinta na Lei 14.133</td></tr></tbody></table></div>
+
+    <p class="small muted" style="margin-top:14px">Fontes: <a href="https://folha.qconcursos.com/n/concursos-instituto-avalia-perfil" target="_blank" rel="noopener">Folha Dirigida — perfil da Avalia</a> · <a href="https://estoupreparado.com.br/noticias/4334-concurso-penal-rn-veja-o-perfil-do-instituto-avalia-em-prova" target="_blank" rel="noopener">Estou Preparado</a> · <a href="https://blog.focanavaga.com.br/instituto-avalia/" target="_blank" rel="noopener">Foca na Vaga</a> · <a href="https://www.tecconcursos.com.br/bancas/instituto-avalia" target="_blank" rel="noopener">TEC Concursos</a> · <a href="https://www.qconcursos.com/questoes-de-concursos/provas/instituto-aocp-2023-if-ma-assistente-em-administracao" target="_blank" rel="noopener">Prova AOCP IF-MA 2023 — Assistente em Administração</a>.</p>
+  </div>`;
+};
+
+/* ---------- Redação ---------- */
 ROTAS["/redacao"] = el => {
   const CRIT = ["Tema, informatividade e argumentação","Norma-padrão da Língua Portuguesa","Coerência e coesão","Tipologia dissertativa, estrutura e vocabulário"];
-  const TEMAS = ["A importância da transparência na gestão pública para o fortalecimento da cidadania","Desafios da permanência estudantil nas universidades públicas brasileiras","Transformação digital no serviço público: avanços e exclusões","Ética e responsabilidade do servidor público no atendimento à população","Inteligência artificial e o futuro do trabalho administrativo","O papel das universidades públicas no desenvolvimento regional","Políticas de ações afirmativas e diversidade no serviço público","Proteção de dados pessoais em tempos de serviços digitais"];
+  const params = new URLSearchParams(location.hash.split("?")[1] || "");
+  const feitos = new Set(S.redacoes.map(r => r.tema));
+  const eixos = [...new Set(TEMAS_REDACAO.map(t => t[0]))];
+  let eixo = "todos";
+  let atual = TEMAS_REDACAO.find(t => t[1] === params.get("tema")) || temaDaSemana(hoje());
   el.innerHTML = `<div class="container">
-    ${header("Estudar · Redação","Prova de redação","Vale 60 pontos (mais que os 30 da parte geral da objetiva). Mínimo 30 pontos. Texto dissertativo-argumentativo de 20 a 30 linhas, a caneta azul ou preta.")}
+    ${header("Estudar · Redação", "Prova de redação", `Vale 60 pontos (mais que os 30 da parte geral da objetiva). Mínimo 30. Dissertativo-argumentativo, 20 a 30 linhas, caneta azul ou preta. ${TEMAS_REDACAO.length} temas em ${eixos.length} eixos — ${feitos.size} já treinados.`)}
     <div class="grid g2">
-      <div class="card"><h2>Critérios (Tabela 13.2)</h2><table><tbody>${CRIT.map(c=>`<tr><td>${c}</td><td class="n">15</td></tr>`).join("")}<tr><td><b>Total</b></td><td class="n"><b>60</b></td></tr></tbody></table></div>
-      <div class="card"><h2>Nota zero / eliminação se…</h2><ul class="small" style="margin:0;padding-left:18px"><li>fugir ao tema ou à tipologia dissertativa</li><li>desestruturação acentuada</li><li>escrever a lápis ou com cor que não seja azul/preta</li><li>deixar em branco, letra ilegível ou espaçamento excessivo</li><li>qualquer identificação (nome, sinais, desenhos)</li><li>fora do limite de 20–30 linhas: perde pontos; o que passar de 30 é desconsiderado</li></ul>
-      <p class="small muted" style="margin-bottom:0">Só é corrigida se você atingir 50% na objetiva e ficar entre os ${EDITAL.redacaoCorrigida.ac} primeiros da ampla concorrência (ou limite da sua cota).</p></div>
+      <div class="card"><h2>Critérios (Tabela 13.2)</h2><table><tbody>${CRIT.map(c => `<tr><td>${c}</td><td class="n">15</td></tr>`).join("")}<tr><td><b>Total</b></td><td class="n"><b>60</b></td></tr></tbody></table>
+        <h3 style="margin:16px 0 6px">Nota zero / eliminação se…</h3><ul class="small" style="margin:0;padding-left:18px"><li>fugir ao tema ou à tipologia dissertativa</li><li>desestruturação acentuada</li><li>escrever a lápis ou com cor diferente de azul/preta</li><li>deixar em branco, letra ilegível ou espaçamento excessivo</li><li>qualquer identificação (nome, sinais, desenhos)</li><li>fora de 20–30 linhas: perde pontos; o que passar de 30 é desconsiderado</li></ul></div>
+      <div class="card"><h2>Estrutura que funciona (25–28 linhas)</h2><ol class="resumo small">
+        <li><b>Introdução (5–6 linhas):</b> contextualize o tema + apresente a <b>tese</b> e anuncie os 2 argumentos.</li>
+        <li><b>Desenvolvimento 1 (7–8 linhas):</b> tópico frasal → explicação → repertório (lei, dado, fato) → fechamento ligado à tese.</li>
+        <li><b>Desenvolvimento 2 (7–8 linhas):</b> mesmo esquema, outro argumento. Abra com um conector (“Além disso”, “Por outro lado”).</li>
+        <li><b>Conclusão (5–6 linhas):</b> retome a tese e proponha um caminho (quem faz o quê, como). Não é obrigatório como no ENEM, mas fecha bem.</li></ol>
+        <p class="small muted" style="margin-bottom:0">Repertório coringa: CF/88 (arts. 5º, 6º, 37, 205, 207), leis do edital (LAI, LGPD, 13.460), a função social da universidade pública, dados oficiais (IBGE, INEP) citados sem inventar números.</p></div>
     </div>
-    <div class="card"><div class="row between" style="flex-wrap:wrap"><h2>Treinar</h2><button class="btn btn-sm btn-secondary" id="sort">🎲 Sortear tema</button></div>
-      <div class="field"><label>Tema</label><input type="text" id="rt" value="${esc(TEMAS[Math.floor(Math.random()*TEMAS.length)])}"></div>
-      <textarea id="rtxt" class="redacao-area" placeholder="Escreva aqui. Conte ~10–12 palavras por linha, como na folha manuscrita."></textarea>
-      <div class="row between small" style="margin-top:8px;flex-wrap:wrap"><span id="rinfo" class="muted"></span><span id="rtime" class="muted"></span></div>
-      <h3 style="margin-top:18px">Autoavaliação (0–15 cada)</h3>
-      <div class="grid g4">${CRIT.map((c,i)=>`<div class="field"><label>${c}</label><input type="number" min="0" max="15" id="rc${i}" value="10"></div>`).join("")}</div>
-      <button class="btn btn-primary" id="rsave">Salvar redação</button></div>
-    <h3>Histórico</h3><div class="card">${S.redacoes.length?`<table><thead><tr><th>Data</th><th>Tema</th><th class="n">Linhas</th><th class="n">Nota</th></tr></thead><tbody>${S.redacoes.slice().reverse().map(r=>`<tr><td>${fmtData(r.data)}</td><td class="small">${esc(r.tema)}</td><td class="n">${r.linhas}</td><td class="n">${r.nota}/60</td></tr>`).join("")}</tbody></table>`:`<p class="muted">Nenhuma redação ainda. Meta sugerida: 1 por semana, 2 na reta final.</p>`}</div></div>`;
+    <div class="card" style="margin-top:14px"><div class="row between" style="flex-wrap:wrap;gap:8px"><h2>Banco de temas</h2>
+      <div class="row" style="gap:8px"><select id="eixo" style="max-width:220px"><option value="todos">Todos os eixos</option>${eixos.map(e => `<option>${e}</option>`).join("")}</select><button class="btn btn-sm btn-secondary" id="sort">🎲 Sortear inédito</button></div></div>
+      <ul class="list" id="temas" style="max-height:320px;overflow:auto;margin-top:8px"></ul></div>
+    <div class="card" id="treino"></div>
+    <h3>Histórico</h3><div class="card">${S.redacoes.length ? `<table><thead><tr><th>Data</th><th>Tema</th><th class="n">Linhas</th><th class="n">Nota</th></tr></thead><tbody>${S.redacoes.slice().reverse().map(r => `<tr><td>${fmtData(r.data)}</td><td class="small">${esc(r.tema)}</td><td class="n">${r.linhas}</td><td class="n">${r.nota}/60</td></tr>`).join("")}</tbody></table>` : `<p class="muted">Nenhuma redação ainda. O plano semanal marca uma por semana (quarta-feira) e duas na reta final.</p>`}</div></div>`;
   const $ = s => el.querySelector(s); const t0 = Date.now();
-  $("#sort").onclick = () => $("#rt").value = TEMAS[Math.floor(Math.random()*TEMAS.length)];
-  const info = () => { const txt = $("#rtxt").value.trim(); const palavras = txt ? txt.split(/\s+/).length : 0; const linhas = Math.round(palavras/11);
-    $("#rinfo").innerHTML = `${palavras} palavras · <b style="color:${linhas<20||linhas>30?"var(--danger)":"var(--success)"}">~${linhas} linhas manuscritas</b> (20–30)`; return linhas; };
-  $("#rtxt").oninput = info; info();
-  const tick = setInterval(()=>{ const m = Math.floor((Date.now()-t0)/60000); $("#rtime").textContent = `⏱ ${m} min (sugestão: até 60 min)`; }, 1000);
+  const pintaTemas = () => {
+    $("#temas").innerHTML = TEMAS_REDACAO.filter(t => eixo === "todos" || t[0] === eixo).map(t => `<li style="cursor:pointer" data-t="${esc(t[1])}"><span class="pill pill-muted" style="flex:none">${esc(t[0])}</span><span style="flex:1${t === atual ? ";font-weight:700;color:var(--accent)" : ""}">${esc(t[1])}</span>${feitos.has(t[1]) ? '<span class="pill pill-ok">feito</span>' : ""}</li>`).join("");
+    $("#temas").querySelectorAll("[data-t]").forEach(li => li.onclick = () => { atual = TEMAS_REDACAO.find(t => t[1] === li.dataset.t); pintaTemas(); pintaTreino(); $("#treino").scrollIntoView({ behavior: "smooth" }); });
+  };
+  const pintaTreino = () => {
+    const rascunho = $("#rtxt") ? $("#rtxt").value : "";
+    $("#treino").innerHTML = `<div class="small muted">${esc(atual[0])}${atual === temaDaSemana(hoje()) ? " · tema da semana" : ""}</div><h2 style="margin-top:4px">${esc(atual[1])}</h2>
+      <div class="small" style="margin-bottom:12px"><b>Caminhos de argumentação:</b> ${atual[2].map(esc).join(" · ")}</div>
+      <textarea id="rtxt" class="redacao-area" placeholder="Escreva aqui. Conte ~10–12 palavras por linha, como na folha manuscrita.">${esc(rascunho)}</textarea>
+      <div class="row between small" style="margin-top:8px;flex-wrap:wrap"><span id="rinfo" class="muted"></span><span id="rtime" class="muted"></span></div>
+      <h3 style="margin-top:18px">Checklist antes de entregar</h3><div class="grid g2 small">${["Tese clara na introdução","Cada parágrafo com um argumento","Repertório (lei, dado ou fato) sem inventar números","Conectores entre parágrafos","Conclusão retoma a tese","Sem “eu acho”, gírias ou 2ª pessoa","Sem identificação na folha","Entre 20 e 30 linhas"].map((c, i) => `<label class="row"><input type="checkbox" class="chk" id="ck${i}">${c}</label>`).join("")}</div>
+      <h3 style="margin-top:18px">Autoavaliação (0–15 cada)</h3>
+      <div class="grid g4">${CRIT.map((c, i) => `<div class="field"><label>${c}</label><input type="number" min="0" max="15" id="rc${i}" value="10"></div>`).join("")}</div>
+      <button class="btn btn-primary" id="rsave">Salvar redação</button>`;
+    $("#rtxt").oninput = info; info();
+    $("#rsave").onclick = () => { const nota = CRIT.reduce((s, _, i) => s + Math.min(15, Math.max(0, Number($("#rc" + i).value) || 0)), 0);
+      S.redacoes.push({ data: hoje(), tema: atual[1], linhas: info(), nota, texto: $("#rtxt").value }); S.sessoes.push({ data: hoje(), min: Math.round((Date.now() - t0) / 60000), a: "red" }); salvar(); location.hash = "#/redacao"; ROTAS["/redacao"](el); };
+  };
+  const info = () => { const txt = $("#rtxt").value.trim(); const palavras = txt ? txt.split(/\s+/).length : 0; const linhas = Math.round(palavras / 11);
+    $("#rinfo").innerHTML = `${palavras} palavras · <b style="color:${linhas < 20 || linhas > 30 ? "var(--danger)" : "var(--success)"}">~${linhas} linhas manuscritas</b> (20–30)`; return linhas; };
+  $("#eixo").onchange = e => { eixo = e.target.value; pintaTemas(); };
+  $("#sort").onclick = () => { const pool = TEMAS_REDACAO.filter(t => (eixo === "todos" || t[0] === eixo) && !feitos.has(t[1])); const src = pool.length ? pool : TEMAS_REDACAO; atual = src[Math.floor(Math.random() * src.length)]; pintaTemas(); pintaTreino(); };
+  pintaTemas(); pintaTreino();
+  const tick = setInterval(() => { const m = Math.floor((Date.now() - t0) / 60000); const e = el.querySelector("#rtime"); if (e) e.textContent = `⏱ ${m} min (sugestão: até 60 min)`; }, 1000);
   limpar = () => clearInterval(tick);
-  $("#rsave").onclick = () => { const nota = CRIT.reduce((s,_,i)=>s+Math.min(15,Math.max(0,Number($("#rc"+i).value)||0)),0);
-    S.redacoes.push({data:hoje(), tema:$("#rt").value, linhas:info(), nota, texto:$("#rtxt").value}); S.sessoes.push({data:hoje(),min:Math.round((Date.now()-t0)/60000),a:"red"}); salvar(); ROTAS["/redacao"](el); };
 };
 
 /* ---------- Simulados ---------- */
