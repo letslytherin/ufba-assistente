@@ -160,6 +160,14 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
 details.texto{background:var(--bg-subtle);border:1px solid var(--border);border-radius:var(--radius-md);padding:10px 14px;margin:8px 0 4px}
 details.texto summary{cursor:pointer;font-weight:600;font-size:.85rem}
 details.texto div{white-space:pre-line;margin-top:8px;line-height:1.7}
+.sheet{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:4px 18px;padding:14px 16px}
+.sheet-row{display:flex;align-items:center;gap:6px;padding:4px 6px;border-radius:8px}
+.sheet-row.ok{background:var(--success-soft)}.sheet-row.bad{background:var(--danger-soft)}.sheet-row.anul{opacity:.55}
+.sheet-row .qn{width:26px;text-align:right;font-weight:700;font-size:.85rem;color:var(--text-2);font-variant-numeric:tabular-nums}
+.bub{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--border-strong);background:var(--surface);color:var(--text-2);font-weight:700;font-size:.8rem;cursor:pointer;padding:0}
+.bub:hover{border-color:var(--accent)}
+.bub.sel{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.bub.gab{box-shadow:0 0 0 2px var(--success)}
 .empty{text-align:center;padding:40px 20px;color:var(--text-2)}
 .empty h2{color:var(--text)}
 .bottom-nav{display:none}
@@ -473,6 +481,20 @@ FC_SEED.push(
  ["lp","Conectores","Concessão: embora, ainda que · Oposição: mas, porém, contudo · Causa: porque, visto que · Conclusão: logo, portanto, por isso · Condição: se, caso."],
 );
 
+
+Q_SEED.push(
+{a:"lp",t:"Regência verbal e nominal",e:"Assinale a alternativa em que o emprego de “onde” ou “aonde” está de acordo com a norma-padrão.",o:["Aonde fica a Pró-Reitoria de Desenvolvimento de Pessoas?","Onde você vai depois do expediente?","Aonde você vai depois do expediente?","Não sei aonde guardei o processo.","A sala aonde trabalho é pequena."],c:2,x:"“Aonde” = a + onde: só com verbos de movimento que pedem a preposição “a” (ir a). “Onde” indica lugar em que algo está (ficar, guardar, trabalhar)."},
+{a:"lp",t:"Morfossintaxe: classes e formação de palavras, termos da oração",e:"A palavra “infelizmente” é formada por",o:["derivação parassintética","derivação prefixal e sufixal","composição por aglutinação","derivação regressiva","derivação imprópria"],c:1,x:"Existem “infeliz” (prefixo in-) e “felizmente” (sufixo -mente): os afixos podem ser retirados um de cada vez → prefixal e sufixal. Na parassintética, os dois entram juntos e obrigatoriamente (ex.: entristecer)."},
+{a:"lp",t:"Coordenação, subordinação, vozes verbais e pronomes relativos",e:"No período “Chegou ao setor, ligou o computador, abriu o sistema e começou os atendimentos.”, as orações mantêm entre si relação de",o:["oposição","causa","adição","condição","finalidade"],c:2,x:"Orações coordenadas (assindéticas e a última sindética com “e”) em sequência de ações: relação de adição. A AOCP cobrou exatamente esse tipo de relação em trecho de crônica."},
+{a:"lp",t:"Redação Oficial (Manual da Presidência, 3ª ed.)",e:"Para que as comunicações oficiais tenham uma única interpretação, o Manual de Redação recomenda o uso de linguagem",o:["conotativa, rica em figuras","denotativa, no sentido literal das palavras","informal, próxima da fala","técnica, com jargões de cada área","híbrida, alternando registros"],c:1,x:"Clareza e precisão exigem linguagem denotativa (sentido próprio), evitando ambiguidade, figuras e jargões."},
+{a:"inf",t:"Planilhas eletrônicas (Excel)",e:"Relacione as teclas de atalho do LibreOffice Calc (instalação em português) às funções e assinale a sequência correta.\n1. Recortar  2. Localizar e substituir  3. Modo de edição da célula\n( ) Ctrl+H   ( ) F2   ( ) Ctrl+X",o:["1 – 2 – 3","2 – 3 – 1","3 – 1 – 2","2 – 1 – 3","3 – 2 – 1"],c:1,x:"No Calc: Ctrl+H = Localizar e substituir; F2 = editar a célula; Ctrl+X = recortar. A AOCP adora questões de “relacione as colunas” com atalhos."},
+{a:"inf",t:"Ameaças: vírus, worms, malware, ransomware",e:"O programa malicioso que permite ao invasor retornar a um equipamento comprometido, por meio da inclusão ou modificação de serviços no sistema, é o",o:["worm","backdoor","adware","keylogger","bot"],c:1,x:"Backdoor = “porta dos fundos” para o retorno do invasor. Keylogger captura teclas; bot integra uma rede de máquinas “zumbis” (botnet)."},
+{a:"ce",t:"Protocolo e avaliação de documentos",e:"O instrumento que organiza os documentos de arquivo segundo as funções e atividades do órgão, atribuindo códigos a cada assunto, é o",o:["tabela de temporalidade","plano (código) de classificação","inventário","listagem de eliminação","termo de recolhimento"],c:1,x:"O plano de classificação agrupa os documentos por função/atividade (com códigos numéricos). A tabela de temporalidade usa esses mesmos códigos para definir prazos e destinação."},
+{a:"ce",t:"Gestão de pessoas: conceitos e função do órgão de GP",e:"Na gestão de cargos, a descrição de cargo focaliza",o:["os requisitos físicos e intelectuais exigidos do ocupante","o conteúdo do cargo: o que o ocupante faz, como faz e por que faz","o salário de mercado para a função","a avaliação de desempenho do ocupante","o plano de carreira da organização"],c:1,x:"Descrição = conteúdo do cargo (tarefas e atribuições). Análise = requisitos que o cargo impõe ao ocupante (instrução, experiência, responsabilidades, condições de trabalho)."},
+{a:"ce",t:"Trabalho em equipe, relações interpessoais e comunicação",e:"Em uma negociação em que o montante a ser dividido é fixo e o ganho de uma parte representa a perda da outra, a abordagem de barganha é",o:["integrativa","distributiva","colaborativa","ganha-ganha","sinérgica"],c:1,x:"Barganha distributiva: recursos fixos, soma zero (ganha-perde). Integrativa: busca soluções que ampliem o ganho de ambos (ganha-ganha). Tema cobrado pela AOCP em 2023."},
+{a:"ce",t:"Processo organizacional: planejamento, direção, comunicação, controle",e:"Segundo Katz, as habilidades que o administrador precisa desenvolver são",o:["interpessoais, informacionais e decisórias","técnicas, humanas e conceituais","planejar, organizar e controlar","estratégicas, táticas e operacionais","formais e informais"],c:1,x:"Katz: técnicas (mais importantes na base), humanas (em todos os níveis) e conceituais (mais importantes na cúpula). Não confunda com os papéis de Mintzberg."},
+);
+
 /* ---------- Resumos por tópico (chave = nome exato do tópico) ---------- */
 const RESUMOS = {
 "Crase":["Regra: preposição “a” + artigo “a(s)” (ou pronome “aquela”, “a qual”).","Obrigatória: locuções adverbiais femininas (às vezes, à noite), prepositivas (à frente de) e conjuntivas (à medida que); hora exata (às 8h); “à moda de” (arroz à grega).","Proibida: antes de masculino, verbo, pronomes pessoais e de tratamento (exceto senhora, senhorita, dona), artigo indefinido, entre palavras repetidas (cara a cara) e com “a” no singular antes de plural (a pessoas).","Facultativa: antes de possessivo feminino no singular (à/a sua sala), de nome próprio feminino e depois de “até”.","Truque: troque por uma palavra masculina — se virar “ao”, há crase."],
@@ -688,7 +710,7 @@ const NAV = [
     ["/edital","Edital verticalizado","☰"],["/conteudo","Conteúdo (resumos)","📖"],["/questoes","Questões","✎"],["/flashcards","Flashcards","❐"],["/redacao","Redação","✍"],
   ]},
   { s: "Praticar", items: [
-    ["/erros","Meus erros","⚠"],["/simulados","Simulados","⏲"],["/banca","Análise da banca","🔎"],["/nota","Calculadora de nota","∑"],["/sobre","O concurso","ℹ"],
+    ["/erros","Meus erros","⚠"],["/simulados","Simulados","⏲"],["/provas","Provas anteriores","📄"],["/banca","Análise da banca","🔎"],["/nota","Calculadora de nota","∑"],["/sobre","O concurso","ℹ"],
   ]},
 ];
 const BOTTOM = [["/inicio","Início","⌂"],["/edital","Edital","☰"],["/hoje","Hoje","☀"],["/questoes","Questões","✎"],["/cronograma","Datas","🗓"]];
@@ -1299,7 +1321,7 @@ ROTAS["/banca"] = el => {
     <div class="grid g2" style="margin-top:14px">
       <div class="card"><h2>Estratégia de estudo para a banca</h2><ol class="resumo small">
         <li><b>Lei seca todo dia</b> (20 min): 8.112, 9.784, LAI, LGPD, 8.429, 14.133, Decreto 1.171, CF arts. 37–41 e 207. Grife prazos e exceções.</li>
-        <li><b>Resolver provas antigas da AOCP para TAE</b> no QConcursos: filtre banca “Instituto AOCP” + cargo “Assistente em Administração” (IF-MA 2023, IF-MS 2025, UFPB 2019, UNIR 2018) e depois “Instituto Avalia” (2025–2026).</li>
+        <li><b>Resolver provas antigas da AOCP para TAE</b> (use a <a href="#/provas">folha de respostas</a> do app) no QConcursos: filtre banca “Instituto AOCP” + cargo “Assistente em Administração” (IF-MA 2023, IF-MS 2025, UFPB 2019, UNIR 2018) e depois “Instituto Avalia” (2025–2026).</li>
         <li><b>Flashcards de prazos e listas</b> (o app já tem): é o que a banca troca nas alternativas.</li>
         <li><b>Português pela gramática</b>: colocação, regência, crase, concordância, conectores e reescrita, sempre em cima de um texto.</li>
         <li><b>Informática decorada</b>: atalhos PT-BR do Word/Excel/Calc, malwares, conversões.</li>
@@ -1493,6 +1515,208 @@ ROTAS["/config"] = el => {
   $("#exp").onclick = () => { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify(S,null,1)],{type:"application/json"})); a.download = `ufba-assistente-backup-${hoje()}.json`; a.click(); };
   $("#imp").onchange = e => { const f = e.target.files[0]; if (!f) return; f.text().then(t => { try { S = Object.assign(estadoInicial(), JSON.parse(t)); salvar(); alert("Backup importado."); rotear(); } catch { alert("Arquivo inválido."); } }); };
   $("#reset").onclick = () => { if (confirm("Apagar todo o progresso? Não dá para desfazer.")){ S = estadoInicial(); salvar(); rotear(); } };
+};
+
+
+/* =========================================================================
+   PROVAS ANTERIORES (AOCP / Avalia) — folha de respostas + importador
+   As questões originais NÃO são copiadas para o app (direitos da banca);
+   você resolve no PDF/QConcursos e usa a folha de respostas aqui.
+   Estrutura: "area:ini-fim" separados por vírgula. rl = Raciocínio Lógico
+   (não cai na UFBA). Deixe vazio se não souber — dá para editar depois.
+   ========================================================================= */
+const PROVAS = [
+  { id: "aocp-ifma-2023", banca: "Instituto AOCP", ano: 2023, orgao: "IF-MA", cargo: "Assistente em Administração", n: 50, tipo: "AE",
+    estrutura: "lp:1-10,rl:11-15,inf:16-20,ap:21-32,ce:33-50",
+    links: [["QConcursos", "https://www.qconcursos.com/questoes-de-concursos/provas/instituto-aocp-2023-if-ma-assistente-em-administracao"], ["PDF da prova", "https://arquivos.qconcursos.com/prova/arquivo_prova/96127/instituto-aocp-2023-if-ma-assistente-em-administracao-prova.pdf"], ["Prova comentada (Gran)", "https://questoes.grancursosonline.com.br/prova/ifma-2023-instituto-aocp-assistente-em-administracao"], ["Gabarito (site da AOCP)", "https://www.institutoaocp.org.br/concursos/636"]],
+    nota: "A prova mais parecida com a da UFBA: mesmo cargo, 5 alternativas. As questões 21–32 (Legislação) equivalem à nossa Administração Pública." },
+  { id: "aocp-ifms-2025", banca: "Instituto AOCP", ano: 2025, orgao: "IF-MS", cargo: "Assistente em Administração", n: 50, tipo: "AE", estrutura: "",
+    links: [["QConcursos", "https://www.qconcursos.com/questoes-de-concursos/provas/instituto-aocp-2025-if-ms-assistente-em-administracao"]],
+    nota: "A mais recente da AOCP para o cargo. Confira na capa da prova a divisão por disciplina e preencha a estrutura." },
+  { id: "aocp-ufpb-2019", banca: "Instituto AOCP", ano: 2019, orgao: "UFPB", cargo: "Assistente em Administração", n: 50, tipo: "AE", estrutura: "",
+    links: [["QConcursos", "https://www.qconcursos.com/questoes-de-concursos/provas/instituto-aocp-2019-ufpb-assistente-em-administracao"]],
+    nota: "Universidade federal e muito Direito Administrativo (16 das 50 questões) — ótimo treino para Específicos e AP." },
+  { id: "aocp-unir-2018", banca: "Instituto AOCP", ano: 2018, orgao: "UNIR", cargo: "Assistente em Administração", n: 85, tipo: "CE", estrutura: "",
+    links: [["QConcursos", "https://www.qconcursos.com/questoes-de-concursos/provas/instituto-aocp-2018-unir-assistente-em-administracao"]],
+    nota: "Formato Certo/Errado — diferente da UFBA, mas bom para treinar a leitura literal da lei." },
+  { id: "aocp-ufpel-2015", banca: "Instituto AOCP", ano: 2015, orgao: "UFPEL", cargo: "Assistente Administrativo", n: 50, tipo: "AE", estrutura: "",
+    links: [["QConcursos", "https://www.qconcursos.com/questoes-de-concursos/provas/instituto-aocp-2015-ufpel-assistente-administrativo"]], nota: "Mais antiga; use para volume de questões." },
+  { id: "aocp-ufpb-2014", banca: "Instituto AOCP", ano: 2014, orgao: "UFPB", cargo: "Assistente Administrativo", n: 50, tipo: "AE", estrutura: "",
+    links: [["QConcursos", "https://www.qconcursos.com/questoes-de-concursos/provas/instituto-aocp-2014-ufpb-assistente-administrativo"]], nota: "Mais antiga; use para volume de questões." },
+  { id: "avalia-feas-2026", banca: "Instituto Avalia", ano: 2026, orgao: "FEAS Curitiba", cargo: "Assistente Administrativo", n: 40, tipo: "AE", estrutura: "",
+    links: [["QConcursos", "https://www.qconcursos.com/questoes-de-concursos/provas/instituto-avalia-2026-feas-de-curitiba-pr-assistente-administrativo"]],
+    nota: "Prova da própria Avalia em 2026 — o retrato mais atual da banca. Confira o nº de questões na capa e ajuste." },
+];
+const AREA_EXTRA = { rl: { id: "rl", nome: "Raciocínio Lógico (não cai na UFBA)", cor: "var(--muted)" } };
+const areaInfo = id => AREA[id] || AREA_EXTRA[id] || { id, nome: "Sem área", cor: "var(--border-strong)" };
+function todasProvas(){ return [...PROVAS, ...(S.provasExtras || [])]; }
+function estadoProva(id){ S.provas = S.provas || {}; return S.provas[id] = S.provas[id] || { resp: {}, gab: "", estrutura: null, tentativas: [] }; }
+function parseEstrutura(str, n){
+  const mapa = {};
+  (str || "").split(",").map(x => x.trim()).filter(Boolean).forEach(parte => {
+    const m = parte.match(/^(\w+)\s*:\s*(\d+)\s*-\s*(\d+)$/); if (!m) return;
+    for (let i = Number(m[2]); i <= Number(m[3]); i++) if (i <= n) mapa[i] = m[1];
+  });
+  return mapa;
+}
+function parseGabarito(txt, n, tipo){
+  const letras = tipo === "CE" ? "CE" : "ABCDE"; const g = {};
+  const t = (txt || "").toUpperCase();
+  const pares = [...t.matchAll(/(\d+)\s*[-.:)=]?\s*([A-E]|X|ANULADA)/g)];
+  if (pares.length >= Math.min(5, n)) pares.forEach(m => { const q = Number(m[1]); if (q >= 1 && q <= n) g[q] = m[2].startsWith("X") || m[2] === "ANULADA" ? "X" : m[2]; });
+  else {
+    const toks = t.split(/[^A-Z]+/).filter(x => /^[A-EX]+$/.test(x));
+    [...toks.join("")].forEach((c, i) => { if (i < n) g[i + 1] = c; });
+  }
+  for (const k in g) if (g[k] !== "X" && !letras.includes(g[k])) delete g[k];
+  return g;
+}
+
+ROTAS["/provas"] = el => {
+  const provas = todasProvas();
+  el.innerHTML = `<div class="container">
+    ${header("Praticar · Provas anteriores", "Provas anteriores da AOCP e da Avalia", "Resolva a prova original (PDF ou QConcursos) com o cronômetro e a folha de respostas daqui. Depois cole o gabarito oficial: o app corrige por área e manda seus erros para o painel de desempenho. As questões originais não são copiadas para o app (são da banca).")}
+    <div class="grid g2">${provas.map(p => { const st = estadoProva(p.id); const ult = st.tentativas[st.tentativas.length - 1];
+      return `<div class="card"><div class="row between"><span class="pill ${p.banca.includes("Avalia") ? "pill-warn" : ""}">${esc(p.banca)} · ${p.ano}</span>${ult ? `<span class="pill pill-ok">${ult.acertos}/${ult.validas} · ${pct(ult.acertos / ult.validas)}</span>` : '<span class="pill pill-muted">não feita</span>'}</div>
+        <h2 style="margin-top:10px">${esc(p.orgao)} — ${esc(p.cargo)}</h2>
+        <p class="small muted" style="margin:0 0 8px">${p.n} questões · ${p.tipo === "CE" ? "Certo/Errado" : "A–E"}${p.estrutura || st.estrutura ? "" : " · estrutura a preencher"}</p>
+        <p class="small" style="margin:0 0 10px">${esc(p.nota || "")}</p>
+        <div class="row small" style="flex-wrap:wrap;gap:10px">${p.links.map(([l, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(l)} ↗</a>`).join("")}</div>
+        <div class="btn-row"><a class="btn btn-primary btn-sm" href="#/prova?id=${encodeURIComponent(p.id)}">Abrir folha de respostas</a></div></div>`; }).join("")}</div>
+    <details class="card" style="margin-top:14px"><summary style="cursor:pointer;font-weight:600">+ Cadastrar outra prova</summary><div style="margin-top:12px">
+      <div class="grid g2"><div class="field"><label>Banca e ano</label><input type="text" id="pb" placeholder="Instituto AOCP 2024"></div><div class="field"><label>Órgão e cargo</label><input type="text" id="po" placeholder="UFXX — Assistente em Administração"></div>
+      <div class="field"><label>Nº de questões</label><input type="number" id="pn" value="50" min="1" max="150"></div><div class="field"><label>Link (QConcursos, PDF…)</label><input type="text" id="pl"></div></div>
+      <div class="field"><label>Estrutura (opcional) — ex.: lp:1-10,inf:11-15,ap:16-30,ce:31-50</label><input type="text" id="pe"></div>
+      <button class="btn btn-primary" id="padd">Cadastrar</button></div></details>
+    <h3>Importar questões copiadas</h3>
+    <div class="card"><p class="small" style="margin-top:0">Copiou questões do QConcursos, do TEC ou de um PDF? Cole abaixo, uma por bloco, separadas por uma linha com <code>---</code>. Elas entram no banco de questões, nos simulados e em Meus erros — e ficam <b>só neste navegador</b> (não vão para o GitHub).</p>
+      <pre class="small" style="background:var(--bg-subtle);padding:10px;border-radius:10px;white-space:pre-wrap;margin:0 0 10px">Área: ce
+Tópico: Poderes administrativos e uso/abuso do poder
+Fonte: AOCP 2023 IF-MA q.40
+Enunciado da questão…
+A) alternativa
+B) alternativa
+C) alternativa
+D) alternativa
+E) alternativa
+Gabarito: C
+Comentário: (opcional)
+---</pre>
+      <p class="small muted">Área: lp, inf, ap ou ce (se faltar, uso a área selecionada abaixo). “Tópico” precisa ser igual a um tópico do edital para contar no mapa de calor — se não bater, a questão entra sem tópico.</p>
+      <div class="row" style="gap:8px;margin-bottom:8px"><label class="small">Área padrão</label><select id="ia" style="max-width:240px">${AREAS.map(a => `<option value="${a.id}">${a.nome}</option>`).join("")}</select></div>
+      <textarea id="itxt" style="min-height:200px" placeholder="Cole aqui…"></textarea>
+      <div class="btn-row"><button class="btn btn-primary" id="iimp">Importar</button><span class="small muted" id="imsg" style="align-self:center"></span></div>
+      <p class="small muted" style="margin-bottom:0">Você tem ${S.qExtras.filter(q => String(q.id).startsWith("i")).length} questões importadas e ${S.qExtras.filter(q => !String(q.id).startsWith("i")).length} criadas à mão. ${S.qExtras.some(q => String(q.id).startsWith("i")) ? '<button class="btn btn-sm btn-ghost" id="idel">Apagar as importadas</button>' : ""}</p></div>
+  </div>`;
+  const $ = s => el.querySelector(s);
+  $("#padd").onclick = () => {
+    const b = $("#pb").value.trim(), o = $("#po").value.trim(); if (!b || !o) return alert("Preencha banca/ano e órgão/cargo.");
+    const [orgao, ...cargo] = o.split(/—|-/);
+    S.provasExtras = S.provasExtras || [];
+    S.provasExtras.push({ id: "u" + Date.now(), banca: b.replace(/\s*\d{4}$/, ""), ano: (b.match(/\d{4}/) || [""])[0], orgao: orgao.trim(), cargo: cargo.join("-").trim() || "—", n: Math.max(1, Math.min(150, Number($("#pn").value) || 50)), tipo: "AE", estrutura: $("#pe").value.trim(), links: $("#pl").value.trim() ? [["Link", $("#pl").value.trim()]] : [], nota: "" });
+    salvar(); ROTAS["/provas"](el);
+  };
+  const idel = $("#idel"); if (idel) idel.onclick = () => { if (confirm("Apagar todas as questões importadas?")) { S.qExtras = S.qExtras.filter(q => !String(q.id).startsWith("i")); salvar(); ROTAS["/provas"](el); } };
+  $("#iimp").onclick = () => {
+    const r = importarQuestoes($("#itxt").value, $("#ia").value);
+    $("#imsg").textContent = `✓ ${r.ok} importada(s)${r.erro ? ` · ${r.erro} bloco(s) ignorado(s) (faltou enunciado, 2+ alternativas ou gabarito)` : ""}`;
+    if (r.ok) $("#itxt").value = "";
+  };
+};
+function importarQuestoes(texto, areaPadrao){
+  const nomesTop = new Set(AREAS.flatMap(a => S.topicos[a.id].map(t => t.nome)));
+  let ok = 0, erro = 0;
+  for (const bloco of texto.split(/\n\s*-{3,}\s*\n?/)) {
+    const linhas = bloco.split("\n").map(l => l.trim()).filter(Boolean); if (!linhas.length) continue;
+    let a = areaPadrao, t = "", fonte = "", gab = null, x = ""; const alts = []; const en = [];
+    for (const l of linhas) {
+      let m;
+      if ((m = l.match(/^[ÁA]rea\s*:\s*(\w+)/i))) { const v = m[1].toLowerCase(); if (AREA[v]) a = v; continue; }
+      if ((m = l.match(/^T[óo]pico\s*:\s*(.+)/i))) { t = m[1].trim(); continue; }
+      if ((m = l.match(/^Fonte\s*:\s*(.+)/i))) { fonte = m[1].trim(); continue; }
+      if ((m = l.match(/^(Gabarito|Resposta)\s*:\s*([A-E])/i))) { gab = "ABCDE".indexOf(m[2].toUpperCase()); continue; }
+      if ((m = l.match(/^Coment[áa]rio\s*:\s*(.*)/i))) { x = m[1]; continue; }
+      if ((m = l.match(/^\(?([A-Ea-e])\s*[).:-]\s*(.+)/)) && ("abcde".indexOf(m[1].toLowerCase()) === alts.length)) { alts.push(m[2].trim()); continue; }
+      if (alts.length) alts[alts.length - 1] += " " + l; else en.push(l);
+    }
+    if (!en.length || alts.length < 2 || gab == null || gab >= alts.length) { erro++; continue; }
+    S.qExtras.push({ id: "i" + Date.now() + "-" + ok, a, t: nomesTop.has(t) ? t : "", e: (fonte ? `[${fonte}] ` : "") + en.join("\n"), o: alts, c: gab, x });
+    ok++;
+  }
+  salvar();
+  return { ok, erro };
+}
+
+ROTAS["/prova"] = el => {
+  const id = new URLSearchParams(location.hash.split("?")[1] || "").get("id");
+  const p = todasProvas().find(x => x.id === id);
+  if (!p) { el.innerHTML = `<div class="container"><div class="empty card"><h2>Prova não encontrada</h2><a href="#/provas">Voltar</a></div></div>`; return; }
+  const st = estadoProva(p.id);
+  const estr = () => st.estrutura != null ? st.estrutura : p.estrutura;
+  const letras = p.tipo === "CE" ? ["C", "E"] : ["A", "B", "C", "D", "E"];
+  let t0 = null, tick = null, corrigido = null;
+  const pinta = () => {
+    const mapa = parseEstrutura(estr(), p.n);
+    const secoes = []; for (let i = 1; i <= p.n; i++) { const a = mapa[i] || "?"; const s = secoes[secoes.length - 1]; if (s && s.a === a) s.qs.push(i); else secoes.push({ a, qs: [i] }); }
+    const g = corrigido ? parseGabarito(st.gab, p.n, p.tipo) : {};
+    const respondidas = Object.keys(st.resp).length;
+    el.innerHTML = `<div class="container" style="max-width:860px">
+      <a class="small" href="#/provas">← Provas anteriores</a>
+      ${header(`${esc(p.banca)} · ${p.ano}`, `${esc(p.orgao)} — ${esc(p.cargo)}`, "Abra a prova ao lado (PDF ou QConcursos), inicie o cronômetro e marque aqui. Tempo de referência da UFBA: 4h para 60 questões + redação (~2,5 min por questão).")}
+      <div class="row small" style="flex-wrap:wrap;gap:12px;margin:-8px 0 14px">${p.links.map(([l, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(l)} ↗</a>`).join("")}</div>
+      <div class="card"><div class="row between" style="flex-wrap:wrap;gap:10px"><div><b id="crono">⏱ 0:00</b> <span class="small muted">· ${respondidas}/${p.n} marcadas · meta ~${Math.round(p.n * 2.5)} min</span></div>
+        <div class="row" style="gap:8px"><button class="btn btn-sm btn-primary" id="start">${tick ? "Pausar" : "Iniciar cronômetro"}</button><button class="btn btn-sm btn-ghost" id="limparResp">Limpar marcações</button></div></div>
+        <details style="margin-top:10px"><summary class="small" style="cursor:pointer">Estrutura por área ${estr() ? "✓" : "(a preencher)"}</summary>
+          <div class="row" style="gap:8px;margin-top:8px"><input type="text" id="estr" value="${esc(estr() || "")}" placeholder="lp:1-10,inf:11-15,ap:16-30,ce:31-50"><button class="btn btn-sm btn-secondary" id="salvaEstr">Salvar</button></div>
+          <p class="small muted" style="margin:6px 0 0">Códigos: lp, inf, ap, ce e rl (raciocínio lógico). Veja a divisão na capa/índice da prova.</p></details></div>
+      ${secoes.map(s => `<h3 class="row" style="gap:8px"><span class="area-dot" style="background:${areaInfo(s.a).cor}"></span>${s.a === "?" ? "Questões" : esc(areaInfo(s.a).nome)} <span class="small muted">(${s.qs[0]}–${s.qs[s.qs.length - 1]})</span></h3>
+        <div class="card sheet">${s.qs.map(q => { const r = st.resp[q]; const gq = g[q]; const status = !corrigido ? "" : gq === "X" ? "anul" : !gq ? "" : r === gq ? "ok" : "bad";
+          return `<div class="sheet-row ${status}"><span class="qn">${q}</span>${letras.map(L => `<button class="bub${r === L ? " sel" : ""}${corrigido && gq === L ? " gab" : ""}" data-q="${q}" data-l="${L}">${L}</button>`).join("")}${status === "anul" ? '<span class="small muted">anulada</span>' : ""}</div>`; }).join("")}</div>`).join("")}
+      <h3>Corrigir</h3>
+      <div class="card"><div class="field"><label>Cole o gabarito oficial (definitivo, de preferência)</label><textarea id="gab" style="min-height:80px" placeholder="Aceita “ABCDE…” em sequência ou “1-A 2-C 3-B…”. Use X para questão anulada.">${esc(st.gab)}</textarea></div>
+        <button class="btn btn-primary" id="corr">Corrigir e salvar tentativa</button></div>
+      <div id="res"></div></div>`;
+    const $ = s => el.querySelector(s);
+    el.querySelectorAll(".bub").forEach(b => b.onclick = () => { const q = b.dataset.q; st.resp[q] = st.resp[q] === b.dataset.l ? undefined : b.dataset.l; if (!st.resp[q]) delete st.resp[q]; salvar(); const y = scrollY; pinta(); scrollTo(0, y); });
+    $("#start").onclick = () => { if (tick) { clearInterval(tick); tick = null; st.decorrido = (st.decorrido || 0) + (Date.now() - t0); salvar(); } else { t0 = Date.now(); tick = setInterval(atualizaCrono, 1000); } pinta(); };
+    $("#limparResp").onclick = () => { if (confirm("Limpar todas as marcações desta prova?")) { st.resp = {}; st.decorrido = 0; corrigido = null; salvar(); pinta(); } };
+    $("#salvaEstr").onclick = () => { st.estrutura = $("#estr").value.trim(); salvar(); pinta(); };
+    $("#corr").onclick = () => { st.gab = $("#gab").value; corrigido = true; salvar(); corrigir(); };
+    atualizaCrono();
+    if (corrigido) mostraResultado();
+  };
+  const atualizaCrono = () => { const ms = (st.decorrido || 0) + (tick ? Date.now() - t0 : 0); const s = Math.round(ms / 1000); const e = el.querySelector("#crono"); if (e) e.textContent = `⏱ ${Math.floor(s / 3600)}:${String(Math.floor(s / 60) % 60).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`; };
+  let ultimo = null;
+  const corrigir = () => {
+    const g = parseGabarito(st.gab, p.n, p.tipo); const nG = Object.keys(g).length;
+    if (nG < p.n * 0.8 && !confirm(`Entendi só ${nG} de ${p.n} respostas no gabarito. Corrigir assim mesmo?`)) { corrigido = null; return; }
+    const mapa = parseEstrutura(estr(), p.n); const porArea = {}; let acertos = 0, validas = 0; const erradas = [];
+    for (let q = 1; q <= p.n; q++) {
+      if (!g[q] || g[q] === "X") continue; validas++;
+      const a = mapa[q] || "?"; porArea[a] = porArea[a] || { n: 0, ok: 0 }; porArea[a].n++;
+      if (st.resp[q] === g[q]) { acertos++; porArea[a].ok++; } else erradas.push({ q, a, sua: st.resp[q] || "—", cert: g[q] });
+    }
+    const min = Math.round((st.decorrido || 0) / 60000);
+    ultimo = { data: hoje(), acertos, validas, porArea, min, erradas };
+    st.tentativas.push({ data: hoje(), acertos, validas, min });
+    // alimenta Desempenho/Prontidão por área (sem tópico)
+    for (const [a, v] of Object.entries(porArea)) if (AREA[a]) for (let i = 0; i < v.n; i++) S.respostas.push({ id: `${p.id}#${i}`, a, t: "", ok: i < v.ok, data: hoje() });
+    if (min) S.sessoes.push({ data: hoje(), min, a: "ce" });
+    salvar(); pinta();
+  };
+  const mostraResultado = () => {
+    if (!ultimo) return; const u = ultimo;
+    const noEdital = Object.entries(u.porArea).filter(([a]) => AREA[a]);
+    const proj = noEdital.length ? AREAS.reduce((s, a) => s + (u.porArea[a.id] ? u.porArea[a.id].ok / u.porArea[a.id].n : 0) * a.q * a.peso, 0) : null;
+    const faltando = AREAS.filter(a => !u.porArea[a.id]).map(a => a.nome);
+    el.querySelector("#res").innerHTML = `<div class="grid g3" style="margin-top:14px"><div class="stat"><div class="v">${u.acertos}/${u.validas}</div><div class="l">acertos (${pct(u.acertos / u.validas)})</div></div>
+      <div class="stat"><div class="v">${proj != null ? proj.toFixed(1) : "—"}</div><div class="l">projeção na escala UFBA (0–90)${faltando.length && proj != null ? " · sem dados de " + faltando.join(", ") : ""}</div></div><div class="stat"><div class="v">${u.min || "—"} min</div><div class="l">tempo registrado</div></div></div>
+      <div class="card" style="margin-top:14px"><table><thead><tr><th>Área</th><th class="n">Acertos</th><th class="n">%</th></tr></thead><tbody>${Object.entries(u.porArea).map(([a, v]) => `<tr><td><span class="row" style="gap:6px;display:inline-flex"><span class="area-dot" style="background:${areaInfo(a).cor}"></span>${esc(areaInfo(a).nome)}</span></td><td class="n">${v.ok}/${v.n}</td><td class="n">${pillTaxa(v.ok / v.n)}</td></tr>`).join("")}</tbody></table></div>
+      ${u.erradas.length ? `<div class="card"><h2>Questões para revisar (${u.erradas.length})</h2><p class="small muted" style="margin-top:0">Volte a elas na prova comentada. Se quiser que uma entre em Meus erros, copie-a e use o importador em Provas anteriores.</p>
+        <div class="row" style="flex-wrap:wrap;gap:6px">${u.erradas.map(e => `<span class="pill pill-bad" title="sua: ${e.sua} · gabarito: ${e.cert}">${e.q}: ${e.sua}→${e.cert}</span>`).join("")}</div></div>` : ""}`;
+  };
+  limpar = () => { if (tick) { clearInterval(tick); st.decorrido = (st.decorrido || 0) + (Date.now() - t0); salvar(); } };
+  pinta();
 };
 
 rotear();
