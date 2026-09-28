@@ -8,7 +8,7 @@ Plataforma pessoal de estudo para o concurso da **UFBA 2026, cargo 201: Assisten
 - Contagem regressiva para a prova (20/12/2026, data provável) e cronograma completo do Anexo III
 - Edital verticalizado com o conteúdo programático oficial (Anexo II)
 - Plano semanal diversificado (duas matérias diferentes por dia, rotina fixa de lei seca, redação e simulado) e agenda do dia
-- Resumos de todos os tópicos do Anexo II
+- Resumos de todos os tópicos do Anexo II, com fontes oficiais, e a lista de assuntos de cada tópico para marcar
 - Mais de 120 questões no estilo AOCP/Avalia, folha de respostas para provas anteriores da AOCP e da Avalia (com correção por área), importador de questões, flashcards com revisão espaçada, "Meus erros" e simulados proporcionais
 - 42 temas de redação por eixo, com estrutura, checklist e critérios da Tabela 13.2
 - Análise da banca Instituto Avalia e calculadora de nota com as regras de eliminação
@@ -16,3 +16,5 @@ Plataforma pessoal de estudo para o concurso da **UFBA 2026, cargo 201: Assisten
 É um arquivo único (`index.html`), sem dependências nem build. O progresso fica salvo no `localStorage` do navegador; use **Configurações → Exportar** para fazer backup.
 
 As questões são autorais, feitas para estudo. Confira sempre com a lei seca e com o edital oficial em www.avalia.org.br.
+
+**Materiais pessoais:** ao abrir o `index.html` localmente, o app carrega `materiais-locais.js` (notas das apostilas e links para os PDFs da pasta Downloads, na página de cada assunto). Esse arquivo e a pasta `materiais-oficiais/` ficam fora do repositório (`.gitignore`).
