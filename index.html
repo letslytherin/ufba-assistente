@@ -223,6 +223,7 @@ details.texto div{white-space:pre-line;margin-top:8px;line-height:1.7}
 <nav class="bottom-nav" id="bottom-nav" aria-label="Navegação inferior"></nav>
 
 <script src="materiais-locais.js"></script>
+<script src="questoes-locais.js"></script>
 <script>
 "use strict";
 /* =========================================================================
@@ -652,7 +653,10 @@ let S;
 try { S = Object.assign(estadoInicial(), JSON.parse(localStorage.getItem(KEY) || "{}")); } catch { S = estadoInicial(); }
 function salvar(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} }
 
-const todasQuestoes = () => [...Q_SEED.map((q,i)=>({...q,id:"s"+i})), ...S.qExtras];
+const Q_LOCAIS = (window.QUESTOES_LOCAIS || []).map(q => ({ ...q, txt: q.ti != null ? (window.TEXTOS_LOCAIS || [])[q.ti] : undefined }));
+const Q_APP = Q_SEED.map((q,i)=>({...q,id:"s"+i, orig:"app"}));
+const todasQuestoes = () => [...Q_APP, ...S.qExtras.map(q => ({...q, orig: String(q.id).startsWith("i") ? "importada" : "propria"})), ...Q_LOCAIS];
+const ORIGENS = { app: "Autorais do app", prova: "Provas reais", apostila: "Apostilas", simulado: "Simulados", importada: "Importadas", propria: "Criadas por você" };
 const todosFlash = () => [...FC_SEED.map((f,i)=>({a:f[0],f:f[1],v:f[2],id:"f"+i})), ...S.fcExtras];
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
@@ -1140,15 +1144,18 @@ ROTAS["/edital"] = el => {
 /* ---------- Questões ---------- */
 function renderQuestao(q, onResp, opts={}){
   const wrap = document.createElement("div"); wrap.className = "card";
+  const verLink = q.link && typeof linkLocal === "function" && (LOCAL || q.link.startsWith("provas-locais/")) ? `<a href="${esc(q.link.startsWith("provas-locais/") ? q.link + (q.pg ? "#page=" + q.pg : "") : linkLocal(q.link, q.pg))}" target="_blank">ver ${q.orig === "apostila" ? "na apostila" : q.orig === "simulado" ? "no simulado" : "na prova"}${q.pg ? " (p. " + q.pg + ")" : ""} ↗</a>` : "";
   wrap.innerHTML = `<div class="row between small"><span>${areaTag(q.a)}</span><span class="muted">${esc(q.t||"")}</span></div>
+    ${q.fonte ? `<div class="small muted" style="margin-top:4px">📄 ${esc(q.fonte)} ${verLink}</div>` : ""}
+    ${q.aviso ? `<div class="small" style="margin-top:6px;padding:6px 10px;border-radius:8px;background:var(--warning-soft)">⚠️ Esta questão depende de um texto ou de destaque (sublinhado/negrito) que não veio na extração — ${verLink || "consulte o material original"}.</div>` : ""}
     ${q.txt?`<details class="texto" ${opts.semFeedback?"":"open"}><summary>Texto-base</summary><div class="small">${esc(q.txt)}</div></details>`:""}
     <div class="q-enun">${esc(q.e)}</div>
-    <div>${q.o.map((alt,i)=>`<button class="alt" data-i="${i}"><span class="letra">${"ABCDE"[i]}</span><span>${esc(alt)}</span></button>`).join("")}</div><div class="fb"></div>`;
+    <div>${q.o.map((alt,i)=>`<button class="alt" data-i="${i}"><span class="letra">${q.o.length === 2 && q.o[0] === "Certo" ? (i ? "E" : "C") : "ABCDE"[i]}</span><span>${esc(alt)}</span></button>`).join("")}</div><div class="fb"></div>`;
   wrap.querySelectorAll(".alt").forEach(b => b.onclick = () => {
     const i = Number(b.dataset.i); const ok = i === q.c;
     if (opts.semFeedback){ wrap.querySelectorAll(".alt").forEach(x=>x.classList.remove("sel")); b.classList.add("sel"); onResp(i, ok); return; }
     wrap.querySelectorAll(".alt").forEach(x => { x.disabled = true; const xi = Number(x.dataset.i); if (xi===q.c) x.classList.add("ok"); else if (xi===i) x.classList.add("bad"); });
-    wrap.querySelector(".fb").innerHTML = `<div class="expl"><b>${ok?"✓ Correta":"✗ Incorreta — gabarito "+"ABCDE"[q.c]}.</b> ${esc(q.x||"")}</div>`;
+    wrap.querySelector(".fb").innerHTML = `<div class="expl"><b>${ok?"✓ Correta":"✗ Incorreta — gabarito "+(q.o.length === 2 && q.o[0] === "Certo" ? q.o[q.c] : "ABCDE"[q.c])}.</b> ${esc(q.x||"")}</div>`;
     onResp(i, ok);
   });
   return wrap;
@@ -1161,9 +1168,10 @@ function registrarResposta(q, ok){
 }
 ROTAS["/questoes"] = el => {
   const params = new URLSearchParams(location.hash.split("?")[1]||"");
-  let filtro = params.get("a") || "todas", modo = "nao";
+  let filtro = params.get("a") || "todas", modo = "nao", origem = params.get("o") || "todas", topicoF = params.get("t") || "", formato = params.get("f") || "todos";
   function lista(){
-    let qs = todasQuestoes().filter(q => filtro==="todas" || q.a===filtro);
+    let qs = todasQuestoes().filter(q => (filtro==="todas" || q.a===filtro) && (origem==="todas" || q.orig===origem) && (!topicoF || q.t===topicoF)
+      && (formato==="todos" || (formato==="ae" ? q.o.length >= 4 : q.o.length === 2)));
     const resp = new Set(S.respostas.map(r=>r.id));
     if (modo==="nao") { const n = qs.filter(q=>!resp.has(q.id)); if (n.length) qs = n; }
     return qs.sort(()=>Math.random()-.5);
@@ -1172,11 +1180,16 @@ ROTAS["/questoes"] = el => {
   function montar(){
     fila = lista(); idx = 0; sessao = {ok:0,n:0};
     el.innerHTML = `<div class="container" style="max-width:780px">
-      ${header("Estudar · Questões","Banco de questões",`${todasQuestoes().length} questões autorais no estilo da banca (5 alternativas). Erros vão automaticamente para <a href="#/erros">Meus erros</a>. Adicione questões de provas anteriores da Avalia/UFBA abaixo.`)}
-      <div class="row" style="flex-wrap:wrap;margin-bottom:14px">
-        <select id="qa" style="max-width:260px"><option value="todas">Todas as áreas</option>${AREAS.map(a=>`<option value="${a.id}" ${filtro===a.id?"selected":""}>${a.nome}</option>`).join("")}</select>
+      ${(() => { const tq = todasQuestoes(); const c = {}; tq.forEach(q => c[q.orig] = (c[q.orig] || 0) + 1);
+        return header("Estudar · Questões","Banco de questões",`${tq.length.toLocaleString("pt-BR")} questões: ${Object.entries(c).map(([k, v]) => `${v.toLocaleString("pt-BR")} ${ORIGENS[k] ? ORIGENS[k].toLowerCase() : k}`).join(" · ")}. Erros vão para <a href="#/erros">Meus erros</a>.${Q_LOCAIS.length ? "" : " (As questões das suas provas e apostilas aparecem quando o app é aberto pelo arquivo index.html do seu computador.)"}`); })()}
+      <div class="row" style="flex-wrap:wrap;margin-bottom:14px;gap:8px">
+        <select id="qa" style="max-width:220px"><option value="todas">Todas as áreas</option>${AREAS.map(a=>`<option value="${a.id}" ${filtro===a.id?"selected":""}>${a.nome}</option>`).join("")}</select>
+        <select id="qt" style="max-width:280px"><option value="">Todos os tópicos</option>${(filtro === "todas" ? AREAS : [AREA[filtro]]).flatMap(a => S.topicos[a.id]).map(t => `<option ${topicoF === t.nome ? "selected" : ""}>${esc(t.nome)}</option>`).join("")}</select>
+        <select id="qo" style="max-width:200px"><option value="todas">Todas as origens</option>${Object.entries(ORIGENS).map(([k, v]) => `<option value="${k}" ${origem === k ? "selected" : ""}>${v}</option>`).join("")}</select>
+        <select id="qf" style="max-width:180px"><option value="todos">A–E e Certo/Errado</option><option value="ae" ${formato === "ae" ? "selected" : ""}>Só múltipla escolha</option><option value="ce" ${formato === "ce" ? "selected" : ""}>Só Certo/Errado</option></select>
         <select id="qm" style="max-width:220px"><option value="nao" ${modo==="nao"?"selected":""}>Priorizar não respondidas</option><option value="todas" ${modo==="todas"?"selected":""}>Todas, aleatório</option></select>
         <span class="small muted" id="qs"></span></div>
+      <p class="small muted" style="margin:-6px 0 12px">${fila.length.toLocaleString("pt-BR")} questões neste filtro.</p>
       <div id="qbox"></div>
       <details class="card" style="margin-top:18px"><summary style="cursor:pointer;font-weight:600">+ Adicionar questão própria</summary>
         <div style="margin-top:12px"><div class="grid g2"><div class="field"><label>Área</label><select id="na">${AREAS.map(a=>`<option value="${a.id}">${a.nome}</option>`).join("")}</select></div>
@@ -1188,7 +1201,10 @@ ROTAS["/questoes"] = el => {
         <button class="btn btn-primary" id="nsave">Salvar questão</button></div></details></div>`;
     const tl = () => el.querySelector("#tl").innerHTML = S.topicos[el.querySelector("#na").value].map(t=>`<option value="${esc(t.nome)}">`).join("");
     tl(); el.querySelector("#na").onchange = tl;
-    el.querySelector("#qa").onchange = e => { filtro = e.target.value; montar(); };
+    el.querySelector("#qa").onchange = e => { filtro = e.target.value; topicoF = ""; montar(); };
+    el.querySelector("#qt").onchange = e => { topicoF = e.target.value; montar(); };
+    el.querySelector("#qo").onchange = e => { origem = e.target.value; montar(); };
+    el.querySelector("#qf").onchange = e => { formato = e.target.value; montar(); };
     el.querySelector("#qm").onchange = e => { modo = e.target.value; montar(); };
     el.querySelector("#nsave").onclick = () => {
       const g = id => el.querySelector(id).value.trim();
@@ -1346,7 +1362,7 @@ ROTAS["/resumo"] = el => {
     ${renderNotasApostilas(nome)}
     ${renderMateriaisTopico(nome)}
     <div class="grid g3" style="margin-top:14px"><div class="stat"><div class="v">${qs.length}</div><div class="l">questões no app</div></div><div class="stat"><div class="v">${pct(st.taxa)}</div><div class="l">seu acerto (${st.n}q)</div></div><div class="stat"><div class="v">${topico && topico.revisoes || 0}</div><div class="l">revisões registradas</div></div></div>
-    <div class="btn-row">${topico ? `<button class="btn btn-primary" id="rv">✓ Marcar como estudado / revisado</button>` : ""}<a class="btn btn-secondary" href="#/questoes?a=${a}">Fazer questões de ${AREA[a] ? AREA[a].nome : ""}</a></div>
+    <div class="btn-row">${topico ? `<button class="btn btn-primary" id="rv">✓ Marcar como estudado / revisado</button>` : ""}${qs.length ? `<a class="btn btn-secondary" href="#/questoes?a=${a}&t=${encodeURIComponent(nome)}">Fazer as ${qs.length} questões deste tópico</a>` : ""}<a class="btn btn-ghost" href="#/questoes?a=${a}">Questões de ${AREA[a] ? AREA[a].nome : ""}</a></div>
     <p class="small muted" id="rvmsg"></p></div>`;
   ligarAssuntos(el, nome);
   const b = el.querySelector("#rv");
@@ -1490,7 +1506,7 @@ ROTAS["/simulados"] = el => {
       <p class="small muted" style="margin-bottom:0">Se o banco tiver menos questões que o necessário, o simulado usa o que houver — adicione questões de provas anteriores em <a href="#/questoes">Questões</a>.</p></div></div>`;
   el.querySelector("#start").onclick = () => {
     const f = Number(el.querySelector("#sz").value);
-    const qs = AREAS.flatMap(a => todas.filter(q=>q.a===a.id).sort(()=>Math.random()-.5).slice(0, Math.max(1, Math.round(a.q*f))));
+    const qs = AREAS.flatMap(a => todas.filter(q=>q.a===a.id && q.o.length >= 4).sort(()=>Math.random()-.5).slice(0, Math.max(1, Math.round(a.q*f))));
     rodarSimulado(el, qs);
   };
 };
