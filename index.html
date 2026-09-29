@@ -1341,11 +1341,17 @@ function linkLocal(caminho, pagina){
   return LOCAL.base + rel.split("/").map(encodeURIComponent).join("/") + (pagina ? "#page=" + pagina : "");
 }
 function nomeArquivo(a){ return a.split("/").pop().replace(/\.(pdf|png)$/i, "").replace(/^\d{4}-\d{2}-\d{2}-\d{2}-\d{2}-\d{2}-\d+-/, "").replace(/-e\d{10}$/, "").replace(/-/g, " "); }
-function renderMateriaisTopico(nome){
+function linksNuvem(nome){
+  const ls = (S.linksNuvem || []).filter(l => l.t === nome);
+  if (!ls.length) return "";
+  return `<div class="card small" style="margin-top:12px">☁️ <b>Seus links na nuvem:</b> ${ls.map(l => `<a href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${esc(l.nome)} ↗</a>`).join(" · ")}</div>`;
+}
+function renderMateriaisTopico(nome){ return linksNuvem(nome) + renderMateriaisTopicoBase(nome); }
+function renderMateriaisTopicoBase(nome){
   if (!LOCAL) {
     const MP = window.MATERIAIS_PUBLICOS || {};
     const ofp = ((MP.oficiaisPorTopico || {})[nome] || []).map(r => (MP.oficiais || []).find(o => o[0] === r)).filter(Boolean);
-    return `<div class="card small" style="margin-top:12px">${ofp.length ? `📄 <b>Documentos oficiais:</b> ${ofp.map(o => `<a href="${esc(o[1])}" target="_blank">${esc(o[0])}</a>`).join(" · ")}<br>` : ""}<span class="muted">📚 As apostilas aparecem só ao abrir o app pelo arquivo <code>index.html</code> no seu computador.</span></div>`;
+    return `<div class="card small" style="margin-top:12px">${ofp.length ? `📄 <b>Documentos oficiais:</b> ${ofp.map(o => `<a href="${esc(o[1])}" target="_blank">${esc(o[0])}</a>`).join(" · ")}<br>` : ""}<span class="muted">📚 As apostilas aparecem só ao abrir o app pelo arquivo <code>index.html</code> no seu computador${(S.linksNuvem || []).length ? "" : ` — ou cadastre links do Drive/OneDrive em <a href="#/config">Configurações</a>`}.</span></div>`;
   }
   const lst = LOCAL.porTopico[nome] || [], imgs = (LOCAL.imagens || {})[nome] || [];
   const ofs = ((LOCAL.oficiaisPorTopico || {})[nome] || []).map(r => (LOCAL.oficiais || []).find(o => o[0] === r)).filter(Boolean);
@@ -1667,9 +1673,25 @@ ROTAS["/config"] = el => {
       <div class="field"><label>Horas de estudo por dia</label><input type="number" id="ch" min="0.5" max="12" step="0.5" value="${S.horasDia}"></div>
       <div class="field"><label>Dias de estudo por semana</label><input type="number" id="cs" min="1" max="7" value="${S.diasSemana}"></div></div>
       <button class="btn btn-primary" id="csave">Salvar</button> <span class="small muted" id="cmsg"></span></div>
+    <div class="card"><h2>☁️ Apostilas no Drive / OneDrive</h2>
+      <p class="small muted" style="margin-top:4px">Cole o link de uma apostila que está no seu Google Drive ou OneDrive e escolha o tópico. O link aparece na página do tópico, também no celular. Ele fica salvo só neste navegador — nunca vai para o GitHub. Para levar ao celular, use <b>Exportar</b> aqui e <b>Importar</b> no celular.</p>
+      <p class="small" style="padding:6px 10px;border-radius:8px;background:var(--warning-soft)">No Drive/OneDrive, deixe o compartilhamento como <b>Restrito</b> (só você, entrando com sua conta). Link “qualquer pessoa com o link” deixa o arquivo aberto para quem tiver o endereço.</p>
+      <div class="grid g2">
+        <div class="field"><label>Nome</label><input type="text" id="lnome" list="lnomes" placeholder="Ex.: Gran — Lei 8.112"><datalist id="lnomes">${LOCAL ? [...new Set(Object.values(LOCAL.porTopico || {}).flat().map(r => nomeArquivo(r.a)))].map(n => `<option value="${esc(n)}">`).join("") : ""}</datalist></div>
+        <div class="field"><label>Tópico</label><select id="ltop">${AREAS.map(a => `<optgroup label="${esc(a.nome)}">${S.topicos[a.id].map(t => `<option>${esc(t.nome)}</option>`).join("")}</optgroup>`).join("")}</select></div></div>
+      <div class="field"><label>Link (https://…)</label><input type="url" id="lurl" placeholder="https://drive.google.com/…"></div>
+      <button class="btn btn-primary" id="ladd">Adicionar link</button> <span class="small muted" id="lmsg"></span>
+      <ul class="list" id="llista" style="margin-top:12px">${(S.linksNuvem || []).map(l => `<li><span style="flex:1"><a href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${esc(l.nome)}</a><br><span class="small muted">${esc(l.t)}</span></span><button class="btn btn-ghost btn-sm" data-ldel="${esc(l.id)}">Remover</button></li>`).join("") || '<li class="small muted">Nenhum link cadastrado.</li>'}</ul></div>
     <div class="card"><h2>Backup</h2><div class="btn-row"><button class="btn btn-secondary" id="exp">Exportar (.json)</button><label class="btn btn-secondary">Importar<input type="file" id="imp" accept=".json" hidden></label><button class="btn btn-danger" id="reset">Apagar tudo</button></div></div></div>`;
   const $ = s => el.querySelector(s);
   $("#csave").onclick = () => { S.dataProva = $("#cd").value || EDITAL.dataProva; S.horasDia = Number($("#ch").value)||2; S.diasSemana = Math.min(7,Math.max(1,Number($("#cs").value)||6)); salvar(); pintarNav("/config"); $("#cmsg").textContent = "✓ Salvo"; };
+  $("#ladd").onclick = () => {
+    const nome = $("#lnome").value.trim(), url = $("#lurl").value.trim(), t = $("#ltop").value;
+    let ok = false; try { ok = new URL(url).protocol === "https:"; } catch {}
+    if (!nome || !ok) { $("#lmsg").textContent = "Preencha o nome e um link que comece com https://"; return; }
+    S.linksNuvem = S.linksNuvem || []; S.linksNuvem.push({ id: "ln" + Date.now(), nome, url, t }); salvar(); rotear();
+  };
+  el.querySelectorAll("[data-ldel]").forEach(b => b.onclick = () => { S.linksNuvem = (S.linksNuvem || []).filter(l => l.id !== b.dataset.ldel); salvar(); rotear(); });
   $("#exp").onclick = () => { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify(S,null,1)],{type:"application/json"})); a.download = `ufba-assistente-backup-${hoje()}.json`; a.click(); };
   $("#imp").onchange = e => { const f = e.target.files[0]; if (!f) return; f.text().then(t => { try { S = Object.assign(estadoInicial(), JSON.parse(t)); salvar(); alert("Backup importado."); rotear(); } catch { alert("Arquivo inválido."); } }); };
   $("#reset").onclick = () => { if (confirm("Apagar todo o progresso? Não dá para desfazer.")){ S = estadoInicial(); salvar(); rotear(); } };
