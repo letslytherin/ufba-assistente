@@ -672,13 +672,18 @@ let S;
 try { S = Object.assign(estadoInicial(), JSON.parse(localStorage.getItem(KEY) || "{}")); } catch { S = estadoInicial(); }
 function salvar(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} }
 
-const Q_FONTE_LOCAL = !!window.QUESTOES_LOCAIS;
-const Q_LOCAIS = (() => { const qs = window.QUESTOES_LOCAIS || window.QUESTOES_PUBLICAS || [], tx = (Q_FONTE_LOCAL ? window.TEXTOS_LOCAIS : window.TEXTOS_PUBLICOS) || [];
-  return qs.map(q => ({ ...q, orig: q.orig === "prova_ap" ? "prova" : q.orig, txt: q.ti != null ? tx[q.ti] : undefined })); })();
+let Q_FONTE_LOCAL, Q_LOCAIS, F_LOCAIS;
+function montarDadosLocais(){
+  Q_FONTE_LOCAL = !!window.QUESTOES_LOCAIS;
+  const qs = window.QUESTOES_LOCAIS || window.QUESTOES_PUBLICAS || [], tx = (Q_FONTE_LOCAL ? window.TEXTOS_LOCAIS : window.TEXTOS_PUBLICOS) || [];
+  Q_LOCAIS = qs.map(q => ({ ...q, orig: q.orig === "prova_ap" ? "prova" : q.orig, txt: q.ti != null ? tx[q.ti] : undefined }));
+  const base = window.FLASH_LOCAIS || window.FLASH_PUBLICOS || [], ids = new Set(base.map(f => f.id));
+  F_LOCAIS = [...base, ...(window.FLASH_EXTRA || []).filter(f => !ids.has(f.id))];
+}
+montarDadosLocais();
 const Q_APP = Q_SEED.map((q,i)=>({...q,id:"s"+i, orig:"app"}));
 const todasQuestoes = () => [...Q_APP, ...S.qExtras.map(q => ({...q, orig: String(q.id).startsWith("i") ? "importada" : "propria"})), ...Q_LOCAIS];
 const ORIGENS = { app: "Autorais do app", prova: "Provas reais", apostila: "Apostilas", simulado: "Simulados", importada: "Importadas", propria: "Criadas por você" };
-const F_LOCAIS = (() => { const base = window.FLASH_LOCAIS || window.FLASH_PUBLICOS || [], ids = new Set(base.map(f => f.id)); return [...base, ...(window.FLASH_EXTRA || []).filter(f => !ids.has(f.id))]; })();
 const FC_ORIGENS = { app: "Do app", resumo: "Dos resumos por assunto", prova_ae: "Múltipla escolha (provas)", ce: "Certo ou errado (provas)", apostila: "Conceitos das apostilas", propria: "Criados por você" };
 const todosFlash = () => [...FC_SEED.map((f,i)=>({a:f[0],f:f[1],v:f[2],id:"f"+i,orig:"app"})), ...S.fcExtras.map(f => ({...f, orig:"propria"})), ...F_LOCAIS];
 function novosHoje(){ const n = S.fcNovos || {}; return n.data === hoje() ? n.n : 0; }
@@ -1174,7 +1179,7 @@ ROTAS["/edital"] = el => {
 /* ---------- Questões ---------- */
 function renderQuestao(q, onResp, opts={}){
   const wrap = document.createElement("div"); wrap.className = "card";
-  const verLink = q.link && typeof linkLocal === "function" && (LOCAL || q.link.startsWith("provas-locais/")) ? `<a href="${esc(q.link.startsWith("provas-locais/") ? q.link + (q.pg ? "#page=" + q.pg : "") : linkLocal(q.link, q.pg))}" target="_blank">ver ${q.orig === "apostila" ? "na apostila" : q.orig === "simulado" ? "no simulado" : "na prova"}${q.pg ? " (p. " + q.pg + ")" : ""} ↗</a>` : "";
+  const verLink = q.link && typeof linkLocal === "function" && (q.link.startsWith("provas-locais/") || (LOCAL && linkLocal(q.link, q.pg) !== "#")) ? `<a href="${esc(q.link.startsWith("provas-locais/") ? q.link + (q.pg ? "#page=" + q.pg : "") : linkLocal(q.link, q.pg))}" target="_blank">ver ${q.orig === "apostila" ? "na apostila" : q.orig === "simulado" ? "no simulado" : "na prova"}${q.pg ? " (p. " + q.pg + ")" : ""} ↗</a>` : "";
   wrap.innerHTML = `<div class="row between small"><span>${areaTag(q.a)}</span><span class="muted">${esc(q.t||"")}</span></div>
     ${q.fonte ? `<div class="small muted" style="margin-top:4px">📄 ${esc(q.fonte)} ${verLink}</div>` : ""}
     ${q.aviso ? `<div class="small" style="margin-top:6px;padding:6px 10px;border-radius:8px;background:var(--warning-soft)">⚠️ Esta questão depende de um texto ou de destaque (sublinhado/negrito) que não veio na extração — ${verLink || "consulte o material original"}.</div>` : ""}
@@ -1332,13 +1337,15 @@ ROTAS["/conteudo"] = el => {
 };
 
 /* ---------- Materiais locais (só existem no computador da usuária) ---------- */
-const LOCAL = window.MATERIAIS_LOCAIS || null;
-const NOTAS_AP = window.NOTAS_APOSTILAS || {};
+let LOCAL = window.MATERIAIS_LOCAIS || null;
+let NOTAS_AP = window.NOTAS_APOSTILAS || {};
+let COFRE = false; // true quando o conteúdo pessoal veio do cofre criptografado (site), não dos arquivos do computador
 function linkLocal(caminho, pagina){
   if (/^(materiais-oficiais|provas-locais)\//.test(caminho)) return caminho + (pagina ? "#page=" + pagina : "");
   if (!LOCAL) return "#";
   if (caminho.startsWith("materiais-oficiais/")) return caminho + (pagina ? "#page=" + pagina : "");
   const rel = caminho.startsWith("DL:") ? caminho.slice(3) : caminho;
+  if (COFRE) { const n = nomeArquivo(rel), l = (S.linksNuvem || []).find(x => x.nome === n); return l ? l.url : "#"; }
   return LOCAL.base + rel.split("/").map(encodeURIComponent).join("/") + (pagina ? "#page=" + pagina : "");
 }
 function nomeArquivo(a){ return a.split("/").pop().replace(/\.(pdf|png)$/i, "").replace(/^\d{4}-\d{2}-\d{2}-\d{2}-\d{2}-\d{2}-\d+-/, "").replace(/-e\d{10}$/, "").replace(/-/g, " "); }
@@ -1674,6 +1681,7 @@ ROTAS["/config"] = el => {
       <div class="field"><label>Horas de estudo por dia</label><input type="number" id="ch" min="0.5" max="12" step="0.5" value="${S.horasDia}"></div>
       <div class="field"><label>Dias de estudo por semana</label><input type="number" id="cs" min="1" max="7" value="${S.diasSemana}"></div></div>
       <button class="btn btn-primary" id="csave">Salvar</button> <span class="small muted" id="cmsg"></span></div>
+    ${renderCofre()}
     <div class="card"><h2>☁️ Apostilas no Drive / OneDrive</h2>
       <p class="small muted" style="margin-top:4px">Cole o link de uma apostila que está no seu Google Drive ou OneDrive e escolha o tópico. O link aparece na página do tópico, também no celular. Ele fica salvo só neste navegador — nunca vai para o GitHub. Para levar ao celular, use <b>Exportar</b> aqui e <b>Importar</b> no celular.</p>
       <p class="small" style="padding:6px 10px;border-radius:8px;background:var(--warning-soft)">No Drive/OneDrive, deixe o compartilhamento como <b>Restrito</b> (só você, entrando com sua conta). Link “qualquer pessoa com o link” deixa o arquivo aberto para quem tiver o endereço.</p>
@@ -1686,6 +1694,7 @@ ROTAS["/config"] = el => {
     <div class="card"><h2>Backup</h2><div class="btn-row"><button class="btn btn-secondary" id="exp">Exportar (.json)</button><label class="btn btn-secondary">Importar<input type="file" id="imp" accept=".json" hidden></label><button class="btn btn-danger" id="reset">Apagar tudo</button></div></div></div>`;
   const $ = s => el.querySelector(s);
   $("#csave").onclick = () => { S.dataProva = $("#cd").value || EDITAL.dataProva; S.horasDia = Number($("#ch").value)||2; S.diasSemana = Math.min(7,Math.max(1,Number($("#cs").value)||6)); salvar(); pintarNav("/config"); $("#cmsg").textContent = "✓ Salvo"; };
+  ligarCofre(el);
   $("#ladd").onclick = () => {
     const nome = $("#lnome").value.trim(), url = $("#lurl").value.trim(), t = $("#ltop").value;
     let ok = false; try { ok = new URL(url).protocol === "https:"; } catch {}
@@ -2436,7 +2445,96 @@ ROTAS["/biblioteca"] = el => {
   el.querySelector("#bq").oninput = pinta; pinta();
 };
 
+/* ---------- Cofre: conteúdo pessoal criptografado para usar no site ---------- */
+const COFRE_CHAVE = "ufba-assistente:cofre-chave", COFRE_MAGIC = "UFBAC1";
+const b64 = { enc: u8 => btoa(String.fromCharCode(...u8)), dec: t => Uint8Array.from(atob(t), c => c.charCodeAt(0)) };
+async function cofreDerivar(senha, salt){
+  const base = await crypto.subtle.importKey("raw", new TextEncoder().encode(senha), "PBKDF2", false, ["deriveKey"]);
+  return crypto.subtle.deriveKey({ name: "PBKDF2", salt, iterations: 600000, hash: "SHA-256" }, base, { name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]);
+}
+async function cofreGzip(u8, comprimir){
+  const st = new Blob([u8]).stream().pipeThrough(comprimir ? new CompressionStream("gzip") : new DecompressionStream("gzip"));
+  return new Uint8Array(await new Response(st).arrayBuffer());
+}
+async function cofreCriarBytes(senha){
+  const dados = { QUESTOES_LOCAIS: window.QUESTOES_LOCAIS, TEXTOS_LOCAIS: window.TEXTOS_LOCAIS, FLASH_LOCAIS: window.FLASH_LOCAIS, NOTAS_APOSTILAS: window.NOTAS_APOSTILAS, MATERIAIS_LOCAIS: window.MATERIAIS_LOCAIS };
+  const salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12));
+  const chave = await cofreDerivar(senha, salt);
+  const ct = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-GCM", iv }, chave, await cofreGzip(new TextEncoder().encode(JSON.stringify(dados)), true)));
+  const out = new Uint8Array(6 + 16 + 12 + ct.length);
+  out.set(new TextEncoder().encode(COFRE_MAGIC), 0); out.set(salt, 6); out.set(iv, 22); out.set(ct, 34);
+  return out;
+}
+async function cofreAbrirBytes(buf, senha, chaveSalva){
+  if (new TextDecoder().decode(buf.slice(0, 6)) !== COFRE_MAGIC) throw new Error("formato");
+  const salt = buf.slice(6, 22), iv = buf.slice(22, 34), ct = buf.slice(34);
+  const chave = senha ? await cofreDerivar(senha, salt) : await crypto.subtle.importKey("raw", b64.dec(chaveSalva), "AES-GCM", true, ["decrypt"]);
+  const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, chave, ct); // falha se a senha estiver errada
+  const dados = JSON.parse(new TextDecoder().decode(await cofreGzip(new Uint8Array(pt), false)));
+  return { dados, chaveRaw: b64.enc(new Uint8Array(await crypto.subtle.exportKey("raw", chave))) };
+}
+function cofreAplicar(d){
+  Object.assign(window, { QUESTOES_LOCAIS: d.QUESTOES_LOCAIS, TEXTOS_LOCAIS: d.TEXTOS_LOCAIS, FLASH_LOCAIS: d.FLASH_LOCAIS });
+  LOCAL = d.MATERIAIS_LOCAIS || null; NOTAS_AP = d.NOTAS_APOSTILAS || {}; COFRE = true;
+  montarDadosLocais();
+}
+async function cofreBaixar(){
+  const r = await fetch("cofre.bin", { cache: "no-cache" });
+  if (!r.ok) throw new Error("ausente");
+  return new Uint8Array(await r.arrayBuffer());
+}
+async function cofreDesbloquear(senha){
+  const { dados, chaveRaw } = await cofreAbrirBytes(await cofreBaixar(), senha);
+  try { localStorage.setItem(COFRE_CHAVE, chaveRaw); } catch {}
+  cofreAplicar(dados);
+}
+async function cofreAutoAbrir(){
+  if (window.QUESTOES_LOCAIS) return; // arquivos do computador já carregados
+  let k = null; try { k = localStorage.getItem(COFRE_CHAVE); } catch {}
+  if (!k) return;
+  try { const { dados } = await cofreAbrirBytes(await cofreBaixar(), null, k); cofreAplicar(dados); rotear(); }
+  catch (e) { if (e.message !== "ausente") try { localStorage.removeItem(COFRE_CHAVE); } catch {} }
+}
+function renderCofre(){
+  if (Q_FONTE_LOCAL && !COFRE) return `<div class="card"><h2>🔐 Cofre para o site</h2>
+    <p class="small muted" style="margin-top:4px">Gera um arquivo <b>cofre.bin</b> com o seu conteúdo pessoal (questões e comentários das apostilas, simulados, conceitos, notas e índice das apostilas), criptografado com AES-256 e uma senha só sua. Depois de publicado, o site abre tudo em qualquer aparelho, com essa senha. Sem a senha o arquivo é ilegível.</p>
+    <div class="grid g2"><div class="field"><label>Senha (mínimo 12 caracteres)</label><input type="password" id="cfs1" autocomplete="new-password"></div>
+    <div class="field"><label>Repita a senha</label><input type="password" id="cfs2" autocomplete="new-password"></div></div>
+    <button class="btn btn-primary" id="cfgerar">Gerar cofre.bin</button> <span class="small muted" id="cfmsg"></span>
+    <p class="small muted" style="margin:8px 0 0">Use uma senha que você não usa em outro lugar e guarde-a no seu gerenciador de senhas. Se perder a senha, é só gerar um cofre novo aqui.</p></div>`;
+  if (COFRE) return `<div class="card"><h2>🔐 Cofre</h2><p class="small">✓ Seu conteúdo pessoal está desbloqueado neste aparelho.</p><button class="btn btn-secondary" id="cfbloq">Bloquear e esquecer a chave neste aparelho</button></div>`;
+  return `<div class="card"><h2>🔐 Cofre</h2><p class="small muted" style="margin-top:4px">Digite a senha do cofre para liberar neste aparelho suas questões comentadas, simulados, conceitos e notas das apostilas. A chave fica salva só neste navegador.</p>
+    <div class="field"><label>Senha do cofre</label><input type="password" id="cfsenha" autocomplete="current-password"></div>
+    <button class="btn btn-primary" id="cfabrir">Desbloquear</button> <span class="small muted" id="cfmsg"></span></div>`;
+}
+function ligarCofre(el){
+  const $ = x => el.querySelector(x), msg = t => { const m = $("#cfmsg"); if (m) m.textContent = t; };
+  if ($("#cfgerar")) $("#cfgerar").onclick = async () => {
+    const a = $("#cfs1").value, b = $("#cfs2").value;
+    if (a.length < 12) return msg("A senha precisa ter pelo menos 12 caracteres.");
+    if (a !== b) return msg("As senhas não conferem.");
+    msg("Gerando…");
+    try {
+      const bytes = await cofreCriarBytes(a);
+      const l = document.createElement("a"); l.href = URL.createObjectURL(new Blob([bytes], { type: "application/octet-stream" })); l.download = "cofre.bin"; l.click();
+      $("#cfs1").value = $("#cfs2").value = "";
+      msg(`✓ cofre.bin gerado (${(bytes.length / 1e6).toFixed(1)} MB) na sua pasta Downloads. Peça para publicá-lo.`);
+    } catch { msg("Não foi possível gerar o cofre neste navegador."); }
+  };
+  if ($("#cfabrir")) $("#cfabrir").onclick = async () => {
+    msg("Abrindo…");
+    try { await cofreDesbloquear($("#cfsenha").value); rotear(); }
+    catch (e) { msg(e.message === "ausente" ? "O cofre ainda não foi publicado no site." : "Senha incorreta."); }
+  };
+  if ($("#cfbloq")) $("#cfbloq").onclick = () => { try { localStorage.removeItem(COFRE_CHAVE); } catch {} location.reload(); };
+}
+document.addEventListener("click", e => {
+  const a = e.target.closest && e.target.closest('a[target="_blank"]');
+  if (a && a.getAttribute("href") === "#") { e.preventDefault(); alert("Este arquivo está só no seu computador. Para abrir aqui, cadastre o link dele no Drive/OneDrive em Configurações, usando o mesmo nome."); }
+});
+
 rotear();
+cofreAutoAbrir();
 </script>
 </body>
 </html>
