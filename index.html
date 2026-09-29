@@ -242,6 +242,7 @@ details.texto div{white-space:pre-line;margin-top:8px;line-height:1.7}
 <script src="questoes-publicas.js"></script>
 <script src="flashcards-locais.js"></script>
 <script src="flashcards-publicos.js"></script>
+<script src="flashcards-extra.js"></script>
 <script>
 "use strict";
 /* =========================================================================
@@ -677,8 +678,8 @@ const Q_LOCAIS = (() => { const qs = window.QUESTOES_LOCAIS || window.QUESTOES_P
 const Q_APP = Q_SEED.map((q,i)=>({...q,id:"s"+i, orig:"app"}));
 const todasQuestoes = () => [...Q_APP, ...S.qExtras.map(q => ({...q, orig: String(q.id).startsWith("i") ? "importada" : "propria"})), ...Q_LOCAIS];
 const ORIGENS = { app: "Autorais do app", prova: "Provas reais", apostila: "Apostilas", simulado: "Simulados", importada: "Importadas", propria: "Criadas por você" };
-const F_LOCAIS = window.FLASH_LOCAIS || window.FLASH_PUBLICOS || [];
-const FC_ORIGENS = { app: "Do app", apostila: "Conceitos das apostilas", ce: "Certo ou errado (provas)", propria: "Criados por você" };
+const F_LOCAIS = (() => { const base = window.FLASH_LOCAIS || window.FLASH_PUBLICOS || [], ids = new Set(base.map(f => f.id)); return [...base, ...(window.FLASH_EXTRA || []).filter(f => !ids.has(f.id))]; })();
+const FC_ORIGENS = { app: "Do app", resumo: "Dos resumos por assunto", prova_ae: "Múltipla escolha (provas)", ce: "Certo ou errado (provas)", apostila: "Conceitos das apostilas", propria: "Criados por você" };
 const todosFlash = () => [...FC_SEED.map((f,i)=>({a:f[0],f:f[1],v:f[2],id:"f"+i,orig:"app"})), ...S.fcExtras.map(f => ({...f, orig:"propria"})), ...F_LOCAIS];
 function novosHoje(){ const n = S.fcNovos || {}; return n.data === hoje() ? n.n : 0; }
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -732,7 +733,7 @@ function minutosPorDia(n=14){
 }
 function errosVencidos(){ return Object.entries(S.erros).filter(([,e]) => e.proxima <= hoje()); }
 function flashVencidos(filtro){
-  const lim = S.fcLimite ?? 20; let livres = Math.max(0, lim - novosHoje());
+  const lim = S.fcLimite ?? 30; let livres = Math.max(0, lim - novosHoje());
   const fs = todosFlash().filter(f => !filtro || filtro(f));
   const rev = fs.filter(f => S.flash[f.id] && S.flash[f.id].proxima <= hoje());
   const novos = fs.filter(f => !S.flash[f.id] && (f.orig === "app" || f.orig === "propria" || livres-- > 0));
@@ -1289,9 +1290,9 @@ ROTAS["/flashcards"] = el => {
       <div class="row" style="flex-wrap:wrap;gap:8px;margin-bottom:14px">
         <select id="fca" style="max-width:220px"><option value="todas">Todas as áreas</option>${AREAS.map(a=>`<option value="${a.id}" ${fa===a.id?"selected":""}>${a.nome}</option>`).join("")}</select>
         <select id="fco" style="max-width:240px"><option value="todas">Todas as origens</option>${Object.entries(FC_ORIGENS).filter(([k]) => cont[k]).map(([k, v]) => `<option value="${k}" ${fo===k?"selected":""}>${v}</option>`).join("")}</select>
-        <label class="small muted" style="display:flex;align-items:center;gap:6px">Novos por dia <input type="number" id="fcl" min="0" max="300" value="${S.fcLimite ?? 20}" style="width:70px"></label>
+        <label class="small muted" style="display:flex;align-items:center;gap:6px">Novos por dia <input type="number" id="fcl" min="0" max="300" value="${S.fcLimite ?? 30}" style="width:70px"></label>
       </div>
-      <p class="small muted" style="margin:-6px 0 12px">Hoje você já viu ${novosHoje()} card(s) novo(s) das apostilas/provas. Os que passam do limite ficam para os próximos dias.</p>
+      <p class="small muted" style="margin:-6px 0 12px">Hoje você já viu ${novosHoje()} card(s) novo(s) (apostilas, provas e resumos). Os que passam do limite ficam para os próximos dias.</p>
       <div class="grid g3"><div class="stat"><div class="v">${venc.length}</div><div class="l">para revisar agora</div></div><div class="stat"><div class="v">${tot}</div><div class="l">cards no total</div></div><div class="stat"><div class="v">${tot-venc.length}</div><div class="l">ainda não vencidos</div></div></div>
       <div class="btn-row">${venc.length?`<button class="btn btn-primary" id="go">Revisar ${venc.length} cards</button>`:`<span class="muted">Tudo revisado por hoje ✓</span>`}</div>
       <details class="card" style="margin-top:18px"><summary style="cursor:pointer;font-weight:600">+ Criar flashcard</summary><div style="margin-top:12px">
