@@ -236,6 +236,7 @@ details.texto div{white-space:pre-line;margin-top:8px;line-height:1.7}
 <nav class="bottom-nav" id="bottom-nav" aria-label="Navegação inferior"></nav>
 
 <script src="resumos-assuntos.js"></script>
+<script src="materiais-publicos.js"></script>
 <script src="materiais-locais.js"></script>
 <script src="questoes-locais.js"></script>
 <script src="questoes-publicas.js"></script>
@@ -1333,6 +1334,7 @@ ROTAS["/conteudo"] = el => {
 const LOCAL = window.MATERIAIS_LOCAIS || null;
 const NOTAS_AP = window.NOTAS_APOSTILAS || {};
 function linkLocal(caminho, pagina){
+  if (/^(materiais-oficiais|provas-locais)\//.test(caminho)) return caminho + (pagina ? "#page=" + pagina : "");
   if (!LOCAL) return "#";
   if (caminho.startsWith("materiais-oficiais/")) return caminho + (pagina ? "#page=" + pagina : "");
   const rel = caminho.startsWith("DL:") ? caminho.slice(3) : caminho;
@@ -1340,7 +1342,11 @@ function linkLocal(caminho, pagina){
 }
 function nomeArquivo(a){ return a.split("/").pop().replace(/\.(pdf|png)$/i, "").replace(/^\d{4}-\d{2}-\d{2}-\d{2}-\d{2}-\d{2}-\d+-/, "").replace(/-e\d{10}$/, "").replace(/-/g, " "); }
 function renderMateriaisTopico(nome){
-  if (!LOCAL) return `<div class="card small muted" style="margin-top:12px">📚 <b>Seus materiais:</b> disponível ao abrir o app pelo arquivo <code>index.html</code> no seu computador (a lista de apostilas não é publicada no GitHub).</div>`;
+  if (!LOCAL) {
+    const MP = window.MATERIAIS_PUBLICOS || {};
+    const ofp = ((MP.oficiaisPorTopico || {})[nome] || []).map(r => (MP.oficiais || []).find(o => o[0] === r)).filter(Boolean);
+    return `<div class="card small" style="margin-top:12px">${ofp.length ? `📄 <b>Documentos oficiais:</b> ${ofp.map(o => `<a href="${esc(o[1])}" target="_blank">${esc(o[0])}</a>`).join(" · ")}<br>` : ""}<span class="muted">📚 As apostilas aparecem só ao abrir o app pelo arquivo <code>index.html</code> no seu computador.</span></div>`;
+  }
   const lst = LOCAL.porTopico[nome] || [], imgs = (LOCAL.imagens || {})[nome] || [];
   const ofs = ((LOCAL.oficiaisPorTopico || {})[nome] || []).map(r => (LOCAL.oficiais || []).find(o => o[0] === r)).filter(Boolean);
   if (!lst.length && !imgs.length && !ofs.length) return `<div class="card small muted" style="margin-top:12px">📚 Nenhum material da sua pasta cobre este tópico — use as fontes oficiais acima.</div>`;
