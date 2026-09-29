@@ -670,7 +670,8 @@ function estadoInicial(){
 }
 let S;
 try { S = Object.assign(estadoInicial(), JSON.parse(localStorage.getItem(KEY) || "{}")); } catch { S = estadoInicial(); }
-function salvar(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} }
+function gravar(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} }
+function salvar(){ S._t = Date.now(); gravar(); if (typeof syncAgendar === "function") syncAgendar(); }
 
 let Q_FONTE_LOCAL, Q_LOCAIS, F_LOCAIS;
 function montarDadosLocais(){
@@ -1681,6 +1682,7 @@ ROTAS["/config"] = el => {
       <div class="field"><label>Horas de estudo por dia</label><input type="number" id="ch" min="0.5" max="12" step="0.5" value="${S.horasDia}"></div>
       <div class="field"><label>Dias de estudo por semana</label><input type="number" id="cs" min="1" max="7" value="${S.diasSemana}"></div></div>
       <button class="btn btn-primary" id="csave">Salvar</button> <span class="small muted" id="cmsg"></span></div>
+    ${renderSync()}
     ${renderCofre()}
     <div class="card"><h2>☁️ Apostilas no Drive / OneDrive</h2>
       <p class="small muted" style="margin-top:4px">Cole o link de uma apostila que está no seu Google Drive ou OneDrive e escolha o tópico. O link aparece na página do tópico, também no celular. Ele fica salvo só neste navegador — nunca vai para o GitHub. Para levar ao celular, use <b>Exportar</b> aqui e <b>Importar</b> no celular.</p>
@@ -1694,7 +1696,7 @@ ROTAS["/config"] = el => {
     <div class="card"><h2>Backup</h2><div class="btn-row"><button class="btn btn-secondary" id="exp">Exportar (.json)</button><label class="btn btn-secondary">Importar<input type="file" id="imp" accept=".json" hidden></label><button class="btn btn-danger" id="reset">Apagar tudo</button></div></div></div>`;
   const $ = s => el.querySelector(s);
   $("#csave").onclick = () => { S.dataProva = $("#cd").value || EDITAL.dataProva; S.horasDia = Number($("#ch").value)||2; S.diasSemana = Math.min(7,Math.max(1,Number($("#cs").value)||6)); salvar(); pintarNav("/config"); $("#cmsg").textContent = "✓ Salvo"; };
-  ligarCofre(el);
+  ligarCofre(el); ligarSync(el);
   $("#ladd").onclick = () => {
     const nome = $("#lnome").value.trim(), url = $("#lurl").value.trim(), t = $("#ltop").value;
     let ok = false; try { ok = new URL(url).protocol === "https:"; } catch {}
@@ -1704,7 +1706,7 @@ ROTAS["/config"] = el => {
   el.querySelectorAll("[data-ldel]").forEach(b => b.onclick = () => { S.linksNuvem = (S.linksNuvem || []).filter(l => l.id !== b.dataset.ldel); salvar(); rotear(); });
   $("#exp").onclick = () => { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify(S,null,1)],{type:"application/json"})); a.download = `ufba-assistente-backup-${hoje()}.json`; a.click(); };
   $("#imp").onchange = e => { const f = e.target.files[0]; if (!f) return; f.text().then(t => { try { S = Object.assign(estadoInicial(), JSON.parse(t)); salvar(); alert("Backup importado."); rotear(); } catch { alert("Arquivo inválido."); } }); };
-  $("#reset").onclick = () => { if (confirm("Apagar todo o progresso? Não dá para desfazer.")){ S = estadoInicial(); salvar(); rotear(); } };
+  $("#reset").onclick = () => { if (confirm(lsGet(SYNC.token) ? "Apagar todo o progresso? Com a sincronização ligada, isso apaga também nos outros aparelhos. Não dá para desfazer." : "Apagar todo o progresso? Não dá para desfazer.")){ S = estadoInicial(); salvar(); rotear(); } };
 };
 
 
@@ -2533,8 +2535,140 @@ document.addEventListener("click", e => {
   if (a && a.getAttribute("href") === "#") { e.preventDefault(); alert("Este arquivo está só no seu computador. Para abrir aqui, cadastre o link dele no Drive/OneDrive em Configurações, usando o mesmo nome."); }
 });
 
+/* ---------- Sincronização do progresso entre aparelhos (GitHub Gist secreto, cifrado) ---------- */
+const SYNC = { token: "ufba-sync:token", gist: "ufba-sync:gist", base: "ufba-sync:base", quando: "ufba-sync:quando", desc: "ufba-assistente-progresso", arq: "ufba-progresso.json" };
+const lsGet = k => { try { return localStorage.getItem(k); } catch { return null; } };
+const lsSet = (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch {} };
+const ARRAYS_POR_ID = new Set(["qExtras", "fcExtras", "linksNuvem", "lp", "inf", "ap", "ce"]); // lp/inf/ap/ce = listas de tópicos
+function mesclar(a, b, localMaisNovo, chave){
+  if (Array.isArray(a) && Array.isArray(b)) {
+    if (ARRAYS_POR_ID.has(chave)) {
+      const m = new Map(); for (const x of b) m.set(x && x.id, x);
+      for (const x of a) m.set(x && x.id, m.has(x && x.id) ? mesclar(x, m.get(x && x.id), localMaisNovo) : x);
+      return [...m.values()];
+    }
+    if (a.some(x => x && typeof x === "object") || b.some(x => x && typeof x === "object")) {
+      // registros (respostas, sessões…): junta como multiconjunto — cada registro aparece o máximo de vezes que aparece em um dos lados
+      const conta = arr => { const c = new Map(); for (const x of arr) { const k = JSON.stringify(x); c.set(k, (c.get(k) || 0) + 1); } return c; };
+      const ca = conta(a), cb = conta(b), out = [];
+      for (const x of a) out.push(x);
+      for (const [k, n] of cb) for (let i = ca.get(k) || 0; i < n; i++) out.push(JSON.parse(k));
+      return out;
+    }
+    return localMaisNovo ? a : b;
+  }
+  if (a && b && typeof a === "object" && typeof b === "object") {
+    if (chave === "flash" || chave === "erros") {
+      const out = { ...b };
+      for (const [k, v] of Object.entries(a)) out[k] = !(k in b) || (v.proxima || "") >= (b[k].proxima || "") ? v : b[k];
+      return out;
+    }
+    const out = {};
+    for (const k of new Set([...Object.keys(a), ...Object.keys(b)])) out[k] = !(k in b) ? a[k] : !(k in a) ? b[k] : mesclar(a[k], b[k], localMaisNovo, k);
+    return out;
+  }
+  return localMaisNovo ? a : b;
+}
+async function syncChave(token){
+  const base = await crypto.subtle.importKey("raw", new TextEncoder().encode(token), "PBKDF2", false, ["deriveKey"]);
+  return crypto.subtle.deriveKey({ name: "PBKDF2", salt: new TextEncoder().encode("ufba-assistente-sync-v1"), iterations: 200000, hash: "SHA-256" }, base, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
+}
+const b64big = { enc: u8 => { let t = ""; for (let i = 0; i < u8.length; i += 0x8000) t += String.fromCharCode(...u8.subarray(i, i + 0x8000)); return btoa(t); }, dec: t => Uint8Array.from(atob(t), c => c.charCodeAt(0)) };
+async function syncCifrar(obj, token){
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-GCM", iv }, await syncChave(token), await cofreGzip(new TextEncoder().encode(JSON.stringify(obj)), true)));
+  return JSON.stringify({ v: 1, t: obj._t || 0, iv: b64big.enc(iv), ct: b64big.enc(ct) });
+}
+async function syncDecifrar(txt, token){
+  const j = JSON.parse(txt);
+  const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: b64big.dec(j.iv) }, await syncChave(token), b64big.dec(j.ct));
+  return JSON.parse(new TextDecoder().decode(await cofreGzip(new Uint8Array(pt), false)));
+}
+async function gh(caminho, token, opts = {}){
+  const r = await fetch("https://api.github.com" + caminho, { ...opts, headers: { Authorization: "Bearer " + token, Accept: "application/vnd.github+json", "Content-Type": "application/json", ...(opts.headers || {}) } });
+  if (r.status === 401 || r.status === 403) throw new Error("token");
+  if (!r.ok) throw new Error("http " + r.status);
+  return r.status === 204 ? null : r.json();
+}
+async function syncAcharGist(token){
+  let id = lsGet(SYNC.gist); if (id) return id;
+  for (let pg = 1; pg <= 5; pg++) {
+    const lista = await gh(`/gists?per_page=100&page=${pg}`, token);
+    const g = lista.find(x => x.description === SYNC.desc && x.files && x.files[SYNC.arq]);
+    if (g) { lsSet(SYNC.gist, g.id); return g.id; }
+    if (lista.length < 100) break;
+  }
+  const g = await gh("/gists", token, { method: "POST", body: JSON.stringify({ description: SYNC.desc, public: false, files: { [SYNC.arq]: { content: await syncCifrar(S, token) } } }) });
+  lsSet(SYNC.gist, g.id); lsSet(SYNC.base, String(S._t || 0)); return g.id;
+}
+async function syncLerRemoto(token, id){
+  const g = await gh("/gists/" + id, token);
+  const f = g.files && g.files[SYNC.arq];
+  if (!f) return null;
+  const txt = f.truncated ? await (await fetch(f.raw_url)).text() : f.content;
+  return syncDecifrar(txt, token);
+}
+let syncOcupado = false, syncTimer = null, syncErro = "";
+function syncStatus(){ const q = lsGet(SYNC.quando); return syncErro ? "⚠️ " + syncErro : q ? "Última sincronização: " + new Date(Number(q)).toLocaleString("pt-BR") : "Ainda não sincronizado."; }
+async function syncAgora(){
+  const token = lsGet(SYNC.token); if (!token || syncOcupado) return;
+  syncOcupado = true; syncErro = "";
+  try {
+    const id = await syncAcharGist(token);
+    let R = null;
+    try { R = await syncLerRemoto(token, id); } catch (e) { if (e.message === "token" || e.message.startsWith("http")) throw e; R = null; }
+    const base = Number(lsGet(SYNC.base) || 0), lt = S._t || 0, rt = (R && R._t) || 0;
+    let mudouLocal = false, enviar = false;
+    if (!R) enviar = true;
+    else if (rt === lt) {}
+    else if (lt <= base) { S = Object.assign(estadoInicial(), R); mudouLocal = true; }       // só o outro aparelho mudou
+    else if (rt <= base) enviar = true;                                                     // só este aparelho mudou
+    else { S = Object.assign(estadoInicial(), mesclar(S, R, lt > rt)); S._t = Date.now(); mudouLocal = enviar = true; } // os dois mudaram
+    if (mudouLocal) gravar();
+    if (enviar) await gh("/gists/" + id, token, { method: "PATCH", body: JSON.stringify({ files: { [SYNC.arq]: { content: await syncCifrar(S, token) } } }) });
+    lsSet(SYNC.base, String(S._t || 0)); lsSet(SYNC.quando, String(Date.now()));
+    if (mudouLocal) rotear();
+  } catch (e) {
+    syncErro = e.message === "token" ? "O token foi recusado pelo GitHub (expirou ou não tem permissão de Gists)." : "Sem conexão com o GitHub agora; tento de novo mais tarde.";
+    if (e.message === "token") lsSet(SYNC.gist, null);
+  } finally {
+    syncOcupado = false;
+    const st = document.querySelector("#syncst"); if (st) st.textContent = syncStatus();
+  }
+}
+function syncAgendar(){ if (!lsGet(SYNC.token)) return; clearTimeout(syncTimer); syncTimer = setTimeout(syncAgora, 4000); }
+document.addEventListener("visibilitychange", () => { if (!lsGet(SYNC.token)) return; if (document.visibilityState === "visible") syncAgora(); else if (syncTimer) { clearTimeout(syncTimer); syncAgora(); } });
+function renderSync(){
+  const on = !!lsGet(SYNC.token);
+  return `<div class="card"><h2>🔄 Sincronizar entre aparelhos</h2>
+    ${on ? `<p class="small">✓ Sincronização ligada neste aparelho. O progresso é enviado alguns segundos depois de cada mudança e buscado sempre que você abre o app.</p>
+      <p class="small muted" id="syncst">${esc(syncStatus())}</p>
+      <div class="btn-row"><button class="btn btn-secondary" id="syncnow">Sincronizar agora</button><button class="btn btn-ghost" id="syncoff">Desligar neste aparelho</button></div>`
+    : `<p class="small muted" style="margin-top:4px">Guarda seu progresso (respostas, erros, flashcards, tópicos estudados, links do Drive) num Gist secreto da sua conta do GitHub, criptografado, e mantém celular e computador iguais.</p>
+      <ol class="small" style="padding-left:18px;margin:8px 0">
+        <li>No GitHub: <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">criar token fine-grained</a>. Em <b>Account permissions → Gists</b>, escolha <b>Read and write</b> (nada mais). Validade: até depois da prova.</li>
+        <li>Copie o token e cole abaixo. Faça o mesmo em cada aparelho (pode ser o mesmo token).</li></ol>
+      <div class="field"><label>Token do GitHub</label><input type="password" id="synctk" autocomplete="off" placeholder="github_pat_…"></div>
+      <button class="btn btn-primary" id="syncon">Ligar sincronização</button> <span class="small muted" id="syncst"></span>`}
+    </div>`;
+}
+function ligarSync(el){
+  const $ = x => el.querySelector(x);
+  if ($("#syncon")) $("#syncon").onclick = async () => {
+    const t = $("#synctk").value.trim();
+    if (t.length < 20) { $("#syncst").textContent = "Cole o token completo."; return; }
+    lsSet(SYNC.token, t); lsSet(SYNC.gist, null); lsSet(SYNC.base, null);
+    $("#syncst").textContent = "Conectando…";
+    await syncAgora();
+    if (syncErro) { lsSet(SYNC.token, null); $("#syncst").textContent = syncErro; } else rotear();
+  };
+  if ($("#syncnow")) $("#syncnow").onclick = () => { $("#syncst").textContent = "Sincronizando…"; syncAgora(); };
+  if ($("#syncoff")) $("#syncoff").onclick = () => { [SYNC.token, SYNC.gist, SYNC.base, SYNC.quando].forEach(k => lsSet(k, null)); rotear(); };
+}
+
 rotear();
 cofreAutoAbrir();
+syncAgora();
 </script>
 </body>
 </html>
