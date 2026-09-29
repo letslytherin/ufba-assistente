@@ -2476,17 +2476,28 @@ async function cofreGzip(u8, comprimir){
   const st = new Blob([u8]).stream().pipeThrough(comprimir ? new CompressionStream("gzip") : new DecompressionStream("gzip"));
   return new Uint8Array(await new Response(st).arrayBuffer());
 }
+const cofreJuntar = partes => { const out = new Uint8Array(partes.reduce((n, p) => n + p.length, 0)); let i = 0; for (const p of partes) { out.set(p, i); i += p.length; } return out; };
 async function cofreCriarBytes(senha){
   const dados = { QUESTOES_LOCAIS: window.QUESTOES_LOCAIS, TEXTOS_LOCAIS: window.TEXTOS_LOCAIS, FLASH_LOCAIS: window.FLASH_LOCAIS, NOTAS_APOSTILAS: window.NOTAS_APOSTILAS, MATERIAIS_LOCAIS: window.MATERIAIS_LOCAIS };
-  const salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12));
-  const chave = await cofreDerivar(senha, salt);
-  const ct = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-GCM", iv }, chave, await cofreGzip(new TextEncoder().encode(JSON.stringify(dados)), true)));
-  const out = new Uint8Array(6 + 16 + 12 + ct.length);
-  out.set(new TextEncoder().encode(COFRE_MAGIC), 0); out.set(salt, 6); out.set(iv, 22); out.set(ct, 34);
-  return out;
+  const salt = crypto.getRandomValues(new Uint8Array(16)), ivK = crypto.getRandomValues(new Uint8Array(12)), ivD = crypto.getRandomValues(new Uint8Array(12));
+  const kek = await cofreDerivar(senha, salt);
+  const dk = crypto.getRandomValues(new Uint8Array(32));                       // chave interna
+  const emb = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-GCM", iv: ivK }, kek, dk));
+  const chave = await crypto.subtle.importKey("raw", dk, "AES-GCM", false, ["encrypt"]);
+  const ct = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-GCM", iv: ivD }, chave, await cofreGzip(new TextEncoder().encode(JSON.stringify(dados)), true)));
+  const cab = cofreJuntar([new TextEncoder().encode("UFBAC2"), salt, ivK, emb]);
+  return { bytes: cofreJuntar([cab, ivD, ct]), chaveArquivo: JSON.stringify({ v: 2, chave: b64big.enc(dk), cabecalho: b64big.enc(cab) }) };
 }
 async function cofreAbrirBytes(buf, senha, chaveSalva){
-  if (new TextDecoder().decode(buf.slice(0, 6)) !== COFRE_MAGIC) throw new Error("formato");
+  const magic = new TextDecoder().decode(buf.slice(0, 6));
+  if (magic === "UFBAC2") {
+    const salt = buf.slice(6, 22), ivK = buf.slice(22, 34), emb = buf.slice(34, 82), ivD = buf.slice(82, 94), ct = buf.slice(94);
+    const dk = senha ? new Uint8Array(await crypto.subtle.decrypt({ name: "AES-GCM", iv: ivK }, await cofreDerivar(senha, salt), emb)) : b64.dec(chaveSalva);
+    const chave = await crypto.subtle.importKey("raw", dk, "AES-GCM", false, ["decrypt"]);
+    const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: ivD }, chave, ct);
+    return { dados: JSON.parse(new TextDecoder().decode(await cofreGzip(new Uint8Array(pt), false))), chaveRaw: b64big.enc(dk) };
+  }
+  if (magic !== COFRE_MAGIC) throw new Error("formato");
   const salt = buf.slice(6, 22), iv = buf.slice(22, 34), ct = buf.slice(34);
   const chave = senha ? await cofreDerivar(senha, salt) : await crypto.subtle.importKey("raw", b64.dec(chaveSalva), "AES-GCM", true, ["decrypt"]);
   const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, chave, ct); // falha se a senha estiver errada
@@ -2521,7 +2532,7 @@ function renderCofre(){
     <div class="grid g2"><div class="field"><label>Senha (mínimo 12 caracteres)</label><input type="password" id="cfs1" autocomplete="new-password"></div>
     <div class="field"><label>Repita a senha</label><input type="password" id="cfs2" autocomplete="new-password"></div></div>
     <button class="btn btn-primary" id="cfgerar">Gerar cofre.bin</button> <span class="small muted" id="cfmsg"></span>
-    <p class="small muted" style="margin:8px 0 0">Use uma senha que você não usa em outro lugar e guarde-a no seu gerenciador de senhas. Se perder a senha, é só gerar um cofre novo aqui.</p></div>`;
+    <p class="small muted" style="margin:8px 0 0">Use uma senha que você não usa em outro lugar e guarde-a no seu gerenciador de senhas. O arquivo cofre-chave.json fica só no seu computador (nunca vai para o GitHub) e permite atualizar o cofre sem gerar de novo. Se perder a senha, é só gerar um cofre novo aqui.</p></div>`;
   if (COFRE) return `<div class="card"><h2>🔐 Cofre</h2><p class="small">✓ Seu conteúdo pessoal está desbloqueado neste aparelho.</p><button class="btn btn-secondary" id="cfbloq">Bloquear e esquecer a chave neste aparelho</button></div>`;
   return `<div class="card"><h2>🔐 Cofre</h2><p class="small muted" style="margin-top:4px">Digite a senha do cofre para liberar neste aparelho suas questões comentadas, simulados, conceitos e notas das apostilas. A chave fica salva só neste navegador.</p>
     <div class="field"><label>Senha do cofre</label><input type="password" id="cfsenha" autocomplete="current-password"></div>
@@ -2535,10 +2546,12 @@ function ligarCofre(el){
     if (a !== b) return msg("As senhas não conferem.");
     msg("Gerando…");
     try {
-      const bytes = await cofreCriarBytes(a);
-      const l = document.createElement("a"); l.href = URL.createObjectURL(new Blob([bytes], { type: "application/octet-stream" })); l.download = "cofre.bin"; l.click();
+      const { bytes, chaveArquivo } = await cofreCriarBytes(a);
+      const baixar = (conteudo, nome, tipo) => { const l = document.createElement("a"); l.href = URL.createObjectURL(new Blob([conteudo], { type: tipo })); l.download = nome; l.click(); };
+      baixar(bytes, "cofre.bin", "application/octet-stream");
+      setTimeout(() => baixar(chaveArquivo, "cofre-chave.json", "application/json"), 600);
       $("#cfs1").value = $("#cfs2").value = "";
-      msg(`✓ cofre.bin gerado (${(bytes.length / 1e6).toFixed(1)} MB) na sua pasta Downloads. Peça para publicá-lo.`);
+      msg(`✓ Dois arquivos na sua pasta Downloads: cofre.bin (${(bytes.length / 1e6).toFixed(1)} MB) e cofre-chave.json. Se o navegador perguntar, permita os dois downloads. Depois peça para publicar.`);
     } catch { msg("Não foi possível gerar o cofre neste navegador."); }
   };
   if ($("#cfabrir")) $("#cfabrir").onclick = async () => {
