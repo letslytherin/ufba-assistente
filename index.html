@@ -157,6 +157,17 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
 .daycard .act{color:var(--text-2);text-decoration:none;border-top:1px dashed var(--border);padding-top:6px}
 .daycard .act:hover{color:var(--accent)}
 .resumo{margin:0;padding-left:20px}.resumo li{margin-bottom:8px}
+.assuntos{display:flex;flex-direction:column;gap:8px}
+.assunto{border:1px solid var(--border);border-radius:10px;padding:0 12px;background:var(--surface)}
+.assunto[open]{padding-bottom:12px}
+.assunto summary{display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px 0;list-style:none}
+.assunto summary::-webkit-details-marker{display:none}
+.assunto summary .nome{flex:1;font-weight:600}
+.assunto .resumo{margin:4px 0 10px}
+.tag-inc{font-size:11px;padding:2px 8px;border-radius:999px;background:var(--bg-subtle);color:var(--muted);white-space:nowrap}
+.inc-alta{border-left:4px solid #e0763a}.inc-alta .tag-inc{background:#e0763a22;color:#c75f22}
+.inc-media{border-left:4px solid var(--border-strong)}
+.resumo li.destaque{background:var(--warning-soft, #fff4d6);border-radius:6px;padding:4px 8px;margin-left:-8px;list-style-position:inside}
 details.texto{background:var(--bg-subtle);border:1px solid var(--border);border-radius:var(--radius-md);padding:10px 14px;margin:8px 0 4px}
 details.texto summary{cursor:pointer;font-weight:600;font-size:.85rem}
 details.texto div{white-space:pre-line;margin-top:8px;line-height:1.7}
@@ -224,6 +235,7 @@ details.texto div{white-space:pre-line;margin-top:8px;line-height:1.7}
 </div>
 <nav class="bottom-nav" id="bottom-nav" aria-label="Navegação inferior"></nav>
 
+<script src="resumos-assuntos.js"></script>
 <script src="materiais-locais.js"></script>
 <script src="questoes-locais.js"></script>
 <script src="questoes-publicas.js"></script>
@@ -1184,9 +1196,9 @@ function registrarResposta(q, ok){
 }
 ROTAS["/questoes"] = el => {
   const params = new URLSearchParams(location.hash.split("?")[1]||"");
-  let filtro = params.get("a") || "todas", modo = "nao", origem = params.get("o") || "todas", topicoF = params.get("t") || "", formato = params.get("f") || "todos";
+  let filtro = params.get("a") || "todas", modo = "nao", origem = params.get("o") || "todas", topicoF = params.get("t") || "", formato = params.get("f") || "todos", subF = params.get("s");
   function lista(){
-    let qs = todasQuestoes().filter(q => (filtro==="todas" || q.a===filtro) && (origem==="todas" || q.orig===origem) && (!topicoF || q.t===topicoF)
+    let qs = todasQuestoes().filter(q => (filtro==="todas" || q.a===filtro) && (origem==="todas" || q.orig===origem) && (!topicoF || q.t===topicoF) && (subF == null || !topicoF || String(q.s) === subF)
       && (formato==="todos" || (formato==="ae" ? q.o.length >= 4 : q.o.length === 2)));
     const resp = new Set(S.respostas.map(r=>r.id));
     if (modo==="nao") { const n = qs.filter(q=>!resp.has(q.id)); if (n.length) qs = n; }
@@ -1205,6 +1217,7 @@ ROTAS["/questoes"] = el => {
         <select id="qf" style="max-width:180px"><option value="todos">A–E e Certo/Errado</option><option value="ae" ${formato === "ae" ? "selected" : ""}>Só múltipla escolha</option><option value="ce" ${formato === "ce" ? "selected" : ""}>Só Certo/Errado</option></select>
         <select id="qm" style="max-width:220px"><option value="nao" ${modo==="nao"?"selected":""}>Priorizar não respondidas</option><option value="todas" ${modo==="todas"?"selected":""}>Todas, aleatório</option></select>
         <span class="small muted" id="qs"></span></div>
+      ${subF != null && topicoF && (SUBTOPICOS[topicoF] || [])[subF] ? `<p class="small" style="margin:-6px 0 8px">Assunto: <b>${esc(SUBTOPICOS[topicoF][subF])}</b> · <a href="#" id="qsub">ver todo o tópico</a></p>` : ""}
       <p class="small muted" style="margin:-6px 0 12px">${fila.length.toLocaleString("pt-BR")} questões neste filtro.</p>
       <div id="qbox"></div>
       <details class="card" style="margin-top:18px"><summary style="cursor:pointer;font-weight:600">+ Adicionar questão própria</summary>
@@ -1217,8 +1230,9 @@ ROTAS["/questoes"] = el => {
         <button class="btn btn-primary" id="nsave">Salvar questão</button></div></details></div>`;
     const tl = () => el.querySelector("#tl").innerHTML = S.topicos[el.querySelector("#na").value].map(t=>`<option value="${esc(t.nome)}">`).join("");
     tl(); el.querySelector("#na").onchange = tl;
-    el.querySelector("#qa").onchange = e => { filtro = e.target.value; topicoF = ""; montar(); };
-    el.querySelector("#qt").onchange = e => { topicoF = e.target.value; montar(); };
+    el.querySelector("#qa").onchange = e => { filtro = e.target.value; topicoF = ""; subF = null; montar(); };
+    el.querySelector("#qt").onchange = e => { topicoF = e.target.value; subF = null; montar(); };
+    const qsub = el.querySelector("#qsub"); if (qsub) qsub.onclick = ev => { ev.preventDefault(); subF = null; montar(); };
     el.querySelector("#qo").onchange = e => { origem = e.target.value; montar(); };
     el.querySelector("#qf").onchange = e => { formato = e.target.value; montar(); };
     el.querySelector("#qm").onchange = e => { modo = e.target.value; montar(); };
@@ -1343,14 +1357,34 @@ function renderNotasApostilas(nome){
   return `<div class="card" style="margin-top:12px;border-color:var(--accent-soft-border)"><h2>🗒️ Notas das suas apostilas</h2><ul class="resumo">${n.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
     <p class="small muted" style="margin:6px 0 0">Anotações feitas a partir das apostilas da sua pasta (Gran, IBGE, mapas), reescritas para revisão. Só aparecem no seu computador.</p></div>`;
 }
+const RA = window.RESUMOS_ASSUNTOS || {}, INC_A = window.INCIDENCIA_ASSUNTOS || {};
+function incidencia(nome, i){
+  const c = INC_A[nome]; if (!c) return null;
+  const tot = c.reduce((a, b) => a + b, 0), n = c.length;
+  if (tot < 8) return { n: c[i], nivel: "pouco", rot: c[i] ? `${c[i]} questão(ões) no banco` : "sem questões no banco" };
+  const sh = c[i] / tot;
+  if (sh >= 1.5 / n) return { n: c[i], nivel: "alta", rot: "🔥 cai muito" };
+  if (sh >= 0.5 / n) return { n: c[i], nivel: "media", rot: "cai às vezes" };
+  return { n: c[i], nivel: "baixa", rot: "raro nas provas" };
+}
+function bulletResumo(x){
+  const m = x.match(/^(Na prova|Pegadinha|Atenção)\s*:\s*/i);
+  return m ? `<li class="destaque"><b>${esc(m[1])}:</b> ${esc(x.slice(m[0].length))}</li>` : `<li>${esc(x)}</li>`;
+}
 function renderAssuntos(area, nome){
   const subs = SUBTOPICOS[nome] || [];
   if (!subs.length) return "";
   S.subtopicos = S.subtopicos || {};
   const feitos = S.subtopicos[nome] || [];
   const n = subs.filter((_, i) => feitos[i]).length;
-  return `<div class="card" style="margin-top:12px"><div class="row between"><h2>Assuntos do tópico</h2><span class="pill">${n}/${subs.length}</span></div>
-    <ul class="list">${subs.map((x, i) => `<li><input type="checkbox" class="chk" id="sub-${i}" data-sub="${i}" ${feitos[i] ? "checked" : ""}><label for="sub-${i}" style="flex:1;cursor:pointer">${esc(x)}</label></li>`).join("")}</ul></div>`;
+  const ordem = subs.map((_, i) => i).sort((a, b) => ((INC_A[nome] || [])[b] || 0) - ((INC_A[nome] || [])[a] || 0) || a - b);
+  const tot = (INC_A[nome] || []).reduce((a, b) => a + b, 0);
+  return `<div class="card" style="margin-top:12px"><div class="row between"><h2>Resumo por assunto</h2><span class="pill">${n}/${subs.length} estudados</span></div>
+    <p class="small muted" style="margin:4px 0 10px">${tot >= 8 ? `Ordenados do mais cobrado para o menos cobrado, estimativa feita a partir de ${tot} questões de provas classificadas por assunto.` : "Poucas questões deste tópico no banco; os assuntos seguem a ordem do edital."} Toque num assunto para abrir o resumo; marque quando tiver estudado.</p>
+    <div class="assuntos">${ordem.map(i => { const x = subs[i], r = (RA[nome] || {})[x] || [], inc = incidencia(nome, i);
+      return `<details class="assunto${inc ? " inc-" + inc.nivel : ""}"><summary><input type="checkbox" class="chk" data-sub="${i}" ${feitos[i] ? "checked" : ""} onclick="event.stopPropagation()" aria-label="Marcar como estudado"><span class="nome">${esc(x)}</span>${inc ? `<span class="tag-inc">${inc.rot}</span>` : ""}</summary>
+        ${r.length ? `<ul class="resumo">${r.map(bulletResumo).join("")}</ul>` : `<p class="small muted">Sem resumo para este assunto.</p>`}
+        ${inc && inc.n ? `<a class="small" href="#/questoes?a=${area}&t=${encodeURIComponent(nome)}&s=${i}">${inc.n === 1 ? "Fazer a questão deste assunto" : `Fazer as ${inc.n} questões deste assunto`} →</a>` : ""}</details>`; }).join("")}</div></div>`;
 }
 function ligarAssuntos(el, nome){
   el.querySelectorAll("[data-sub]").forEach(c => c.onchange = () => {
@@ -1360,7 +1394,7 @@ function ligarAssuntos(el, nome){
     const t = AREAS.flatMap(a => S.topicos[a.id]).find(t => t.nome === nome);
     if (t && subs.length && subs.every((_, i) => arr[i]) && !t.estudado) { t.estudado = true; t.ultima = hoje(); }
     salvar();
-    const pill = c.closest(".card").querySelector(".pill"); if (pill) pill.textContent = `${subs.filter((_, i) => arr[i]).length}/${subs.length}`;
+    const pill = c.closest(".card").querySelector(".pill"); if (pill) pill.textContent = `${subs.filter((_, i) => arr[i]).length}/${subs.length} estudados`;
   });
 }
 function progressoAssuntos(nome){ const subs = SUBTOPICOS[nome] || []; const f = ((S.subtopicos || {})[nome]) || []; return [subs.filter((_, i) => f[i]).length, subs.length]; }
@@ -1383,9 +1417,9 @@ ROTAS["/resumo"] = el => {
   el.innerHTML = `<div class="container" style="max-width:780px">
     <a class="small" href="#/conteudo?a=${a}">← Conteúdo</a>
     ${header(AREA[a] ? AREA[a].nome : "Resumo", esc(nome || ""), "")}
-    ${r ? `<div class="card"><ul class="resumo">${r.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>` : `<div class="card empty"><p>Ainda sem resumo para este tópico.</p></div>`}
-    ${renderFontes(nome)}
     ${renderAssuntos(a, nome)}
+    ${r ? `<details class="card" style="margin-top:12px"><summary style="cursor:pointer;font-weight:600">Visão geral do tópico (pontos-chave)</summary><ul class="resumo" style="margin-top:10px">${r.map(bulletResumo).join("")}</ul></details>` : ""}
+    ${renderFontes(nome)}
     ${renderNotasApostilas(nome)}
     ${renderMateriaisTopico(nome)}
     <div class="grid g3" style="margin-top:14px"><div class="stat"><div class="v">${qs.length}</div><div class="l">questões no app</div></div><div class="stat"><div class="v">${pct(st.taxa)}</div><div class="l">seu acerto (${st.n}q)</div></div><div class="stat"><div class="v">${topico && topico.revisoes || 0}</div><div class="l">revisões registradas</div></div></div>
