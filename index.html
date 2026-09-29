@@ -235,6 +235,7 @@ details.texto div{white-space:pre-line;margin-top:8px;line-height:1.7}
 </div>
 <nav class="bottom-nav" id="bottom-nav" aria-label="Navegação inferior"></nav>
 
+<script src="correcoes.js"></script>
 <script src="resumos-assuntos.js"></script>
 <script src="materiais-publicos.js"></script>
 <script src="materiais-locais.js"></script>
@@ -677,13 +678,19 @@ let Q_FONTE_LOCAL, Q_LOCAIS, F_LOCAIS;
 function montarDadosLocais(){
   Q_FONTE_LOCAL = !!window.QUESTOES_LOCAIS;
   const qs = window.QUESTOES_LOCAIS || window.QUESTOES_PUBLICAS || [], tx = (Q_FONTE_LOCAL ? window.TEXTOS_LOCAIS : window.TEXTOS_PUBLICOS) || [];
-  Q_LOCAIS = qs.map(q => ({ ...q, orig: q.orig === "prova_ap" ? "prova" : q.orig, txt: q.ti != null ? tx[q.ti] : undefined }));
+  const COR = window.CORRECOES_QUESTOES || { gabarito: {}, notas: {}, remover: [] }, rem = new Set(COR.remover || []);
+  Q_LOCAIS = qs.filter(q => !rem.has(q.id)).map(q => ({ ...q, orig: q.orig === "prova_ap" ? "prova" : q.orig, txt: q.ti != null ? tx[q.ti] : undefined,
+    ...(q.id in (COR.gabarito || {}) ? { c: COR.gabarito[q.id], nota: (COR.notas || {})[q.id] } : {}) }));
   const base = window.FLASH_LOCAIS || window.FLASH_PUBLICOS || [], ids = new Set(base.map(f => f.id));
   F_LOCAIS = [...base, ...(window.FLASH_EXTRA || []).filter(f => !ids.has(f.id))];
 }
 montarDadosLocais();
 const Q_APP = Q_SEED.map((q,i)=>({...q,id:"s"+i, orig:"app"}));
-const todasQuestoes = () => [...Q_APP, ...S.qExtras.map(q => ({...q, orig: String(q.id).startsWith("i") ? "importada" : "propria"})), ...Q_LOCAIS];
+const todasQuestoes = () => { const rep = S.reportes || {}; return [...Q_APP, ...S.qExtras.map(q => ({...q, orig: String(q.id).startsWith("i") ? "importada" : "propria"})), ...Q_LOCAIS].filter(q => !rep[q.id]); };
+// uma vez: respostas dadas com o gabarito antigo das questões corrigidas não contam
+(() => { const g = (window.CORRECOES_QUESTOES || {}).gabarito || {}; S._corrigidas = S._corrigidas || [];
+  const novas = Object.keys(g).filter(id => !S._corrigidas.includes(id)); if (!novas.length) return;
+  S.respostas = S.respostas.filter(r => !novas.includes(r.id)); novas.forEach(id => delete S.erros[id]); S._corrigidas.push(...novas); gravar(); })();
 const ORIGENS = { app: "Autorais do app", prova: "Provas reais", apostila: "Apostilas", simulado: "Simulados", importada: "Importadas", propria: "Criadas por você" };
 const FC_ORIGENS = { app: "Do app", resumo: "Dos resumos por assunto", prova_ae: "Múltipla escolha (provas)", ce: "Certo ou errado (provas)", apostila: "Conceitos das apostilas", propria: "Criados por você" };
 const todosFlash = () => [...FC_SEED.map((f,i)=>({a:f[0],f:f[1],v:f[2],id:"f"+i,orig:"app"})), ...S.fcExtras.map(f => ({...f, orig:"propria"})), ...F_LOCAIS];
@@ -1184,6 +1191,7 @@ function renderQuestao(q, onResp, opts={}){
   wrap.innerHTML = `<div class="row between small"><span>${areaTag(q.a)}</span><span class="muted">${esc(q.t||"")}</span></div>
     ${q.fonte ? `<div class="small muted" style="margin-top:4px">📄 ${esc(q.fonte)} ${verLink}</div>` : ""}
     ${q.aviso ? `<div class="small" style="margin-top:6px;padding:6px 10px;border-radius:8px;background:var(--warning-soft)">⚠️ Esta questão depende de um texto ou de destaque (sublinhado/negrito) que não veio na extração — ${verLink || "consulte o material original"}.</div>` : ""}
+    ${q.nota ? `<div class="small" style="margin-top:6px;padding:6px 10px;border-radius:8px;background:var(--bg-subtle)">ℹ️ ${esc(q.nota)}</div>` : ""}
     ${q.txt?`<details class="texto" ${opts.semFeedback?"":"open"}><summary>Texto-base</summary><div class="small">${esc(q.txt)}</div></details>`:""}
     <div class="q-enun">${esc(q.e)}</div>
     <div>${q.o.map((alt,i)=>`<button class="alt" data-i="${i}"><span class="letra">${q.o.length === 2 && q.o[0] === "Certo" ? (i ? "E" : "C") : "ABCDE"[i]}</span><span>${esc(alt)}</span></button>`).join("")}</div><div class="fb"></div>`;
@@ -1191,7 +1199,15 @@ function renderQuestao(q, onResp, opts={}){
     const i = Number(b.dataset.i); const ok = i === q.c;
     if (opts.semFeedback){ wrap.querySelectorAll(".alt").forEach(x=>x.classList.remove("sel")); b.classList.add("sel"); onResp(i, ok); return; }
     wrap.querySelectorAll(".alt").forEach(x => { x.disabled = true; const xi = Number(x.dataset.i); if (xi===q.c) x.classList.add("ok"); else if (xi===i) x.classList.add("bad"); });
-    wrap.querySelector(".fb").innerHTML = `<div class="expl"><b>${ok?"✓ Correta":"✗ Incorreta — gabarito "+(q.o.length === 2 && q.o[0] === "Certo" ? q.o[q.c] : "ABCDE"[q.c])}.</b> ${esc(q.x||"")}</div>`;
+    wrap.querySelector(".fb").innerHTML = `<div class="expl"><b>${ok?"✓ Correta":"✗ Incorreta — gabarito "+(q.o.length === 2 && q.o[0] === "Certo" ? q.o[q.c] : "ABCDE"[q.c])}.</b> ${esc(q.x||"")}</div>
+      ${q.orig && q.orig !== "app" ? `<button class="btn btn-ghost btn-sm" data-rep style="margin-top:6px">⚑ Esta questão tem erro</button>` : ""}`;
+    const br = wrap.querySelector("[data-rep]");
+    if (br) br.onclick = () => {
+      if (!confirm("Tirar esta questão do banco? Se você errou por causa do erro da questão, a resposta também deixa de contar. Dá para desfazer em Configurações.")) return;
+      S.reportes = S.reportes || {}; S.reportes[q.id] = hoje();
+      S.respostas = S.respostas.filter(r => r.id !== q.id); delete S.erros[q.id]; salvar();
+      br.outerHTML = `<span class="small muted">⚑ Questão retirada do banco (${esc(q.fonte || q.id)}).</span>`;
+    };
     onResp(i, ok);
   });
   return wrap;
@@ -1693,10 +1709,12 @@ ROTAS["/config"] = el => {
       <div class="field"><label>Link (https://…)</label><input type="url" id="lurl" placeholder="https://drive.google.com/…"></div>
       <button class="btn btn-primary" id="ladd">Adicionar link</button> <span class="small muted" id="lmsg"></span>
       <ul class="list" id="llista" style="margin-top:12px">${(S.linksNuvem || []).map(l => `<li><span style="flex:1"><a href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${esc(l.nome)}</a><br><span class="small muted">${esc(l.t)}</span></span><button class="btn btn-ghost btn-sm" data-ldel="${esc(l.id)}">Remover</button></li>`).join("") || '<li class="small muted">Nenhum link cadastrado.</li>'}</ul></div>
+    ${Object.keys(S.reportes || {}).length ? `<div class="card"><h2>⚑ Questões retiradas</h2><p class="small muted">Você marcou ${Object.keys(S.reportes).length} questão(ões) com erro; elas não aparecem nas listas nem nos simulados.</p><button class="btn btn-secondary" id="represt">Devolver todas ao banco</button></div>` : ""}
     <div class="card"><h2>Backup</h2><div class="btn-row"><button class="btn btn-secondary" id="exp">Exportar (.json)</button><label class="btn btn-secondary">Importar<input type="file" id="imp" accept=".json" hidden></label><button class="btn btn-danger" id="reset">Apagar tudo</button></div></div></div>`;
   const $ = s => el.querySelector(s);
   $("#csave").onclick = () => { S.dataProva = $("#cd").value || EDITAL.dataProva; S.horasDia = Number($("#ch").value)||2; S.diasSemana = Math.min(7,Math.max(1,Number($("#cs").value)||6)); salvar(); pintarNav("/config"); $("#cmsg").textContent = "✓ Salvo"; };
   ligarCofre(el); ligarSync(el);
+  if ($("#represt")) $("#represt").onclick = () => { S.reportes = {}; salvar(); rotear(); };
   $("#ladd").onclick = () => {
     const nome = $("#lnome").value.trim(), url = $("#lurl").value.trim(), t = $("#ltop").value;
     let ok = false; try { ok = new URL(url).protocol === "https:"; } catch {}

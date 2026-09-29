@@ -1,0 +1,2 @@
+/* Correções de gabarito e questões removidas (por id). */
+window.CORRECOES_QUESTOES = {"gabarito": {"L2086": 1, "L1966": 2}, "notas": {"L2086": "A apostila marca a letra A, mas o próprio comentário explica a autotutela (letra B) — gabarito corrigido para B.", "L1966": "A apostila marca a letra D, mas agências executivas pertencem ao setor de atividades exclusivas (letra C), como diz o próprio comentário — gabarito corrigido para C."}, "remover": ["L1970", "L2917"]};
