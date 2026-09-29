@@ -158,6 +158,9 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
 .daycard .act:hover{color:var(--accent)}
 .resumo{margin:0;padding-left:20px}.resumo li{margin-bottom:8px}
 .assuntos{display:flex;flex-direction:column;gap:8px}
+.video-principal{display:flex;gap:12px;align-items:center;margin-top:8px;text-decoration:none;color:inherit}
+.video-principal img{width:160px;height:90px;object-fit:cover;border-radius:8px;flex-shrink:0;background:var(--bg-subtle)}
+@media (max-width:480px){.video-principal{flex-direction:column;align-items:flex-start}.video-principal img{width:100%;height:auto;aspect-ratio:16/9}}
 .assunto{border:1px solid var(--border);border-radius:10px;padding:0 12px;background:var(--surface)}
 .assunto[open]{padding-bottom:12px}
 .assunto summary{display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px 0;list-style:none}
@@ -237,6 +240,7 @@ details.texto div{white-space:pre-line;margin-top:8px;line-height:1.7}
 
 <script src="correcoes.js"></script>
 <script src="resumos-assuntos.js"></script>
+<script src="videos.js"></script>
 <script src="materiais-publicos.js"></script>
 <script src="materiais-locais.js"></script>
 <script src="questoes-locais.js"></script>
@@ -1349,7 +1353,7 @@ ROTAS["/conteudo"] = el => {
     <div class="row" style="flex-wrap:wrap;gap:8px;margin-bottom:14px"><a class="btn btn-sm ${filtro === "todas" ? "btn-primary" : "btn-secondary"}" href="#/conteudo">Todas</a>${AREAS.map(a => `<a class="btn btn-sm ${filtro === a.id ? "btn-primary" : "btn-secondary"}" href="#/conteudo?a=${a.id}">${a.nome}</a>`).join("")}</div>
     ${lista.map(a => `<h3>${areaTag(a.id)}</h3><div class="card"><ul class="list">${S.topicos[a.id].map(t => { const r = RESUMOS[t.nome]; const nq = todasQuestoes().filter(q => q.t === t.nome).length;
       const of = (FONTES[t.nome] || []).some(f => f !== "doutrina");
-      return `<li><span style="flex:1">${r ? `<a href="#/resumo?a=${a.id}&t=${encodeURIComponent(t.nome)}">${esc(t.nome)}</a>` : `<span class="muted">${esc(t.nome)}</span>`}${of ? ' <span class="pill pill-ok" title="Resumo com fonte oficial">fonte oficial</span>' : ""}</span><span class="small muted">${nq ? nq + " questões" : ""}</span>${t.estudado ? '<span class="pill pill-ok">estudado</span>' : ""}</li>`; }).join("")}</ul></div>`).join("")}
+      return `<li><span style="flex:1">${r ? `<a href="#/resumo?a=${a.id}&t=${encodeURIComponent(t.nome)}">${esc(t.nome)}</a>` : `<span class="muted">${esc(t.nome)}</span>`}${of ? ' <span class="pill pill-ok" title="Resumo com fonte oficial">fonte oficial</span>' : ""}</span>${VID[t.nome] ? `<a class="small" href="https://www.youtube.com/watch?v=${esc(VID[t.nome][0].id)}" target="_blank" rel="noopener" title="Aula no YouTube">▶ aula</a>` : ""}<span class="small muted">${nq ? nq + " questões" : ""}</span>${t.estudado ? '<span class="pill pill-ok">estudado</span>' : ""}</li>`; }).join("")}</ul></div>`).join("")}
   </div>`;
 };
 
@@ -1394,7 +1398,19 @@ function renderNotasApostilas(nome){
   return `<div class="card" style="margin-top:12px;border-color:var(--accent-soft-border)"><h2>🗒️ Notas das suas apostilas</h2><ul class="resumo">${n.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
     <p class="small muted" style="margin:6px 0 0">Anotações feitas a partir das apostilas da sua pasta (Gran, IBGE, mapas), reescritas para revisão. Só aparecem no seu computador.</p></div>`;
 }
-const RA = window.RESUMOS_ASSUNTOS || {}, INC_A = window.INCIDENCIA_ASSUNTOS || {};
+const RA = window.RESUMOS_ASSUNTOS || {}, INC_A = window.INCIDENCIA_ASSUNTOS || {}, VID = window.VIDEOS_TOPICOS || {};
+const ytBusca = q => "https://www.youtube.com/results?search_query=" + encodeURIComponent(q);
+function renderVideos(nome){
+  const vs = VID[nome] || [];
+  if (!vs.length) return `<div class="card small" style="margin-top:12px">▶ <a href="${ytBusca(nome + " aula concurso")}" target="_blank" rel="noopener">Buscar aulas sobre este tópico no YouTube ↗</a></div>`;
+  const [v, ...extra] = vs;
+  return `<div class="card video-card" style="margin-top:12px"><h2>▶ Aula no YouTube</h2>
+    <a class="video-principal" href="https://www.youtube.com/watch?v=${esc(v.id)}" target="_blank" rel="noopener">
+      <img src="https://i.ytimg.com/vi/${esc(v.id)}/mqdefault.jpg" alt="" loading="lazy" width="320" height="180">
+      <span><b>${esc(v.titulo)}</b><br><span class="small muted">${esc(v.canal)} · ${esc(v.dur)}</span></span></a>
+    ${extra.map(x => `<p class="small" style="margin:8px 0 0">Outra aula: <a href="https://www.youtube.com/watch?v=${esc(x.id)}" target="_blank" rel="noopener">${esc(x.titulo)}</a> <span class="muted">· ${esc(x.canal)} · ${esc(x.dur)}</span></p>`).join("")}
+    <p class="small muted" style="margin:6px 0 0"><a href="${ytBusca(nome + " aula concurso")}" target="_blank" rel="noopener">Mais aulas sobre o tópico ↗</a> · aulas escolhidas entre as mais vistas de canais para concursos</p></div>`;
+}
 function incidencia(nome, i){
   const c = INC_A[nome]; if (!c) return null;
   const tot = c.reduce((a, b) => a + b, 0), n = c.length;
@@ -1421,7 +1437,8 @@ function renderAssuntos(area, nome){
     <div class="assuntos">${ordem.map(i => { const x = subs[i], r = (RA[nome] || {})[x] || [], inc = incidencia(nome, i);
       return `<details class="assunto${inc ? " inc-" + inc.nivel : ""}"><summary><input type="checkbox" class="chk" data-sub="${i}" ${feitos[i] ? "checked" : ""} onclick="event.stopPropagation()" aria-label="Marcar como estudado"><span class="nome">${esc(x)}</span>${inc ? `<span class="tag-inc">${inc.rot}</span>` : ""}</summary>
         ${r.length ? `<ul class="resumo">${r.map(bulletResumo).join("")}</ul>` : `<p class="small muted">Sem resumo para este assunto.</p>`}
-        ${inc && inc.n ? `<a class="small" href="#/questoes?a=${area}&t=${encodeURIComponent(nome)}&s=${i}">${inc.n === 1 ? "Fazer a questão deste assunto" : `Fazer as ${inc.n} questões deste assunto`} →</a>` : ""}</details>`; }).join("")}</div></div>`;
+        ${inc && inc.n ? `<a class="small" href="#/questoes?a=${area}&t=${encodeURIComponent(nome)}&s=${i}">${inc.n === 1 ? "Fazer a questão deste assunto" : `Fazer as ${inc.n} questões deste assunto`} →</a>` : ""}
+        <a class="small" style="display:inline-block;margin-left:${inc && inc.n ? "12px" : "0"}" href="${ytBusca(x + " aula concurso")}" target="_blank" rel="noopener">▶ Aulas deste assunto no YouTube ↗</a></details>`; }).join("")}</div></div>`;
 }
 function ligarAssuntos(el, nome){
   el.querySelectorAll("[data-sub]").forEach(c => c.onchange = () => {
@@ -1454,6 +1471,7 @@ ROTAS["/resumo"] = el => {
   el.innerHTML = `<div class="container" style="max-width:780px">
     <a class="small" href="#/conteudo?a=${a}">← Conteúdo</a>
     ${header(AREA[a] ? AREA[a].nome : "Resumo", esc(nome || ""), "")}
+    ${renderVideos(nome)}
     ${renderAssuntos(a, nome)}
     ${r ? `<details class="card" style="margin-top:12px"><summary style="cursor:pointer;font-weight:600">Visão geral do tópico (pontos-chave)</summary><ul class="resumo" style="margin-top:10px">${r.map(bulletResumo).join("")}</ul></details>` : ""}
     ${renderFontes(nome)}
