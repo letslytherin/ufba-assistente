@@ -239,16 +239,18 @@ details.texto div{white-space:pre-line;margin-top:8px;line-height:1.7}
 </div>
 <nav class="bottom-nav" id="bottom-nav" aria-label="Navegação inferior"></nav>
 
-<script src="correcoes.js"></script>
-<script src="resumos-assuntos.js"></script>
-<script src="videos.js"></script>
-<script src="materiais-publicos.js"></script>
-<script src="materiais-locais.js"></script>
-<script src="questoes-locais.js"></script>
-<script src="questoes-publicas.js"></script>
-<script src="flashcards-locais.js"></script>
-<script src="flashcards-publicos.js"></script>
-<script src="flashcards-extra.js"></script>
+<script src="correcoes.js?v=20260930"></script>
+<script src="resumos-assuntos.js?v=20260930"></script>
+<script src="resumos-pmpe.js?v=20260930"></script>
+<script src="questoes-pmpe.js?v=20260930"></script>
+<script src="videos.js?v=20260930"></script>
+<script src="materiais-publicos.js?v=20260930"></script>
+<script src="materiais-locais.js?v=20260930"></script>
+<script src="questoes-locais.js?v=20260930"></script>
+<script src="questoes-publicas.js?v=20260930"></script>
+<script src="flashcards-locais.js?v=20260930"></script>
+<script src="flashcards-publicos.js?v=20260930"></script>
+<script src="flashcards-extra.js?v=20260930"></script>
 <script>
 "use strict";
 /* =========================================================================
@@ -819,7 +821,7 @@ function montarDadosLocais(){
   F_LOCAIS = [...base, ...(window.FLASH_EXTRA || []).filter(f => !ids.has(f.id))];
 }
 montarDadosLocais();
-const Q_APP = Q_SEED.map((q,i)=>({...q,id:"s"+i, orig:"app"}));
+const Q_APP = [...Q_SEED, ...(window.Q_PMPE || [])].map((q,i)=>({...q,id:"s"+i, orig:"app"}));
 const todasQuestoes = () => { const rep = S.reportes || {}; return [...Q_APP, ...S.qExtras.map(q => ({...q, orig: String(q.id).startsWith("i") ? "importada" : "propria"})), ...Q_LOCAIS].filter(q => !rep[q.id] && AREA_ATIVA.has(q.a)); };
 // uma vez: respostas dadas com o gabarito antigo das questões corrigidas não contam
 (() => { const g = (window.CORRECOES_QUESTOES || {}).gabarito || {}; S._corrigidas = S._corrigidas || [];
@@ -1300,7 +1302,7 @@ ROTAS["/edital"] = el => {
       <div style="width:120px"><div class="small muted" style="text-align:right">${s.estudados}/${s.total}</div><div class="bar"><i style="width:${s.total?s.estudados/s.total*100:0}%;background:${a.cor}"></i></div></div></summary>
       <div class="body"><ul class="list">${S.topicos[a.id].map((t,i)=>{const ts=statsTopico(a.id,t.nome);return `<li class="topic">
         <input type="checkbox" class="chk" id="t-${t.id}" data-a="${a.id}" data-i="${i}" ${t.estudado?"checked":""}>
-        <label for="t-${t.id}">${esc(t.nome)}${RESUMOS[t.nome]?` <a class="small" href="#/resumo?a=${a.id}&t=${encodeURIComponent(t.nome)}" onclick="event.stopPropagation()">📖 resumo</a>`:""}<br><span class="small muted">${(() => { const [f, n] = progressoAssuntos(t.nome); return n ? `<a href="#/resumo?a=${a.id}&t=${encodeURIComponent(t.nome)}" onclick="event.stopPropagation()">${f}/${n} assuntos</a> · ` : ""; })()}${t.revisoes?`${t.revisoes} revisão(ões) · última ${fmtData(t.ultima)}`:"sem revisões"}${ts.n?` · ${pct(ts.taxa)} em ${ts.n}q`:""}</span></label>
+        <label for="t-${t.id}">${esc(t.nome)}${(RESUMOS[t.nome] || (window.RESUMOS_PMPE || {})[t.nome])?` <a class="small" href="#/resumo?a=${a.id}&t=${encodeURIComponent(t.nome)}" onclick="event.stopPropagation()">📖 resumo</a>`:""}<br><span class="small muted">${(() => { const [f, n] = progressoAssuntos(t.nome); return n ? `<a href="#/resumo?a=${a.id}&t=${encodeURIComponent(t.nome)}" onclick="event.stopPropagation()">${f}/${n} assuntos</a> · ` : ""; })()}${t.revisoes?`${t.revisoes} revisão(ões) · última ${fmtData(t.ultima)}`:"sem revisões"}${ts.n?` · ${pct(ts.taxa)} em ${ts.n}q`:""}</span></label>
         <button class="btn btn-sm btn-ghost" data-rev="${a.id}:${i}" title="Registrar revisão">↻ revisei</button>
         <button class="btn btn-sm btn-ghost" data-del="${a.id}:${i}" title="Remover tópico" aria-label="Remover">✕</button></li>`}).join("")}</ul>
         <div class="row" style="margin-top:10px"><input type="text" placeholder="Adicionar tópico do Anexo II…" data-add="${a.id}"><button class="btn btn-secondary btn-sm" data-addbtn="${a.id}">Adicionar</button></div></div></details>`}).join("")}
@@ -1475,7 +1477,7 @@ ROTAS["/conteudo"] = el => {
   el.innerHTML = `<div class="container">
     ${header("Estudar · Conteúdo", "Resumos por tópico", "Pontos-chave de cada tópico do Anexo II, conferidos em fontes oficiais (Planalto, Manual de Redação da Presidência, Arquivo Nacional/CONARQ, CERT.br, Microsoft, Estatuto da UFBA). Cada resumo mostra as fontes com link.")}
     <div class="row" style="flex-wrap:wrap;gap:8px;margin-bottom:14px"><a class="btn btn-sm ${filtro === "todas" ? "btn-primary" : "btn-secondary"}" href="#/conteudo">Todas</a>${AREAS.map(a => `<a class="btn btn-sm ${filtro === a.id ? "btn-primary" : "btn-secondary"}" href="#/conteudo?a=${a.id}">${a.nome}</a>`).join("")}</div>
-    ${lista.map(a => `<h3>${areaTag(a.id)}</h3><div class="card"><ul class="list">${S.topicos[a.id].map(t => { const r = RESUMOS[t.nome]; const nq = todasQuestoes().filter(q => q.t === t.nome).length;
+    ${lista.map(a => `<h3>${areaTag(a.id)}</h3><div class="card"><ul class="list">${S.topicos[a.id].map(t => { const r = RESUMOS[t.nome] || RA[t.nome]; const nq = todasQuestoes().filter(q => q.t === t.nome).length;
       const of = (FONTES[t.nome] || []).some(f => f !== "doutrina");
       return `<li><span style="flex:1">${r ? `<a href="#/resumo?a=${a.id}&t=${encodeURIComponent(t.nome)}">${esc(t.nome)}</a>` : `<span class="muted">${esc(t.nome)}</span>`}${of ? ' <span class="pill pill-ok" title="Resumo com fonte oficial">fonte oficial</span>' : ""}</span>${VID[t.nome] ? `<a class="small" href="https://www.youtube.com/watch?v=${esc(VID[t.nome][0].id)}" target="_blank" rel="noopener" title="Aula no YouTube">▶ aula</a>` : ""}<span class="small muted">${nq ? nq + " questões" : ""}</span>${t.estudado ? '<span class="pill pill-ok">estudado</span>' : ""}</li>`; }).join("")}</ul></div>`).join("")}
   </div>`;
@@ -1523,6 +1525,8 @@ function renderNotasApostilas(nome){
     <p class="small muted" style="margin:6px 0 0">Anotações feitas a partir das apostilas da sua pasta (Gran, IBGE, mapas), reescritas para revisão. Só aparecem no seu computador.</p></div>`;
 }
 const RA = window.RESUMOS_ASSUNTOS || {}, INC_A = window.INCIDENCIA_ASSUNTOS || {}, VID = window.VIDEOS_TOPICOS || {};
+Object.assign(RA, window.RESUMOS_PMPE || {});
+for (const [t, subs] of Object.entries(RA)) if (!SUBTOPICOS[t]) SUBTOPICOS[t] = Object.keys(subs);
 const ytBusca = q => "https://www.youtube.com/results?search_query=" + encodeURIComponent(q);
 function renderVideos(nome){
   const vs = VID[nome] || [];
