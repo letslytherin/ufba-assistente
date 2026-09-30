@@ -210,6 +210,7 @@ details.texto div{white-space:pre-line;margin-top:8px;line-height:1.7}
   .timer{font-size:3.4rem}
 }
 @media (max-width:420px){.g3,.g4{grid-template-columns:1fr 1fr}.hero .units{gap:12px}}
+.side-outro{display:block;margin-top:8px;width:100%;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:inherit;border-radius:8px;padding:4px 8px;font-size:12px;cursor:pointer;text-align:left}
 .rodape-fontes{font-size:12px;line-height:1.5;color:var(--muted, #777);padding:18px 24px 90px;border-top:1px solid var(--border, #ddd);margin-top:24px;max-width:960px}
 </style>
 </head>
@@ -218,7 +219,7 @@ details.texto div{white-space:pre-line;margin-top:8px;line-height:1.7}
 <div class="app" id="app">
   <div class="overlay" id="overlay"></div>
   <aside class="sidebar" id="sidebar" aria-label="Navegação">
-    <div class="brand"><div class="brand-mark">AA</div><div>UFBA Assistente<small>Edital 007/2026 · cargo 201</small></div></div>
+    <div class="brand"><div class="brand-mark">AA</div><div><span id="marca">UFBA Assistente</span><small id="marca-sub">Edital 007/2026 · cargo 201</small></div></div>
     <div class="side-count" id="side-count"></div>
     <nav id="nav"></nav>
     <div class="sidebar-foot">
@@ -229,11 +230,11 @@ details.texto div{white-space:pre-line;margin-top:8px;line-height:1.7}
   <div style="min-width:0">
     <header class="topbar">
       <button class="icon-btn" id="menu-btn" aria-label="Abrir menu">☰</button>
-      <div class="t"><div class="brand-mark" style="width:28px;height:28px;font-size:12px">AA</div>UFBA Assistente</div>
+      <div class="t"><div class="brand-mark" style="width:28px;height:28px;font-size:12px">AA</div><span id="marca-top">UFBA Assistente</span></div>
       <button class="icon-btn" id="theme-btn-2" aria-label="Alternar tema">◐</button>
     </header>
     <main class="main" id="main" tabindex="-1"></main>
-    <footer class="rodape-fontes">Material de estudo pessoal, sem fins comerciais. As questões de concursos anteriores são reproduzidas de provas públicas, com indicação de banca, órgão e ano em cada uma; os direitos pertencem às respectivas bancas organizadoras (Instituto AOCP, Instituto Avalia, COPEVE/UFAL, CEBRASPE, FGV, FCC, VUNESP e outras). Os resumos citam as fontes oficiais usadas (Planalto, Manual de Redação da Presidência da República, Arquivo Nacional/CONARQ, CERT.br, Microsoft, UFBA). Parte das questões e dos flashcards Certo/Errado foi selecionada a partir das apostilas do Gran Cursos Online (gran.com.br), que reúnem itens de provas públicas; essas questões trazem a indicação “via apostila Gran Cursos Online”. Os comentários, resumos e simulados do Gran, que são conteúdo autoral do curso, não são publicados neste site. Edital: UFBA 007/2026 — Instituto Avalia.</footer>
+    <footer class="rodape-fontes">Material de estudo pessoal, sem fins comerciais. As questões de concursos anteriores são reproduzidas de provas públicas, com indicação de banca, órgão e ano em cada uma; os direitos pertencem às respectivas bancas organizadoras (Instituto AOCP, Instituto Avalia, COPEVE/UFAL, CEBRASPE, FGV, FCC, VUNESP e outras). Os resumos citam as fontes oficiais usadas (Planalto, Manual de Redação da Presidência da República, Arquivo Nacional/CONARQ, CERT.br, Microsoft, UFBA). Parte das questões e dos flashcards Certo/Errado foi selecionada a partir das apostilas do Gran Cursos Online (gran.com.br), que reúnem itens de provas públicas; essas questões trazem a indicação “via apostila Gran Cursos Online”. Os comentários, resumos e simulados do Gran, que são conteúdo autoral do curso, não são publicados neste site. Editais: UFBA 007/2026 (Instituto Avalia) e PM-PE 001/2026 (Instituto AOCP).</footer>
   </div>
 </div>
 <nav class="bottom-nav" id="bottom-nav" aria-label="Navegação inferior"></nav>
@@ -253,7 +254,7 @@ details.texto div{white-space:pre-line;margin-top:8px;line-height:1.7}
 /* =========================================================================
    DADOS DO EDITAL (Edital de Abertura nº 007/2026 – UFBA / Instituto Avalia)
    ========================================================================= */
-const EDITAL = {
+const EDITAL_UFBA = {
   cargo: "201 – Assistente em Administração",
   classe: "Nível Médio – Classe D",
   vagas: { total: 94, ac: 55, pp: 24, pcd: 10, ind: 3, quil: 2 },
@@ -263,16 +264,14 @@ const EDITAL = {
   cidades: "Salvador, Vitória da Conquista, Barreiras, Teixeira de Freitas e Juazeiro",
   dataProva: "2026-12-20",
 };
-const AREAS = [
+const AREAS_UFBA = [
   { id: "lp",  nome: "Língua Portuguesa",         q: 12, peso: 1, cor: "var(--c-lp)" },
   { id: "inf", nome: "Noções de Informática",     q: 6,  peso: 1, cor: "var(--c-inf)" },
   { id: "ap",  nome: "Administração Pública",     q: 12, peso: 1, cor: "var(--c-ap)" },
   { id: "ce",  nome: "Conhecimentos Específicos", q: 30, peso: 2, cor: "var(--c-ce)" },
 ];
-const AREA = Object.fromEntries(AREAS.map(a => [a.id, a]));
-const TOTAL_OBJ = AREAS.reduce((s, a) => s + a.q * a.peso, 0); // 90
 
-const DATAS = [
+const DATAS_UFBA = [
   { ini: "2026-09-28", fim: "2026-09-28", t: "Publicação do Edital de Abertura" },
   { ini: "2026-09-28", fim: "2026-10-02", t: "Impugnação do edital" },
   { ini: "2026-09-28", fim: "2026-10-05", t: "Pedido de isenção da taxa (até 23h59)" },
@@ -305,12 +304,123 @@ const DATAS = [
 
 /* Conteúdo programático — Anexo II, Nível Médio (Conhecimentos Comuns) e
    Cargo 201 (Conhecimentos Específicos). Itens longos foram divididos. */
-const TOPICOS_PADRAO = {
+const TOPICOS_UFBA = {
   lp: ["Compreensão e interpretação de textos","Tipologia textual e gêneros textuais","Ortografia oficial e acentuação gráfica","Coesão e coerência: referência, conectores, progressão","Morfossintaxe: classes e formação de palavras, termos da oração","Coordenação, subordinação, vozes verbais e pronomes relativos","Pontuação e efeitos de sentido","Concordância verbal e nominal","Regência verbal e nominal","Crase","Colocação pronominal","Semântica: denotação, conotação, sinonímia, paronímia, figuras de linguagem","Reescrita de frases e equivalência de estruturas","Variação linguística e adequação de registro","Redação Oficial (Manual da Presidência, 3ª ed.)"],
   inf: ["Conceitos básicos de informática e TI","Windows 10+: arquivos, pastas, programas e configurações","Organização de arquivos, diretórios e integridade de documentos","Processador de textos (Word)","Planilhas eletrônicas (Excel)","Apresentações (PowerPoint)","Correio eletrônico (Outlook) e colaboração online","Internet, intranet e navegadores","Ferramentas de busca e compartilhamento","Computação em nuvem","Redes de computadores: noções","Segurança da informação: senhas, autenticação, engenharia social, phishing","Ameaças: vírus, worms, malware, ransomware","Antivírus, firewall, atualizações e backup"],
   ap: ["CF/88: princípios e disposições gerais (Título III, Cap. VII)","Organização da Adm. Pública Federal: direta, indireta, descentralização","Agentes públicos, atendimento ao cidadão, inclusão e acessibilidade","Lei 8.112/1990: provimento, vacância, direitos e vantagens","Lei 8.112/1990: deveres, proibições, regime disciplinar e PAD","Ética: Decreto 1.171/1994 e Decreto 6.029/2007","Improbidade administrativa (Lei 8.429/1992 e alterações)","Processo administrativo federal (Lei 9.784/1999)","LAI (Lei 12.527/2011 e Decreto 7.724/2012)","LGPD (Lei 13.709/2018) na Administração Pública","Licitações e contratos (Lei 14.133/2021)","Governança, integridade, controle e Decreto 9.830/2019","Governo Digital (Lei 14.129/2021)","Gestão documental e arquivística (Lei 8.159/1991)","Recursos materiais e patrimoniais","Sustentabilidade e A3P","Atendimento ao público e Carta de Serviços ao Usuário","Segurança da informação no ambiente de trabalho","Redação oficial e comunicação administrativa","IFES: estrutura, autonomia universitária e colegiados","Estatuto e Regimento Geral da UFBA"],
   ce: ["Estado, governo e Administração Pública: conceitos e princípios","Organização administrativa da União: direta e indireta","Agentes públicos: espécies, cargo, emprego e função","Poderes administrativos e uso/abuso do poder","Serviços públicos e delegação (concessão, permissão, autorização)","Controle da Administração e responsabilidade civil do Estado","Licitações (Lei 14.133/2021): modalidades, dispensa, inexigibilidade, fases","Organizações formais: estrutura e departamentalização","Processo organizacional: planejamento, direção, comunicação, controle","Gestão de processos","Gestão da qualidade","Gestão de projetos","Gestão de pessoas: conceitos e função do órgão de GP","Comportamento organizacional: motivação e liderança","Recursos materiais: classificação e gestão de estoques","Compras, modalidades e cadastro de fornecedores","Recebimento, conferência e armazenagem","Arquivologia: conceitos e gestão de documentos","Arquivos correntes, intermediários e permanentes","Protocolo e avaliação de documentos","Tipologias, suportes, microfilmagem e automação","Preservação, conservação e restauração","Atendimento ao público: qualidade e postura","Trabalho em equipe, relações interpessoais e comunicação"],
 };
+
+/* =========================================================================
+   PM-PE 2026/2027 — Edital de Abertura 001/2026 (Portaria Conjunta SAD/SDS nº 299,
+   DOE-PE edição extra de 29/09/2026) — cargo 201 Soldado (QPMG), Instituto AOCP.
+   ========================================================================= */
+const EDITAL_PMPE = {
+  cargo: "201 – Soldado (Praça da Polícia Militar QPMG)", vagas: 1250, remuneracao: 5617.92, taxa: 180,
+  banca: "Instituto AOCP", site: "www.institutoaocp.org.br", duracao: "5 horas (objetiva + redação)", dataProva: "2027-02-21",
+  redMax: 40, redMin: 12,
+};
+const AREAS_PMPE = [
+  { id: "lp",  nome: "Língua Portuguesa",                         q: 10, peso: 1, cor: "var(--c-lp)", bloco: "I" },
+  { id: "hpe", nome: "História de Pernambuco",                     q: 10, peso: 1, cor: "#c2410c",     bloco: "I" },
+  { id: "rl",  nome: "Raciocínio Lógico",                          q: 10, peso: 1, cor: "#7c3aed",     bloco: "II" },
+  { id: "inf", nome: "Informática",                                q: 10, peso: 1, cor: "var(--c-inf)", bloco: "II" },
+  { id: "dc",  nome: "Direito Constitucional",                     q: 10, peso: 1, cor: "#0f766e",     bloco: "III" },
+  { id: "dh",  nome: "Direitos Humanos e Legislação Extravagante", q: 10, peso: 1, cor: "#be123c",     bloco: "III" },
+];
+const DATAS_PMPE = [
+  { ini: "2026-09-29", fim: "2026-09-29", t: "Publicação do Edital de Abertura (DOE-PE)" },
+  { ini: "2026-10-01", fim: "2026-10-05", t: "Impugnação do edital" },
+  { ini: "2026-10-05", fim: "2026-10-08", t: "Pedido de isenção da taxa (até 13h de 08/10) e documentos (até 14h)" },
+  { ini: "2026-10-14", fim: "2026-10-14", t: "Resultado dos pedidos de isenção" },
+  { ini: "2026-10-16", fim: "2026-10-20", t: "Recurso contra indeferimento da isenção" },
+  { ini: "2026-10-28", fim: "2026-10-28", t: "Resultado da isenção pós-recurso" },
+  { ini: "2026-10-05", fim: "2026-11-05", t: "Inscrições (até 23h59 de 05/11)" },
+  { ini: "2026-10-05", fim: "2026-11-06", t: "Pagamento da taxa de R$ 180,00 (até 06/11)" },
+  { ini: "2026-10-16", fim: "2026-11-06", t: "Documentos para vagas reservadas (PcD, PPIQ) e laudo para atendimento especial" },
+  { ini: "2026-11-19", fim: "2026-11-19", t: "Deferimento das inscrições" },
+  { ini: "2026-11-23", fim: "2026-11-25", t: "Recurso contra indeferimento da inscrição" },
+  { ini: "2026-12-15", fim: "2026-12-15", t: "Deferimento das inscrições pós-recurso" },
+  { ini: "2027-02-02", fim: "2027-02-02", t: "Edital de horário e local de prova" },
+  { ini: "2027-02-15", fim: "2027-02-15", t: "Cartão de Informação do Candidato" },
+  { ini: "2027-02-21", fim: "2027-02-21", t: "PROVA OBJETIVA + REDAÇÃO (5 horas)", prova: true },
+  { ini: "2027-02-22", fim: "2027-02-24", t: "Recurso contra o gabarito preliminar" },
+  { ini: "2027-03-25", fim: "2027-03-25", t: "Resultado preliminar da objetiva" },
+  { ini: "2027-04-09", fim: "2027-04-09", t: "Resultado da objetiva pós-recursos e gabarito definitivo" },
+  { ini: "2027-04-12", fim: "2027-04-12", t: "Habilitados para a correção da redação" },
+  { ini: "2027-04-26", fim: "2027-04-26", t: "Resultado preliminar da redação" },
+  { ini: "2027-05-20", fim: "2027-05-20", t: "Resultado da redação pós-recurso" },
+  { ini: "2027-06-10", fim: "2027-06-10", t: "Convocação para os exames médicos" },
+  { ini: "2027-06-25", fim: "2027-06-29", t: "EXAMES MÉDICOS" },
+  { ini: "2027-07-23", fim: "2027-08-01", t: "EXAME DE APTIDÃO FÍSICA (TAF)" },
+  { ini: "2027-08-29", fim: "2027-08-29", t: "AVALIAÇÃO PSICOLÓGICA (presencial)" },
+  { ini: "2027-08-30", fim: "2027-09-08", t: "Entrevista individual on-line" },
+  { ini: "2027-10-14", fim: "2027-10-14", t: "Classificação na Primeira Etapa do Concurso" },
+];
+/* Conteúdo programático — Anexo II, cargo de Soldado (QPMG). Tópicos com o MESMO nome
+   de um tópico da UFBA compartilham o progresso (estudou lá, conta aqui). */
+const TOPICOS_PMPE = {
+  lp: ["Compreensão e interpretação de textos","Tipologia textual e gêneros textuais","Ortografia oficial e acentuação gráfica","Coesão e coerência: referência, conectores, progressão","Morfossintaxe: classes e formação de palavras, termos da oração","Coordenação, subordinação, vozes verbais e pronomes relativos","Pontuação e efeitos de sentido","Concordância verbal e nominal","Regência verbal e nominal","Crase","Colocação pronominal","Semântica: denotação, conotação, sinonímia, paronímia, figuras de linguagem","Variação linguística e adequação de registro"],
+  hpe: ["Ocupação e colonização: nativos, Capitanias Hereditárias e Duarte Coelho","A importância do açúcar para a economia local","Formação de Olinda e Recife","A presença holandesa e o governo de Maurício de Nassau","Movimentos de resistência e emancipacionistas (1654–1848)","Pernambuco durante o período republicano","Cultura popular pernambucana: frevo, maracatu, culinária e festas","Aspectos afro-brasileiros em Pernambuco"],
+  rl: ["Proposições e conectivos lógicos (tabela-verdade)","Quantificadores e negação de proposições","Equivalências e implicações lógicas","Argumentação: validade, inferências, deduções e analogias","Falácias","Diagramas lógicos","Princípio da contagem, arranjos e permutações","Combinações","Probabilidade"],
+  inf: ["Conceitos básicos de informática e TI","Windows 10+: arquivos, pastas, programas e configurações","Windows 11: Painel de Controle e Prompt de Comando","Organização de arquivos, diretórios e integridade de documentos","Processador de textos (Word)","Planilhas eletrônicas (Excel)","Apresentações (PowerPoint)","LibreOffice 7: Writer, Calc e Impress","Internet, intranet e navegadores","Computação em nuvem","Segurança da informação: senhas, autenticação, engenharia social, phishing","Ameaças: vírus, worms, malware, ransomware","Antivírus, firewall, atualizações e backup"],
+  dc: ["Princípios fundamentais (arts. 1º a 4º)","Direitos e deveres individuais e coletivos (art. 5º)","Remédios constitucionais","Direitos sociais (arts. 6º a 11)","Nacionalidade (art. 12)","Direitos políticos (arts. 14 a 16)","Organização político-administrativa e repartição de competências","CF/88: princípios e disposições gerais (Título III, Cap. VII)","Militares dos Estados (art. 42)","Poder Legislativo","Poder Executivo","Poder Judiciário","Funções essenciais à Justiça","Defesa do Estado: estados de defesa e de sítio, Forças Armadas e segurança pública (art. 144)"],
+  dh: ["Teoria geral dos Direitos Humanos","Evolução histórica e gerações de direitos humanos","Incorporação dos tratados de DH (art. 5º, §§ 2º e 3º)","Declaração Universal dos Direitos Humanos (1948)","Pacto de San José da Costa Rica (Decreto 678/1992)","ECA (Lei 8.069/1990) e a atuação policial","Abuso de Autoridade (Lei 13.869/2019)","Lei de Tortura (Lei 9.455/1997)","Lei Maria da Penha (Lei 11.340/2006)","Crimes de preconceito de raça ou de cor (Lei 7.716/1989)","Crimes ambientais (Lei 9.605/1998)","Crimes hediondos (Lei 8.072/1990)","Lei de Drogas (Lei 11.343/2006)","Estatuto dos Policiais Militares de PE (Lei 6.783/1974)","Estatuto da Pessoa Idosa (Lei 10.741/2003)","Estatuto da Juventude (Lei 12.852/2013)"],
+};
+
+const CONCURSOS = {
+  ufba: {
+    id: "ufba", nome: "UFBA", marca: "UFBA Assistente", sub: "Edital 007/2026 · cargo 201",
+    titulo: "UFBA 2026 · Assistente em Administração", edital: EDITAL_UFBA, areas: AREAS_UFBA, datas: DATAS_UFBA, topicos: TOPICOS_UFBA,
+    areaForte: "ce", horasProva: "4h", site: "www.avalia.org.br",
+    provaSub: "Prova objetiva + redação", pesoNota: "Conhecimentos Específicos valem 2 pts/questão = 2/3 da objetiva.",
+    aviso: "Anexo II do Edital 007/2026 — Conhecimentos Comuns (Nível Médio) e Conhecimentos Específicos do cargo 201.",
+    cronoDesc: "Anexo III — Cronograma de execução (etapas que valem para Assistente em Administração). Pode ser alterado — acompanhe www.avalia.org.br.",
+    simDesc: "Mesma proporção da prova (12 LP · 6 Info · 12 AP · 30 CE com peso 2), com tempo corrido e correção só no final. A nota é projetada para a escala de 90 pontos.",
+    regra: pts => { const tot = Object.values(pts).reduce((a, b) => a + b, 0), zer = AREAS_UFBA.filter(a => !pts[a.id]).map(a => a.nome);
+      return { ok: tot >= 45 && !zer.length, itens: [[tot >= 45, `Objetiva ≥ 45 pontos${tot < 45 ? ` (faltam ${45 - tot})` : ""}`], [!zer.length, `Nenhuma área zerada${zer.length ? ` (${zer.join(", ")})` : ""}`]] }; },
+    ativDia: {
+      1: { t: "Lei seca: Lei 8.112/1990 (20 min)", l: "#/conteudo?a=ap" }, 2: { t: "Flashcards + Meus erros (20 min)", l: "#/flashcards" },
+      3: { t: "Redação da semana (60 min)", l: "#/redacao" }, 4: { t: "Lei seca: 9.784, LAI e LGPD (20 min)", l: "#/conteudo?a=ap" },
+      5: { t: "20 questões mistas das 4 áreas", l: "#/questoes" }, 6: { t: "Mini simulado + correção dos erros", l: "#/simulados" },
+      0: { t: "Revisão leve: erros e flashcards da semana", l: "#/erros" } },
+    checklist: [["isencao","Decidir se vou pedir isenção da taxa (até 05/10)"],["inscricao","Fazer a inscrição no site da Avalia (até 29/10)"],["boleto","Pagar o boleto de R$ 100,00 (até 23h de 30/10)"],
+      ["deferida","Conferir se a inscrição foi deferida (06/11; pós-recurso 17/11)"],["estatuto","Ler o Estatuto e Regimento Geral da UFBA (ufba.br/arquivos/estatuto-e-regimento-geral)"],["cartao","Emitir o Cartão de Informação do Candidato (a partir de 11/12)"],
+      ["local","Conferir o local de prova e planejar o trajeto"],["caneta","Separar caneta esferográfica azul ou preta de tubo transparente + documento com foto"]],
+  },
+  pmpe: {
+    id: "pmpe", nome: "PM-PE", marca: "PM-PE Assistente", sub: "Edital 001/2026 · Soldado QPMG",
+    titulo: "PM-PE 2027 · Soldado (QPMG)", edital: EDITAL_PMPE, areas: AREAS_PMPE, datas: DATAS_PMPE, topicos: TOPICOS_PMPE,
+    areaForte: null, horasProva: "5h", site: "www.institutoaocp.org.br",
+    provaSub: "Prova objetiva + redação (5 horas)", pesoNota: "Seis matérias de 10 questões (1 ponto cada) em 3 blocos. É preciso fazer ao menos 30% de cada bloco e do total, sem zerar nenhuma matéria.",
+    aviso: "Anexo II do Edital 001/2026 da PM-PE (DOE-PE de 29/09/2026) — conteúdo do cargo de Soldado (QPMG). Tópicos com o mesmo nome dos da UFBA compartilham o seu progresso.",
+    cronoDesc: "Anexo I — Cronograma do Edital 001/2026 (Soldado). Pode ser alterado — acompanhe www.institutoaocp.org.br.",
+    simDesc: "Mesma proporção da prova (10 questões de cada uma das 6 matérias, 1 ponto cada), com tempo corrido e correção só no final. A nota é projetada para a escala de 60 pontos.",
+    regra: pts => { const tot = Object.values(pts).reduce((a, b) => a + b, 0), zer = AREAS_PMPE.filter(a => !pts[a.id]).map(a => a.nome);
+      const bl = ["I", "II", "III"].map(b => [b, AREAS_PMPE.filter(a => a.bloco === b).reduce((x, a) => x + (pts[a.id] || 0), 0)]);
+      const blOk = bl.every(([, v]) => v >= 6);
+      return { ok: tot >= 18 && blOk && !zer.length, itens: [[tot >= 18, `Objetiva ≥ 18 pontos (30% de 60)${tot < 18 ? ` (faltam ${18 - tot})` : ""}`],
+        [blOk, `Cada bloco ≥ 6 pontos (30% de 20): ${bl.map(([b, v]) => `bloco ${b} = ${Math.round(v * 10) / 10}`).join(" · ")}`], [!zer.length, `Nenhuma matéria zerada${zer.length ? ` (${zer.join(", ")})` : ""}`]] }; },
+    ativDia: {
+      1: { t: "Lei seca: legislação extravagante (20 min)", l: "#/conteudo?a=dh" }, 2: { t: "Raciocínio lógico: 10 exercícios (30 min)", l: "#/conteudo?a=rl" },
+      3: { t: "Redação da semana (60 min)", l: "#/redacao" }, 4: { t: "Lei seca: CF/88, arts. 5º, 42 e 144 (20 min)", l: "#/conteudo?a=dc" },
+      5: { t: "20 questões mistas dos 3 blocos", l: "#/questoes" }, 6: { t: "Mini simulado + correção dos erros", l: "#/simulados" },
+      0: { t: "Revisão leve: erros, flashcards e História de PE", l: "#/erros" } },
+    checklist: [["req","Conferir os requisitos: 18 a 30 anos na inscrição, altura mínima (1,60 m mulheres · 1,65 m homens), CNH categoria B e ensino médio"],
+      ["isencao","Decidir se vou pedir isenção da taxa (05/10 a 08/10, até 13h)"],["inscricao","Fazer a inscrição no site do Instituto AOCP (05/10 a 05/11)"],["boleto","Pagar o boleto de R$ 180,00 (até 06/11)"],
+      ["deferida","Conferir se a inscrição foi deferida (19/11; pós-recurso 15/12)"],["taf","Começar o treino para o Teste de Aptidão Física (jul/2027) — já"],
+      ["cartao","Conferir local de prova (02/02/2027) e o Cartão de Informação (15/02/2027)"],["caneta","Separar caneta esferográfica azul ou preta de tubo transparente + documento com foto"]],
+  },
+};
+const CONC_KEY = "ufba-assistente:concurso";
+let CID = "ufba"; try { CID = localStorage.getItem(CONC_KEY) || "ufba"; } catch {}
+if (!CONCURSOS[CID]) CID = "ufba";
+const CONC = CONCURSOS[CID];
+const EDITAL = CONC.edital, AREAS = CONC.areas, DATAS = CONC.datas, TOPICOS_PADRAO = CONC.topicos;
+const AREA = Object.fromEntries(Object.values(CONCURSOS).flatMap(c => c.areas).map(a => [a.id, a]).reverse().concat(AREAS.map(a => [a.id, a])));
+const AREA_ATIVA = new Set(AREAS.map(a => a.id));
+const TOTAL_OBJ = AREAS.reduce((s, a) => s + a.q * a.peso, 0);
+function trocarConcurso(cid){ try { localStorage.setItem(CONC_KEY, cid); } catch {} location.hash = "#/inicio"; location.reload(); }
 
 /* Banco de questões — autorais, estilo múltipla escolha A–E (5 alternativas, como a Avalia). */
 const Q_SEED = [
@@ -664,17 +774,37 @@ function addDias(iso, n){ const d = parseIso(iso); d.setDate(d.getDate()+n); ret
 function diasEntre(a, b){ return Math.round((parseIso(b) - parseIso(a)) / 86400000); }
 function fmtData(iso, opts={day:"2-digit",month:"2-digit"}){ return parseIso(iso).toLocaleDateString("pt-BR", opts); }
 
+function topicosPadrao(cid){
+  const c = CONCURSOS[cid], t = {};
+  for (const a of c.areas) t[a.id] = c.topicos[a.id].map((nome, i) => ({ id: (cid === "ufba" ? "" : cid + "-") + a.id + "-" + i, nome, estudado: false, revisoes: 0, ultima: null }));
+  return t;
+}
 function estadoInicial(){
-  const topicos = {};
-  for (const a of AREAS) topicos[a.id] = TOPICOS_PADRAO[a.id].map((nome,i) => ({ id: a.id+"-"+i, nome, estudado:false, revisoes:0, ultima:null }));
-  return {
-    dataProva: EDITAL.dataProva, horasDia: 2, diasSemana: 6, meta: 60,
-    topicos, respostas: [], erros: {}, flash: {}, sessoes: [], simulados: [], redacoes: [],
-    qExtras: [], fcExtras: [], checklist: {},
-  };
+  return { horasDia: 2, diasSemana: 6, meta: 60, cfg: {},
+    respostas: [], erros: {}, flash: {}, sessoes: [], simulados: [], redacoes: [], qExtras: [], fcExtras: [], checklist: {} };
+}
+/* O que é de cada concurso (data da prova e lista de tópicos) fica em S.cfg[concurso];
+   S.topicos e S.dataProva apontam para o concurso ativo. */
+function novoEstado(obj){
+  const st = Object.assign(estadoInicial(), obj || {});
+  st.cfg = st.cfg || {};
+  if (st.topicos && !st.cfg.ufba) st.cfg.ufba = { topicos: st.topicos, dataProva: st.dataProva || EDITAL_UFBA.dataProva }; // versão antiga (só UFBA)
+  delete st.topicos; delete st.dataProva;
+  for (const cid of Object.keys(CONCURSOS)) {
+    const c = st.cfg[cid] = st.cfg[cid] || {};
+    if (!c.dataProva) c.dataProva = CONCURSOS[cid].edital.dataProva;
+    const pad = topicosPadrao(cid); c.topicos = c.topicos || {};
+    for (const a of CONCURSOS[cid].areas) if (!c.topicos[a.id]) c.topicos[a.id] = pad[a.id];
+  }
+  // tópicos com o mesmo nome nos dois concursos são o mesmo objeto → progresso compartilhado
+  const porNome = new Map(); for (const lst of Object.values(st.cfg.ufba.topicos)) for (const t of lst) porNome.set(t.nome, t);
+  for (const cid of Object.keys(CONCURSOS)) if (cid !== "ufba") for (const k of Object.keys(st.cfg[cid].topicos)) st.cfg[cid].topicos[k] = st.cfg[cid].topicos[k].map(t => porNome.get(t.nome) || t);
+  Object.defineProperty(st, "topicos", { get(){ return st.cfg[CID].topicos; }, set(v){ st.cfg[CID].topicos = v; }, enumerable: false, configurable: true });
+  Object.defineProperty(st, "dataProva", { get(){ return st.cfg[CID].dataProva; }, set(v){ st.cfg[CID].dataProva = v; }, enumerable: false, configurable: true });
+  return st;
 }
 let S;
-try { S = Object.assign(estadoInicial(), JSON.parse(localStorage.getItem(KEY) || "{}")); } catch { S = estadoInicial(); }
+try { S = novoEstado(JSON.parse(localStorage.getItem(KEY) || "{}")); } catch { S = novoEstado({}); }
 function gravar(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} }
 function salvar(){ S._t = Date.now(); gravar(); if (typeof syncAgendar === "function") syncAgendar(); }
 
@@ -690,14 +820,14 @@ function montarDadosLocais(){
 }
 montarDadosLocais();
 const Q_APP = Q_SEED.map((q,i)=>({...q,id:"s"+i, orig:"app"}));
-const todasQuestoes = () => { const rep = S.reportes || {}; return [...Q_APP, ...S.qExtras.map(q => ({...q, orig: String(q.id).startsWith("i") ? "importada" : "propria"})), ...Q_LOCAIS].filter(q => !rep[q.id]); };
+const todasQuestoes = () => { const rep = S.reportes || {}; return [...Q_APP, ...S.qExtras.map(q => ({...q, orig: String(q.id).startsWith("i") ? "importada" : "propria"})), ...Q_LOCAIS].filter(q => !rep[q.id] && AREA_ATIVA.has(q.a)); };
 // uma vez: respostas dadas com o gabarito antigo das questões corrigidas não contam
 (() => { const g = (window.CORRECOES_QUESTOES || {}).gabarito || {}; S._corrigidas = S._corrigidas || [];
   const novas = Object.keys(g).filter(id => !S._corrigidas.includes(id)); if (!novas.length) return;
   S.respostas = S.respostas.filter(r => !novas.includes(r.id)); novas.forEach(id => delete S.erros[id]); S._corrigidas.push(...novas); gravar(); })();
 const ORIGENS = { app: "Autorais do app", prova: "Provas reais", apostila: "Apostilas", simulado: "Simulados", importada: "Importadas", propria: "Criadas por você" };
 const FC_ORIGENS = { app: "Do app", resumo: "Dos resumos por assunto", prova_ae: "Múltipla escolha (provas)", ce: "Certo ou errado (provas)", apostila: "Conceitos das apostilas", propria: "Criados por você" };
-const todosFlash = () => [...FC_SEED.map((f,i)=>({a:f[0],f:f[1],v:f[2],id:"f"+i,orig:"app"})), ...S.fcExtras.map(f => ({...f, orig:"propria"})), ...F_LOCAIS];
+const todosFlash = () => [...FC_SEED.map((f,i)=>({a:f[0],f:f[1],v:f[2],id:"f"+i,orig:"app"})), ...S.fcExtras.map(f => ({...f, orig:"propria"})), ...F_LOCAIS].filter(f => AREA_ATIVA.has(f.a));
 function novosHoje(){ const n = S.fcNovos || {}; return n.data === hoje() ? n.n : 0; }
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
@@ -748,7 +878,7 @@ function minutosPorDia(n=14){
   for (let i=n-1;i>=0;i--){ const d = addDias(hoje(),-i); out.push({ d, m: S.sessoes.filter(s=>s.data===d).reduce((x,s)=>x+s.min,0) }); }
   return out;
 }
-function errosVencidos(){ return Object.entries(S.erros).filter(([,e]) => e.proxima <= hoje()); }
+function errosVencidos(){ const ids = new Set(todasQuestoes().map(q => q.id)); return Object.entries(S.erros).filter(([id, e]) => e.proxima <= hoje() && ids.has(id)); }
 function flashVencidos(filtro){
   const lim = S.fcLimite ?? 30; let livres = Math.max(0, lim - novosHoje());
   const fs = todosFlash().filter(f => !filtro || filtro(f));
@@ -786,7 +916,11 @@ function pintarNav(path){
   document.getElementById("side-count").innerHTML = d >= 0
     ? `<b>${d} ${d===1?"dia":"dias"}</b><span>para a prova · ${fmtData(S.dataProva,{day:"2-digit",month:"short"})}</span>`
     : `<b>Prova realizada</b><span>${fmtData(S.dataProva)}</span>`;
+  document.getElementById("side-count").innerHTML += Object.values(CONCURSOS).filter(c => c.id !== CID).map(c => { const n = diasEntre(hoje(), S.cfg[c.id].dataProva);
+    return `<button class="side-outro" data-trocar="${c.id}" title="Trocar para ${c.nome}">${c.nome}: ${n >= 0 ? n + " dias" : "prova realizada"} ⇄</button>`; }).join("");
 }
+document.title = CONC.marca + " — Preparação";
+document.getElementById("marca").textContent = CONC.marca; document.getElementById("marca-sub").textContent = CONC.sub; document.getElementById("marca-top").textContent = CONC.marca;
 let limpar = null;
 function rotear(){
   if (limpar){ limpar(); limpar = null; }
@@ -818,7 +952,7 @@ const header = (eyebrow, titulo, desc) => `<div class="page-header"><div class="
 const pct = x => x == null ? "—" : Math.round(x*100)+"%";
 const areaTag = id => `<span class="row" style="gap:6px;display:inline-flex"><span class="area-dot" style="background:${AREA[id].cor}"></span>${AREA[id].nome}</span>`;
 const pillTaxa = t => t == null ? `<span class="pill pill-muted">sem dados</span>` : t >= .75 ? `<span class="pill pill-ok">${pct(t)}</span>` : t >= .5 ? `<span class="pill pill-warn">${pct(t)}</span>` : `<span class="pill pill-bad">${pct(t)}</span>`;
-const AVISO_ANEXO = `<div class="notice" style="background:var(--accent-soft);border-color:var(--accent-soft-border)"><b style="color:var(--accent)">Fonte:</b> Anexo II do Edital 007/2026 — Conhecimentos Comuns (Nível Médio) e Conhecimentos Específicos do cargo 201. Itens longos foram divididos em tópicos menores; você pode adicionar ou remover.</div>`;
+const AVISO_ANEXO = `<div class="notice" style="background:var(--accent-soft);border-color:var(--accent-soft-border)"><b style="color:var(--accent)">Fonte:</b> ${CONC.aviso} Itens longos foram divididos em tópicos menores; você pode adicionar ou remover.</div>`;
 
 /* =========================================================================
    VIEWS
@@ -837,12 +971,13 @@ ROTAS["/inicio"] = el => {
   const totalResp = S.respostas.length, totalAc = S.respostas.filter(r=>r.ok).length;
   const pendRev = errosVencidos().length + flashVencidos().length;
   el.innerHTML = `<div class="container">
-    ${header("UFBA 2026 · Assistente em Administração","Minha Preparação","Onde você está, quanto falta e o que fazer agora.")}
+    ${header(CONC.titulo,"Minha Preparação","Onde você está, quanto falta e o que fazer agora.")}
+    ${renderOutroConcurso()}
     <div class="hero">
       <div>
         <div class="sub">${d>=0?"Faltam":"A prova foi há"}</div>
         <div class="big">${Math.abs(d)} ${Math.abs(d)===1?"dia":"dias"}</div>
-        <div class="sub">Prova objetiva + redação · ${fmtData(S.dataProva,{weekday:"long",day:"2-digit",month:"long",year:"numeric"})} · manhã (data provável)</div>
+        <div class="sub">${CONC.provaSub} · ${fmtData(S.dataProva,{weekday:"long",day:"2-digit",month:"long",year:"numeric"})}</div>
       </div>
       <div class="units">
         <div><b>${semanas}</b><span>semanas</span></div>
@@ -870,9 +1005,9 @@ ROTAS["/inicio"] = el => {
         <div class="row between"><h2>Próxima data do edital</h2><a class="btn btn-sm btn-secondary" href="#/cronograma">Ver todas</a></div>
         ${prox ? `<p style="font-size:1.05rem;margin:6px 0 2px"><b>${esc(prox.t)}</b></p>
           <p class="muted" style="margin:0">${prox.ini!==prox.fim?`${fmtData(prox.ini)} a `:""}${fmtData(prox.fim,{day:"2-digit",month:"long"})} · ${(()=>{const n=diasEntre(hoje(),prox.fim);return n===0?"hoje":n===1?"amanhã":`em ${n} dias`})()}</p>` : `<p class="muted">Sem datas futuras.</p>`}
-        <h3 style="margin:18px 0 8px">Peso na nota (objetiva = 90 pts)</h3>
+        <h3 style="margin:18px 0 8px">Peso na nota (objetiva = ${TOTAL_OBJ} pts)</h3>
         ${AREAS.map(a=>`<div class="row" style="margin-bottom:6px"><span class="small" style="width:170px">${a.nome}</span><div class="bar" style="flex:1"><i style="width:${a.q*a.peso/TOTAL_OBJ*100}%;background:${a.cor}"></i></div><span class="small muted" style="width:52px;text-align:right">${a.q*a.peso} pts</span></div>`).join("")}
-        <p class="small muted" style="margin:8px 0 0">Conhecimentos Específicos valem 2 pts/questão = 2/3 da objetiva.</p>
+        <p class="small muted" style="margin:8px 0 0">${CONC.pesoNota}</p>
       </div>
     </div>
     <h3>Progresso por área</h3>
@@ -903,18 +1038,10 @@ function prioridadeTopicos(){
    todo dia, alternando com LP / AP / Informática) + uma atividade fixa do
    dia da semana. As 3 últimas semanas são de reta final (revisão e simulados).
    ========================================================================= */
-const CURTO = { lp: "Português", inf: "Informática", ap: "Adm. Pública", ce: "Específicos" };
+const CURTO = { lp: "Português", inf: "Informática", ap: "Adm. Pública", ce: "Específicos", hpe: "História de PE", rl: "Raciocínio", dc: "Constitucional", dh: "DH e Legislação" };
 const DIAS_SEM = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
 const DIAS_SEM_LONGO = ["Domingo","Segunda","Terça","Quarta","Quinta","Sexta","Sábado"];
-const ATIV_DIA = {
-  1: { t: "Lei seca: Lei 8.112/1990 (20 min)", l: "#/conteudo?a=ap" },
-  2: { t: "Flashcards + Meus erros (20 min)", l: "#/flashcards" },
-  3: { t: "Redação da semana (60 min)", l: "#/redacao" },
-  4: { t: "Lei seca: 9.784, LAI e LGPD (20 min)", l: "#/conteudo?a=ap" },
-  5: { t: "20 questões mistas das 4 áreas", l: "#/questoes" },
-  6: { t: "Mini simulado + correção dos erros", l: "#/simulados" },
-  0: { t: "Revisão leve: erros e flashcards da semana", l: "#/erros" },
-};
+const ATIV_DIA = CONC.ativDia;
 const PESO_ROD = { ce: 1.5, ap: 1.1, lp: 1.1, inf: 0.8 };
 function diasAtivos(){
   const n = S.diasSemana;
@@ -931,7 +1058,7 @@ function gerarPlanoEstudos(){
   const fila = Object.fromEntries(AREAS.map(a => [a.id, prio.filter(p => p.area === a.id && !p.t.estudado)]));
   const fracos = Object.fromEntries(AREAS.map(a => [a.id, prio.filter(p => p.area === a.id && p.t.estudado)]));
   // Hoje fica "congelado" para não mudar enquanto você marca tópicos ao longo do dia
-  const cache = S.planoHoje && S.planoHoje.data === hoje() ? S.planoHoje : null;
+  const cache = S.planoHoje && S.planoHoje.data === hoje() && (S.planoHoje.cid || "ufba") === CID ? S.planoHoje : null;
   if (cache) for (const b of cache.blocos) if (fila[b.area]) fila[b.area] = fila[b.area].filter(p => !b.topicos.includes(p.t.nome));
 
   // Quantos blocos de conteúdo existem até a reta final → tópicos por bloco
@@ -942,7 +1069,7 @@ function gerarPlanoEstudos(){
 
   // Ritmo proporcional: cada área avança na proporção do que falta nela, para
   // todas terminarem juntas (Específicos com peso extra) → mistura real de matérias.
-  const quota = Object.fromEntries(AREAS.map(a => [a.id, fila[a.id].length * (a.id === "ce" ? 1.25 : 1)]));
+  const quota = Object.fromEntries(AREAS.map(a => [a.id, fila[a.id].length * (a.id === CONC.areaForte ? 1.25 : 1)]));
   const somaQuota = Object.values(quota).reduce((x, y) => x + y, 0) || 1;
   const feitos = Object.fromEntries(AREAS.map(a => [a.id, 0])); let nBlocosConteudo = 0;
   const ultimoUso = Object.fromEntries(AREAS.map(a => [a.id, -99])); let diaIdx = 0;
@@ -981,7 +1108,7 @@ function gerarPlanoEstudos(){
         const r = pegaRevisao(usadas); if (r) { usadas.push(r.area); blocos.push(r); }
       }
     }
-    if (d === hoje() && !cache) { S.planoHoje = { data: d, blocos }; salvar(); }
+    if (d === hoje() && !cache) { S.planoHoje = { data: d, blocos, cid: CID }; salvar(); }
     ontem = blocos.map(b => b.area); diaIdx++;
     dias.push({ data: d, w, fase: reta ? "reta" : "conteudo", blocos });
   }
@@ -990,8 +1117,9 @@ function gerarPlanoEstudos(){
 function atividadeDoDia(dia){
   if (dia.fase === "prova") return { t: "PROVA — chegue cedo, documento com foto e caneta azul/preta transparente", l: "#/cronograma" };
   if (dia.fase === "vespera") return { t: "Véspera: revisão leve dos flashcards, separar documentos, dormir cedo", l: "#/flashcards" };
-  if (dia.fase === "reta" && (dia.w === 6 || dia.w === 3)) return { t: "Simulado COMPLETO cronometrado (objetiva + redação em 4h)", l: "#/simulados" };
+  if (dia.fase === "reta" && (dia.w === 6 || dia.w === 3)) return { t: `Simulado COMPLETO cronometrado (objetiva + redação em ${CONC.horasProva})`, l: "#/simulados" };
   const a = ATIV_DIA[dia.w];
+  const pm = atividadeConciliada(dia); if (pm) return pm;
   if (dia.w === 3) return { t: `Redação: “${temaDaSemana(dia.data)[1]}”`, l: "#/redacao?tema=" + encodeURIComponent(temaDaSemana(dia.data)[1]) };
   return a;
 }
@@ -1082,7 +1210,7 @@ ROTAS["/cronograma"] = el => {
   const lista = [...DATAS].sort((a,b)=>a.ini.localeCompare(b.ini)||a.fim.localeCompare(b.fim));
   const prox = proximoEvento();
   el.innerHTML = `<div class="container">
-    ${header("Minha Preparação · Cronograma","Datas do edital","Anexo III — Cronograma de execução (etapas que valem para Assistente em Administração). Pode ser alterado — acompanhe www.avalia.org.br.")}
+    ${header("Minha Preparação · Cronograma","Datas do edital",CONC.cronoDesc)}
     <div class="card"><ul class="timeline">${lista.map(x=>{
       const passado = x.fim < hoje(); const n = diasEntre(hoje(), x.fim);
       const cls = x.prova ? "prova" : passado ? "passado" : x===prox ? "proximo" : "";
@@ -1090,11 +1218,7 @@ ROTAS["/cronograma"] = el => {
       return `<li class="${cls}"><div class="d">${x.ini!==x.fim?fmtData(x.ini)+" – ":""}${fmtData(x.fim,{day:"2-digit",month:"2-digit",year:"numeric"})}${x.aprox?" (aprox.)":""}</div>
         <div class="t" style="${x.prova?"font-weight:700;color:var(--danger)":""}">${esc(x.t)}</div><div class="small muted">${quando}</div></li>`;}).join("")}</ul></div>
     <h3>Checklist do candidato</h3>
-    <div class="card"><ul class="list">${[
-      ["isencao","Decidir se vou pedir isenção da taxa (até 05/10)"],["inscricao","Fazer a inscrição no site da Avalia (até 29/10)"],["boleto","Pagar o boleto de R$ 100,00 (até 23h de 30/10)"],
-      ["deferida","Conferir se a inscrição foi deferida (06/11; pós-recurso 17/11)"],["estatuto","Ler o Estatuto e Regimento Geral da UFBA (ufba.br/arquivos/estatuto-e-regimento-geral)"],["cartao","Emitir o Cartão de Informação do Candidato (a partir de 11/12)"],
-      ["local","Conferir o local de prova e planejar o trajeto"],["caneta","Separar caneta esferográfica azul ou preta de tubo transparente + documento com foto"],
-    ].map(([k,t])=>`<li><input type="checkbox" class="chk" id="ck-${k}" data-k="${k}" ${S.checklist[k]?"checked":""}><label for="ck-${k}" style="flex:1;cursor:pointer">${t}</label></li>`).join("")}</ul></div></div>`;
+    <div class="card"><ul class="list">${CONC.checklist.map(([k,t])=>`<li><input type="checkbox" class="chk" id="ck-${k}" data-k="${k}" ${S.checklist[k]?"checked":""}><label for="ck-${k}" style="flex:1;cursor:pointer">${t}</label></li>`).join("")}</ul></div></div>`;
   el.querySelectorAll("[data-k]").forEach(c => c.onchange = () => { S.checklist[c.dataset.k] = c.checked; salvar(); });
 };
 
@@ -1185,7 +1309,7 @@ ROTAS["/edital"] = el => {
   el.querySelectorAll("[data-rev]").forEach(b => b.onclick = () => { const [a,i] = b.dataset.rev.split(":"); const t = S.topicos[a][i]; t.revisoes++; t.estudado = true; t.ultima = hoje(); salvar(); ROTAS["/edital"](el); });
   el.querySelectorAll("[data-del]").forEach(b => b.onclick = () => { const [a,i] = b.dataset.del.split(":"); if (confirm("Remover este tópico?")){ S.topicos[a].splice(i,1); salvar(); ROTAS["/edital"](el); } });
   el.querySelectorAll("[data-addbtn]").forEach(b => b.onclick = () => { const a = b.dataset.addbtn; const inp = el.querySelector(`[data-add="${a}"]`); const nome = inp.value.trim(); if (!nome) return; S.topicos[a].push({id:a+"-"+Date.now(), nome, estudado:false, revisoes:0, ultima:null}); salvar(); ROTAS["/edital"](el); });
-  el.querySelector("#restaurar").onclick = () => { if (confirm("Substituir seus tópicos pela lista padrão? O progresso marcado será perdido.")){ S.topicos = estadoInicial().topicos; salvar(); ROTAS["/edital"](el); } };
+  el.querySelector("#restaurar").onclick = () => { if (confirm("Substituir seus tópicos pela lista padrão? O progresso marcado será perdido.")){ S.topicos = topicosPadrao(CID); S = novoEstado(JSON.parse(JSON.stringify(S))); salvar(); ROTAS["/edital"](el); } };
 };
 
 /* ---------- Questões ---------- */
@@ -1489,6 +1613,7 @@ ROTAS["/resumo"] = el => {
 ROTAS["/banca"] = el => {
   const barra = (l, v, max, cor) => `<div class="row" style="margin-bottom:6px"><span class="small" style="width:210px">${l}</span><div class="bar" style="flex:1"><i style="width:${v / max * 100}%;background:${cor}"></i></div><span class="small muted" style="width:60px;text-align:right">${v}</span></div>`;
   el.innerHTML = `<div class="container">
+    ${CID === "pmpe" ? `<div class="notice" style="margin-bottom:12px"><b>PM-PE:</b> a prova é do <b>Instituto AOCP</b> — a própria “matriz” da Avalia; o estilo descrito abaixo (textos longos em Português, questões diretas de lei seca, 5 alternativas) vale igual. Diferenças: 6 matérias de 10 questões, blocos com mínimo de 30%, e nada de Adm. Pública/Específicos.</div>` : ""}
     ${header("Praticar · Banca", "Análise da banca: Instituto Avalia", "O que esperar da prova e como treinar. Baseado no perfil publicado da banca e na leitura de uma prova real de Assistente em Administração da AOCP (IF-MA 2023) — a Avalia nasceu de uma cisão da AOCP e herdou banco de questões e padrão de elaboração.")}
     <div class="grid g4"><div class="stat"><div class="v">AOCP</div><div class="l">origem: herdou equipe, banco de questões e padrão</div></div><div class="stat"><div class="v">A–E</div><div class="l">5 alternativas, 1 correta</div></div><div class="stat"><div class="v">0</div><div class="l">desconto por erro: nunca deixe em branco</div></div><div class="stat"><div class="v">~4,9 mil</div><div class="l">questões da banca no TEC Concursos</div></div></div>
 
@@ -1523,7 +1648,7 @@ ROTAS["/banca"] = el => {
 
     <div class="card" style="margin-top:14px"><h2>Onde estão os pontos (objetiva = 90)</h2>
       ${barra("Conhecimentos Específicos", 60, 60, "var(--c-ce)")}${barra("Língua Portuguesa", 12, 60, "var(--c-lp)")}${barra("Administração Pública", 12, 60, "var(--c-ap)")}${barra("Noções de Informática", 6, 60, "var(--c-inf)")}
-      <p class="small muted" style="margin-bottom:0">Mínimo: 45 pts e nenhuma área zerada. Desempate: Específicos → Português → Informática → Redação. Como só as ${EDITAL.redacaoCorrigida.ac} primeiras redações da ampla concorrência são corrigidas (94 vagas no total), o corte real deve ficar bem acima de 45.</p></div>
+      <p class="small muted" style="margin-bottom:0">Mínimo: 45 pts e nenhuma área zerada. Desempate: Específicos → Português → Informática → Redação. Como só as ${EDITAL_UFBA.redacaoCorrigida.ac} primeiras redações da ampla concorrência são corrigidas (94 vagas no total), o corte real deve ficar bem acima de 45.</p></div>
 
     <div class="grid g2" style="margin-top:14px">
       <div class="card"><h2>Estratégia de estudo para a banca</h2><ol class="resumo small">
@@ -1565,11 +1690,11 @@ ROTAS["/redacao"] = el => {
   let eixo = "todos";
   let atual = TEMAS_REDACAO.find(t => t[1] === params.get("tema")) || temaDaSemana(hoje());
   el.innerHTML = `<div class="container">
-    ${header("Estudar · Redação", "Prova de redação", `Vale 60 pontos (mais que os 30 da parte geral da objetiva). Mínimo 30. Dissertativo-argumentativo, 20 a 30 linhas, caneta azul ou preta. ${TEMAS_REDACAO.length} temas em ${eixos.length} eixos — ${feitos.size} já treinados.`)}
+    ${header("Estudar · Redação", "Prova de redação", `${CID === "pmpe" ? "PM-PE: vale 40 pontos (a objetiva vale 60). Mínimo 12. Dissertação, 15 a 20 linhas, caneta azul ou preta." : "Vale 60 pontos (mais que os 30 da parte geral da objetiva). Mínimo 30. Dissertativo-argumentativo, 20 a 30 linhas, caneta azul ou preta."} ${TEMAS_REDACAO.length} temas em ${eixos.length} eixos — ${feitos.size} já treinados.`)}
     <div class="grid g2">
-      <div class="card"><h2>Critérios (Tabela 13.2)</h2><table><tbody>${CRIT.map(c => `<tr><td>${c}</td><td class="n">15</td></tr>`).join("")}<tr><td><b>Total</b></td><td class="n"><b>60</b></td></tr></tbody></table>
-        <h3 style="margin:16px 0 6px">Nota zero / eliminação se…</h3><ul class="small" style="margin:0;padding-left:18px"><li>fugir ao tema ou à tipologia dissertativa</li><li>desestruturação acentuada</li><li>escrever a lápis ou com cor diferente de azul/preta</li><li>deixar em branco, letra ilegível ou espaçamento excessivo</li><li>qualquer identificação (nome, sinais, desenhos)</li><li>fora de 20–30 linhas: perde pontos; o que passar de 30 é desconsiderado</li></ul></div>
-      <div class="card"><h2>Estrutura que funciona (25–28 linhas)</h2><ol class="resumo small">
+      <div class="card"><h2>Critérios (${CID === "pmpe" ? "Tabela 12.2 da PM-PE" : "Tabela 13.2"})</h2><table><tbody>${CRIT.map(c => `<tr><td>${c}</td><td class="n">${CID === "pmpe" ? 10 : 15}</td></tr>`).join("")}<tr><td><b>Total</b></td><td class="n"><b>${CID === "pmpe" ? 40 : 60}</b></td></tr></tbody></table>
+        <h3 style="margin:16px 0 6px">Nota zero / eliminação se…</h3><ul class="small" style="margin:0;padding-left:18px"><li>fugir ao tema ou à tipologia dissertativa</li><li>desestruturação acentuada</li><li>escrever a lápis ou com cor diferente de azul/preta</li><li>deixar em branco, letra ilegível ou espaçamento excessivo</li><li>qualquer identificação (nome, sinais, desenhos)</li><li>${CID === "pmpe" ? "use de 15 a 20 linhas; o que passar de 20 é desconsiderado" : "fora de 20–30 linhas: perde pontos; o que passar de 30 é desconsiderado"}</li></ul></div>
+      <div class="card"><h2>Estrutura que funciona (${CID === "pmpe" ? "18–20 linhas: introdução 4, dois desenvolvimentos de 5–6, conclusão 4" : "25–28 linhas"})</h2><ol class="resumo small">
         <li><b>Introdução (5–6 linhas):</b> contextualize o tema + apresente a <b>tese</b> e anuncie os 2 argumentos.</li>
         <li><b>Desenvolvimento 1 (7–8 linhas):</b> tópico frasal → explicação → repertório (lei, dado, fato) → fechamento ligado à tese.</li>
         <li><b>Desenvolvimento 2 (7–8 linhas):</b> mesmo esquema, outro argumento. Abra com um conector (“Além disso”, “Por outro lado”).</li>
@@ -1614,9 +1739,9 @@ ROTAS["/simulados"] = el => {
   const todas = todasQuestoes();
   const disp = Object.fromEntries(AREAS.map(a=>[a.id, todas.filter(q=>q.a===a.id).length]));
   el.innerHTML = `<div class="container" style="max-width:780px">
-    ${header("Praticar · Simulados","Simulado proporcional","Mesma proporção da prova (12 LP · 6 Info · 12 AP · 30 CE com peso 2), com tempo corrido e correção só no final. A nota é projetada para a escala de 90 pontos.")}
+    ${header("Praticar · Simulados","Simulado proporcional",CONC.simDesc)}
     <div class="card"><div class="grid g2">
-      <div class="field"><label>Tamanho</label><select id="sz"><option value="0.33">Mini — 20 questões (~25 min)</option><option value="0.5">Médio — 30 questões (~40 min)</option><option value="1">Completo — 60 questões (3h, se houver no banco)</option></select></div>
+      <div class="field"><label>Tamanho</label><select id="sz"><option value="0.33">Mini — 20 questões (~25 min)</option><option value="0.5">Médio — 30 questões (~40 min)</option><option value="1">Completo — ${AREAS.reduce((x, a) => x + a.q, 0)} questões (se houver no banco)</option></select></div>
       <div class="field"><label>Banco disponível</label><div class="small muted" style="padding-top:8px">${AREAS.map(a=>`${a.nome.split(" ")[0]}: ${disp[a.id]}`).join(" · ")}</div></div></div>
       <button class="btn btn-primary" id="start">Iniciar simulado</button>
       <p class="small muted" style="margin-bottom:0">Se o banco tiver menos questões que o necessário, o simulado usa o que houver — adicione questões de provas anteriores em <a href="#/questoes">Questões</a>.</p></div></div>`;
@@ -1641,13 +1766,14 @@ function rodarSimulado(el, qs){
     const porArea = Object.fromEntries(AREAS.map(a=>[a.id,{n:0,ok:0}]));
     qs.forEach(q => { const ok = resp[q.id] === q.c; porArea[q.a].n++; if (ok) porArea[q.a].ok++; if (resp[q.id]!=null) registrarResposta(q, ok); });
     const proj = AREAS.reduce((s,a)=>{ const p = porArea[a.id]; return s + (p.n ? p.ok/p.n : 0) * a.q * a.peso; }, 0);
-    const zerou = AREAS.filter(a=>porArea[a.id].n && !porArea[a.id].ok);
+    const regra = CONC.regra(Object.fromEntries(AREAS.map(a => { const p = porArea[a.id]; return [a.id, p.n ? p.ok / p.n * a.q * a.peso : 0]; })));
     const acertos = qs.filter(q=>resp[q.id]===q.c).length;
     const min = Math.round((Date.now()-t0)/60000);
     S.simulados.push({data:hoje(), acertos, total:qs.length, proj, min}); S.sessoes.push({data:hoje(), min, a:"ce"}); salvar();
     el.innerHTML = `<div class="container" style="max-width:780px">${header("Simulado · Resultado", `${acertos}/${qs.length} acertos`)}
-      <div class="grid g3"><div class="stat"><div class="v">${proj.toFixed(1)}</div><div class="l">nota projetada (0–90)</div></div><div class="stat"><div class="v">${min} min</div><div class="l">tempo usado</div></div>
-      <div class="stat"><div class="v">${proj>=45&&!zerou.length?"✓":"✗"}</div><div class="l">${proj>=45&&!zerou.length?"acima do mínimo (45 pts)":zerou.length?"zerou: "+zerou.map(a=>a.nome).join(", "):"abaixo de 45 pts"}</div></div></div>
+      <div class="grid g3"><div class="stat"><div class="v">${proj.toFixed(1)}</div><div class="l">nota projetada (0–${TOTAL_OBJ})</div></div><div class="stat"><div class="v">${min} min</div><div class="l">tempo usado</div></div>
+      <div class="stat"><div class="v">${regra.ok?"✓":"✗"}</div><div class="l">${regra.ok?"dentro dos mínimos do edital":"abaixo de algum mínimo do edital"}</div></div></div>
+      <div class="card small" style="margin-top:10px"><ul class="list">${regra.itens.map(([ok, t]) => `<li>${ok ? "✅" : "❌"} ${esc(t)}</li>`).join("")}</ul></div>
       <div class="card" style="margin-top:14px"><table><thead><tr><th>Área</th><th class="n">Acertos</th><th class="n">%</th><th class="n">Projeção</th></tr></thead><tbody>
       ${AREAS.map(a=>{const p=porArea[a.id];return `<tr><td>${areaTag(a.id)}</td><td class="n">${p.ok}/${p.n}</td><td class="n">${p.n?pct(p.ok/p.n):"—"}</td><td class="n">${(p.n?p.ok/p.n*a.q*a.peso:0).toFixed(1)} / ${a.q*a.peso}</td></tr>`}).join("")}</tbody></table></div>
       <h3>Gabarito comentado</h3>
@@ -1658,24 +1784,26 @@ function rodarSimulado(el, qs){
 }
 
 ROTAS["/nota"] = el => {
+  const E = EDITAL, redMax = E.redMax || 60, redMin = E.redMin || 30;
   el.innerHTML = `<div class="container" style="max-width:780px">
-    ${header("Praticar · Nota","Calculadora de nota","Use depois de um simulado externo ou do gabarito preliminar. Regras do edital: ≥ 45 pts na objetiva (50%), nenhuma área zerada, e redação ≥ 30.")}
-    <div class="card">${AREAS.map(a=>`<div class="row" style="margin-bottom:10px"><span style="flex:1">${areaTag(a.id)} <span class="small muted">(${a.q}q × ${a.peso})</span></span><input type="number" min="0" max="${a.q}" value="0" data-n="${a.id}" style="max-width:100px"></div>`).join("")}
-      <div class="row" style="margin-bottom:10px"><span style="flex:1">Redação <span class="small muted">(0–60)</span></span><input type="number" min="0" max="60" value="0" id="nr" style="max-width:100px"></div></div>
+    ${header("Praticar · Nota","Calculadora de nota",`Use depois de um simulado externo ou do gabarito preliminar. Regras do edital de ${CONC.nome}: veja os critérios abaixo; redação ≥ ${redMin} de ${redMax}.`)}
+    <div class="card">${AREAS.map(a=>`<div class="row" style="margin-bottom:10px"><span style="flex:1">${areaTag(a.id)} <span class="small muted">(${a.q}q × ${a.peso}${a.bloco ? " · bloco " + a.bloco : ""})</span></span><input type="number" min="0" max="${a.q}" value="0" data-n="${a.id}" style="max-width:100px"></div>`).join("")}
+      <div class="row" style="margin-bottom:10px"><span style="flex:1">Redação <span class="small muted">(0–${redMax})</span></span><input type="number" min="0" max="${redMax}" value="0" id="nr" style="max-width:100px"></div></div>
     <div id="nres" style="margin-top:14px"></div></div>`;
   const calc = () => {
-    let obj = 0; const zer = [];
-    for (const a of AREAS){ const inp = el.querySelector(`[data-n="${a.id}"]`); const v = Math.min(a.q, Math.max(0, Number(inp.value)||0)); obj += v*a.peso; if (!v) zer.push(a.nome); }
-    const red = Math.min(60, Math.max(0, Number(el.querySelector("#nr").value)||0));
-    const okObj = obj >= 45 && !zer.length, okRed = red >= 30;
-    el.querySelector("#nres").innerHTML = `<div class="grid g3"><div class="stat"><div class="v">${obj}</div><div class="l">objetiva (de 90)</div></div><div class="stat"><div class="v">${red}</div><div class="l">redação (de 60)</div></div><div class="stat"><div class="v">${obj+red}</div><div class="l">nota final (de 150)</div></div></div>
-      <div class="card" style="margin-top:14px"><ul class="list"><li>${obj>=45?"✅":"❌"} Objetiva ≥ 45 pontos ${obj<45?`<span class="muted small">(faltam ${45-obj})</span>`:""}</li><li>${!zer.length?"✅":"❌"} Nenhuma área zerada ${zer.length?`<span class="muted small">(${zer.join(", ")})</span>`:""}</li><li>${okRed?"✅":"❌"} Redação ≥ 30 pontos</li></ul>
-      <p class="small muted" style="margin-bottom:0">${okObj&&okRed?"Habilitada nos critérios de nota. A correção da redação ainda depende de estar dentro do limite de classificação da Tabela 13.1.":"Ajuste os valores para ver o que falta."} Desempate: Conhecimentos Específicos → Língua Portuguesa → Informática → Redação.</p></div>`;
+    const pts = {}; let obj = 0;
+    for (const a of AREAS){ const inp = el.querySelector(`[data-n="${a.id}"]`); const v = Math.min(a.q, Math.max(0, Number(inp.value)||0)); pts[a.id] = v*a.peso; obj += v*a.peso; }
+    const red = Math.min(redMax, Math.max(0, Number(el.querySelector("#nr").value)||0));
+    const r = CONC.regra(pts), okRed = red >= redMin;
+    el.querySelector("#nres").innerHTML = `<div class="grid g3"><div class="stat"><div class="v">${obj}</div><div class="l">objetiva (de ${TOTAL_OBJ})</div></div><div class="stat"><div class="v">${red}</div><div class="l">redação (de ${redMax})</div></div><div class="stat"><div class="v">${obj+red}</div><div class="l">nota final (de ${TOTAL_OBJ+redMax})</div></div></div>
+      <div class="card" style="margin-top:14px"><ul class="list">${r.itens.map(([ok, t]) => `<li>${ok ? "✅" : "❌"} ${esc(t)}</li>`).join("")}<li>${okRed?"✅":"❌"} Redação ≥ ${redMin} pontos</li></ul>
+      <p class="small muted" style="margin-bottom:0">${r.ok&&okRed?"Dentro dos critérios de nota. A correção da redação ainda depende de estar dentro do limite de classificação do edital.":"Ajuste os valores para ver o que falta."}</p></div>`;
   };
   el.querySelectorAll("input").forEach(i => i.oninput = calc); calc();
 };
 
 ROTAS["/sobre"] = el => {
+  if (CID === "pmpe") return sobrePMPE(el);
   const v = EDITAL.vagas;
   el.innerHTML = `<div class="container">
     ${header("Praticar · O concurso","UFBA 2026 — Assistente em Administração","Resumo do Edital de Abertura nº 007/2026, de 25/09/2026.")}
@@ -1708,9 +1836,52 @@ ROTAS["/sobre"] = el => {
       <li>Sigilo sobre informações restritas e zelo pelos recursos institucionais</li></ul></div></div>`;
 };
 
+function sobrePMPE(el){
+  const E = EDITAL_PMPE;
+  el.innerHTML = `<div class="container">
+    ${header("Praticar · O concurso","PM-PE — Soldado (QPMG)","Resumo do Edital de Abertura 001/2026 (Portaria Conjunta SAD/SDS nº 299, DOE-PE de 29/09/2026). Confira sempre o edital oficial.")}
+    <div class="grid g4"><div class="stat"><div class="v">1.250</div><div class="l">vagas de Soldado</div></div><div class="stat"><div class="v">R$ 5.617</div><div class="l">remuneração inicial</div></div><div class="stat"><div class="v">R$ 180</div><div class="l">taxa de inscrição</div></div><div class="stat"><div class="v">21/02</div><div class="l">prova (2027)</div></div></div>
+    <div class="grid g2" style="margin-top:14px">
+      <div class="card"><h2>A prova (5 horas)</h2><table><thead><tr><th>Bloco</th><th>Matéria</th><th class="n">Questões</th></tr></thead><tbody>
+        ${AREAS_PMPE.map(a => `<tr><td>${a.bloco}</td><td>${a.nome}</td><td class="n">${a.q}</td></tr>`).join("")}
+        <tr><td></td><td>Redação (dissertação, 15 a 20 linhas)</td><td class="n">40 pts</td></tr><tr><td></td><td><b>Total</b></td><td class="n"><b>60 + 40</b></td></tr></tbody></table>
+        <p class="small muted" style="margin-bottom:0">5 alternativas, 1 correta, 1 ponto por questão. Nota final = objetiva + redação.</p></div>
+      <div class="card"><h2>Para passar da objetiva</h2><ul class="resumo small">
+        <li>Pelo menos <b>30% de cada bloco</b> (6 de 20 pontos).</li><li>Pelo menos <b>30% do total</b> (18 de 60).</li><li><b>Não zerar</b> nenhuma matéria.</li>
+        <li>Só é corrigida a redação de quem passa na objetiva e fica dentro do limite de classificação (ampla concorrência: até a 4.866ª posição).</li>
+        <li>Redação: mínimo de <b>12 de 40</b> pontos.</li></ul></div></div>
+    <div class="card"><h2>Requisitos (confira antes de se inscrever)</h2><ul class="resumo small">
+      <li>Ensino médio completo · nacionalidade brasileira · direitos políticos e obrigações militares/eleitorais em dia.</li>
+      <li><b>Idade:</b> 18 a 30 anos na data da inscrição.</li><li><b>Altura mínima:</b> 1,60 m (mulheres) · 1,65 m (homens).</li><li><b>CNH</b> categoria B, no mínimo.</li></ul></div>
+    <div class="card"><h2>Etapas depois da prova</h2><ul class="resumo small">
+      <li>Exames médicos (25 a 29/06/2027) → Teste de Aptidão Física (23/07 a 01/08/2027) → Avaliação psicológica (29/08/2027) e entrevista → classificação (14/10/2027).</li>
+      <li>Validade do concurso: 2 anos, prorrogável uma vez. Regime: Estatuto dos Policiais Militares de PE (Lei 6.783/1974).</li></ul></div></div>`;
+}
+function renderOutroConcurso(){
+  const outros = Object.values(CONCURSOS).filter(c => c.id !== CID);
+  return outros.map(c => { const d = diasEntre(hoje(), S.cfg[c.id].dataProva);
+    return `<div class="notice" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span style="flex:1">Você também tem <b>${c.titulo}</b>${d >= 0 ? ` — faltam <b>${d} dias</b>` : ""}.${CID === "ufba" && S.conciliar ? " O plano de hoje já reserva horários para a PM-PE." : ""}</span><button class="btn btn-sm btn-secondary" data-trocar="${c.id}">Abrir ${c.nome}</button></div>`; }).join("");
+}
+document.addEventListener("click", e => { const b = e.target.closest && e.target.closest("[data-trocar]"); if (b) trocarConcurso(b.dataset.trocar); });
+/* Conciliação: estudando para a UFBA até a prova dela, com horários fixos para as matérias novas da PM-PE */
+function atividadeConciliada(dia){
+  if (CID !== "ufba" || !S.conciliar || dia.data >= S.cfg.ufba.dataProva || ![2, 5].includes(dia.w)) return null;
+  const areas = dia.w === 2 ? ["rl"] : ["dc", "dh", "hpe"];
+  const idx = Math.floor(diasEntre("2026-09-28", dia.data) / 7);
+  const ordem = dia.w === 2 ? areas : areas.slice(idx % 3).concat(areas.slice(0, idx % 3));
+  for (const a of ordem) {
+    const t = (S.cfg.pmpe.topicos[a] || []).find(t => !t.estudado);
+    if (t) return { t: `PM-PE · ${CURTO[a]}: ${t.nome} (40 min)`, l: `#/resumo?a=${a}&t=${encodeURIComponent(t.nome)}` };
+  }
+  return null;
+}
+
 ROTAS["/config"] = el => {
   el.innerHTML = `<div class="container" style="max-width:720px">
     ${header("Configurações","Configurações e backup","Seus dados ficam só neste navegador. Faça backup de vez em quando.")}
+    <div class="card"><h2>Concurso</h2><p class="small muted" style="margin-top:4px">O app mostra um concurso por vez (edital, datas, tópicos, plano). Questões, erros e flashcards de Português e Informática, e os tópicos com o mesmo nome, valem para os dois.</p>
+      <div class="btn-row">${Object.values(CONCURSOS).map(c => `<button class="btn ${c.id === CID ? "btn-primary" : "btn-secondary"}" data-trocar="${c.id}" ${c.id === CID ? "disabled" : ""}>${c.titulo}</button>`).join("")}</div>
+      <label class="row" style="gap:8px;margin-top:10px"><input type="checkbox" id="concil" ${S.conciliar ? "checked" : ""}> <span class="small">Estudar também para a PM-PE enquanto a UFBA é a prioridade (até 20/12, terças e sextas o plano da UFBA reserva 40 min para Raciocínio Lógico, Constitucional, Direitos Humanos e História de PE)</span></label></div>
     <div class="card"><div class="grid g2">
       <div class="field"><label>Data da prova</label><input type="date" id="cd" value="${S.dataProva}"></div>
       <div class="field"><label>Horas de estudo por dia</label><input type="number" id="ch" min="0.5" max="12" step="0.5" value="${S.horasDia}"></div>
@@ -1732,6 +1903,7 @@ ROTAS["/config"] = el => {
   const $ = s => el.querySelector(s);
   $("#csave").onclick = () => { S.dataProva = $("#cd").value || EDITAL.dataProva; S.horasDia = Number($("#ch").value)||2; S.diasSemana = Math.min(7,Math.max(1,Number($("#cs").value)||6)); salvar(); pintarNav("/config"); $("#cmsg").textContent = "✓ Salvo"; };
   ligarCofre(el); ligarSync(el);
+  $("#concil").onchange = e => { S.conciliar = e.target.checked; S.planoHoje = null; salvar(); };
   if ($("#represt")) $("#represt").onclick = () => { S.reportes = {}; salvar(); rotear(); };
   $("#ladd").onclick = () => {
     const nome = $("#lnome").value.trim(), url = $("#lurl").value.trim(), t = $("#ltop").value;
@@ -1741,8 +1913,8 @@ ROTAS["/config"] = el => {
   };
   el.querySelectorAll("[data-ldel]").forEach(b => b.onclick = () => { S.linksNuvem = (S.linksNuvem || []).filter(l => l.id !== b.dataset.ldel); salvar(); rotear(); });
   $("#exp").onclick = () => { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify(S,null,1)],{type:"application/json"})); a.download = `ufba-assistente-backup-${hoje()}.json`; a.click(); };
-  $("#imp").onchange = e => { const f = e.target.files[0]; if (!f) return; f.text().then(t => { try { S = Object.assign(estadoInicial(), JSON.parse(t)); salvar(); alert("Backup importado."); rotear(); } catch { alert("Arquivo inválido."); } }); };
-  $("#reset").onclick = () => { if (confirm(lsGet(SYNC.token) ? "Apagar todo o progresso? Com a sincronização ligada, isso apaga também nos outros aparelhos. Não dá para desfazer." : "Apagar todo o progresso? Não dá para desfazer.")){ S = estadoInicial(); salvar(); rotear(); } };
+  $("#imp").onchange = e => { const f = e.target.files[0]; if (!f) return; f.text().then(t => { try { S = novoEstado(JSON.parse(t)); salvar(); alert("Backup importado."); rotear(); } catch { alert("Arquivo inválido."); } }); };
+  $("#reset").onclick = () => { if (confirm(lsGet(SYNC.token) ? "Apagar todo o progresso? Com a sincronização ligada, isso apaga também nos outros aparelhos. Não dá para desfazer." : "Apagar todo o progresso? Não dá para desfazer.")){ S = novoEstado({}); salvar(); rotear(); } };
 };
 
 
@@ -2588,7 +2760,7 @@ document.addEventListener("click", e => {
 const SYNC = { token: "ufba-sync:token", gist: "ufba-sync:gist", base: "ufba-sync:base", quando: "ufba-sync:quando", desc: "ufba-assistente-progresso", arq: "ufba-progresso.json" };
 const lsGet = k => { try { return localStorage.getItem(k); } catch { return null; } };
 const lsSet = (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch {} };
-const ARRAYS_POR_ID = new Set(["qExtras", "fcExtras", "linksNuvem", "lp", "inf", "ap", "ce"]); // lp/inf/ap/ce = listas de tópicos
+const ARRAYS_POR_ID = new Set(["qExtras", "fcExtras", "linksNuvem", ...Object.values(CONCURSOS).flatMap(c => c.areas.map(a => a.id))]); // lp/inf/ap/ce = listas de tópicos
 function mesclar(a, b, localMaisNovo, chave){
   if (Array.isArray(a) && Array.isArray(b)) {
     if (ARRAYS_POR_ID.has(chave)) {
@@ -2670,9 +2842,9 @@ async function syncAgora(){
     let mudouLocal = false, enviar = false;
     if (!R) enviar = true;
     else if (rt === lt) {}
-    else if (lt <= base) { S = Object.assign(estadoInicial(), R); mudouLocal = true; }       // só o outro aparelho mudou
+    else if (lt <= base) { S = novoEstado(R); mudouLocal = true; }       // só o outro aparelho mudou
     else if (rt <= base) enviar = true;                                                     // só este aparelho mudou
-    else { S = Object.assign(estadoInicial(), mesclar(S, R, lt > rt)); S._t = Date.now(); mudouLocal = enviar = true; } // os dois mudaram
+    else { S = novoEstado(mesclar(S, R, lt > rt)); S._t = Date.now(); mudouLocal = enviar = true; } // os dois mudaram
     if (mudouLocal) gravar();
     if (enviar) await gh("/gists/" + id, token, { method: "PATCH", body: JSON.stringify({ files: { [SYNC.arq]: { content: await syncCifrar(S, token) } } }) });
     lsSet(SYNC.base, String(S._t || 0)); lsSet(SYNC.quando, String(Date.now()));
