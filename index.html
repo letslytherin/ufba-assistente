@@ -158,6 +158,13 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
 .daycard .act:hover{color:var(--accent)}
 .resumo{margin:0;padding-left:20px}.resumo li{margin-bottom:8px}
 .assuntos{display:flex;flex-direction:column;gap:8px}
+#auto-chip{position:fixed;right:14px;bottom:14px;z-index:40;display:none;align-items:center;gap:8px;padding:6px 6px 6px 12px;border-radius:999px;font-size:.8rem;background:var(--surface);border:1px solid var(--border);box-shadow:0 4px 16px rgba(0,0,0,.18);max-width:calc(100vw - 28px)}
+#auto-chip.ativo{border-color:#16a34a}#auto-chip.ativo span::first-letter{color:#16a34a}
+#auto-chip.parado,#auto-chip.pausado{opacity:.75}
+#auto-chip span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#auto-chip button{border:0;border-radius:999px;width:26px;height:26px;cursor:pointer;background:var(--bg-subtle);color:var(--text)}
+@media (max-width:900px){#auto-chip{bottom:76px}}
+@media print{#auto-chip{display:none!important}}
 .pod-foco{outline:2px solid var(--accent);outline-offset:2px}
 .mm-wrap{overflow-x:auto;padding:8px 2px 16px}
 .mm{display:flex;align-items:flex-start;gap:0;min-width:640px}
@@ -947,6 +954,65 @@ function pintarNav(path){
 }
 document.title = CONC.marca + " — Preparação";
 document.getElementById("marca").textContent = CONC.marca; document.getElementById("marca-sub").textContent = CONC.sub; document.getElementById("marca-top").textContent = CONC.marca;
+/* ---------- Registro automático de estudo ----------
+   Conta tempo quando há um tema em estudo E (você mexeu na tela nos últimos 90 s com a página
+   visível OU um podcast está tocando). Grava em S.sessoes com área, tópico e tipo (auto: true).
+   Simulados, provas anteriores e Modo foco registram o próprio tempo e ficam de fora. */
+const AUTO = { ctx: null, acao: Date.now(), pausado: false, ticks: 0 };
+const AUTO_TICK = 15;
+["pointerdown", "keydown", "scroll", "touchstart", "wheel", "input"].forEach(ev => addEventListener(ev, () => { AUTO.acao = Date.now(); }, { passive: true, capture: true }));
+function ctxDaRota(path){
+  const q = new URLSearchParams(location.hash.split("?")[1] || "");
+  if (path === "/resumo" || path === "/mapa") return q.get("a") ? { a: q.get("a"), t: q.get("t") || "", tipo: path === "/mapa" ? "mapa mental" : "leitura" } : null;
+  if (path === "/questoes") return q.get("a") ? { a: q.get("a"), t: q.get("t") || "", tipo: "questões" } : null;
+  if (path === "/redacao") return { a: "lp", t: "Redação", tipo: "redação" };
+  if (path === "/conteudo" && q.get("a")) return { a: q.get("a"), t: "", tipo: "leitura" };
+  if (["/flashcards", "/erros", "/anotacoes"].includes(path)) return { a: null, t: "", tipo: path === "/erros" ? "revisão de erros" : path.slice(1) };
+  return null; // demais telas não contam (planejamento, configurações, simulados, provas, foco…)
+}
+function autoContexto(ctx){ AUTO.ctx = ctx; AUTO.pausado = false; pintarAuto(); }
+function autoAtual(){
+  const au = [...document.querySelectorAll("audio[data-pod]")].find(x => !x.paused && !x.ended);
+  if (au) { const e = (window.PODCASTS || []).find(x => x.id === au.dataset.pod); if (e) return { ctx: { a: e.area, t: e.titulo, tipo: "podcast" }, ativo: true }; }
+  const ctx = AUTO.ctx;
+  return { ctx, ativo: !!(ctx && document.visibilityState === "visible" && Date.now() - AUTO.acao < 90000) };
+}
+function minHojeTema(ctx){ return S.sessoes.filter(x => x.auto && x.data === hoje() && x.a === ctx.a && (x.t || "") === (ctx.t || "")).reduce((m, x) => m + (x.seg || 0), 0) / 60; }
+function registrarAuto(ctx, seg){
+  let r = S.sessoes.find(x => x.auto && x.data === hoje() && x.a === ctx.a && (x.t || "") === (ctx.t || "") && x.tipo === ctx.tipo);
+  if (!r) { r = { data: hoje(), min: 0, a: ctx.a, t: ctx.t || "", tipo: ctx.tipo, auto: true, seg: 0 }; S.sessoes.push(r); }
+  r.seg += seg; r.min = Math.round(r.seg / 60);
+  // 10 min lendo/ouvindo/praticando um tópico no dia = tópico estudado (e revisado, se já estava)
+  if (ctx.t && minHojeTema(ctx) >= 10) for (const lst of Object.values(S.topicos)) { const t = lst.find(x => x.nome === ctx.t);
+    if (t && t.ultima !== hoje()) { if (t.estudado) t.revisoes = (t.revisoes || 0) + 1; t.estudado = true; t.ultima = hoje(); } }
+  AUTO.ticks++;
+  if (AUTO.ticks % 4 === 0) salvar(); else gravar();
+}
+setInterval(() => {
+  const { ctx, ativo } = autoAtual();
+  if (ctx && ctx.a && AREA[ctx.a] && ativo && !AUTO.pausado) registrarAuto(ctx, AUTO_TICK);
+  pintarAuto(ctx, ativo);
+}, AUTO_TICK * 1000);
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") salvar(); });
+function pintarAuto(ctx, ativo){
+  if (ctx === undefined) ({ ctx, ativo } = autoAtual());
+  let ch = document.getElementById("auto-chip");
+  if (!ch) { ch = document.createElement("div"); ch.id = "auto-chip"; document.body.appendChild(ch);
+    ch.onclick = e => { if (e.target.closest("[data-autop]")) { AUTO.pausado = !AUTO.pausado; pintarAuto(); } }; }
+  if (!ctx || !ctx.a || !AREA[ctx.a]) { ch.style.display = "none"; return; }
+  const min = Math.round(minHojeTema(ctx));
+  const nome = ctx.t ? (ctx.t.length > 34 ? ctx.t.slice(0, 32) + "…" : ctx.t) : AREA[ctx.a].nome;
+  ch.style.display = "flex";
+  ch.className = AUTO.pausado ? "pausado" : ativo ? "ativo" : "parado";
+  ch.innerHTML = `<span>${AUTO.pausado ? "⏸ Pausado" : ativo ? "⏱ Estudando" : "⏸ Parado (sem atividade)"}: <b>${esc(nome)}</b> · ${min} min hoje</span><button data-autop title="${AUTO.pausado ? "Voltar a contar" : "Não contar este tempo"}">${AUTO.pausado ? "▶" : "❚❚"}</button>`;
+}
+function renderAutoHoje(){
+  const rs = S.sessoes.filter(x => x.auto && x.data === hoje() && x.seg >= 30);
+  if (!rs.length) return `<div class="card small muted" style="margin-top:14px">⏱ O app registra sozinho o tempo em que você lê resumos e mapas, responde questões, revisa flashcards, escreve ou ouve podcasts — com o tema. Nada registrado ainda hoje.</div>`;
+  const tot = Math.round(rs.reduce((m, x) => m + x.seg, 0) / 60);
+  return `<div class="card" style="margin-top:14px"><div class="row between"><h2>⏱ Registrado automaticamente hoje</h2><b>${tot} min</b></div><ul class="list">${rs.sort((x, y) => y.seg - x.seg).map(x => `<li><span style="flex:1">${AREA[x.a] ? areaTag(x.a) : ""} ${esc(x.t || "")}<br><span class="small muted">${esc(x.tipo)}</span></span><b>${Math.max(1, Math.round(x.seg / 60))} min</b></li>`).join("")}</ul></div>`;
+}
+
 let limpar = null;
 function rotear(){
   if (limpar){ limpar(); limpar = null; }
@@ -955,6 +1021,7 @@ function rotear(){
   pintarNav(ROTAS[path] ? path : "/inicio");
   appEl.classList.remove("nav-open");
   mainEl.innerHTML = "";
+  autoContexto(ctxDaRota(ROTAS[path] ? path : "/inicio"));
   fn(mainEl);
   window.scrollTo(0,0);
 }
@@ -1160,7 +1227,8 @@ ROTAS["/hoje"] = el => {
       <div class="row"><input type="range" id="h" min="0.5" max="8" step="0.5" value="${S.horasDia}" style="flex:1"><output id="ho" style="width:44px;font-weight:700">${S.horasDia}h</output></div></div>
       <div class="btn-row"><button class="btn btn-primary" id="gerar">Atualizar agenda</button><button class="btn btn-secondary" id="ruim">😩 Dia ruim — só 20 min</button><a class="btn btn-ghost" href="#/semana">Ver a semana →</a></div>
     </div>
-    <div id="plano" style="margin-top:14px"></div></div>`;
+    <div id="plano" style="margin-top:14px"></div>
+    ${renderAutoHoje()}</div>`;
   const r = el.querySelector("#h"), o = el.querySelector("#ho");
   r.oninput = () => o.textContent = r.value + "h";
   const gerar = min => { el.querySelector("#plano").innerHTML = renderPlano(montarAgenda(dia, min)); };
@@ -1340,6 +1408,7 @@ ROTAS["/edital"] = el => {
 
 /* ---------- Questões ---------- */
 function renderQuestao(q, onResp, opts={}){
+  if (!opts.semFeedback && q && AREA[q.a]) autoContexto({ a: q.a, t: q.t || "", tipo: "questões" });
   const wrap = document.createElement("div"); wrap.className = "card";
   const verLink = q.link && typeof linkLocal === "function" && (q.link.startsWith("provas-locais/") || (LOCAL && linkLocal(q.link, q.pg) !== "#")) ? `<a href="${esc(q.link.startsWith("provas-locais/") ? q.link + (q.pg ? "#page=" + q.pg : "") : linkLocal(q.link, q.pg))}" target="_blank">ver ${q.orig === "apostila" ? "na apostila" : q.orig === "simulado" ? "no simulado" : "na prova"}${q.pg ? " (p. " + q.pg + ")" : ""} ↗</a>` : "";
   wrap.innerHTML = `<div class="row between small"><span>${areaTag(q.a)}</span><span class="muted">${esc(q.t||"")}</span></div>
@@ -1483,7 +1552,7 @@ ROTAS["/flashcards"] = el => {
   }
   function card(){
     if (i >= fila.length){ el.innerHTML = `<div class="container" style="max-width:720px">${header("Estudar · Flashcards","Sessão concluída")}<div class="card empty"><h2>${res.ok}/${res.n} lembrados</h2><button class="btn btn-primary" id="back">Voltar</button></div></div>`; el.querySelector("#back").onclick = config; return; }
-    const f = fila[i]; verso = false;
+    const f = fila[i]; verso = false; autoContexto({ a: f.a, t: f.t || "", tipo: "flashcards" });
     el.innerHTML = `<div class="container" style="max-width:720px">${header("Estudar · Flashcards",`Card ${i+1} de ${fila.length}`)}
       <div class="card flash" id="fc"><div class="lado">${AREA[f.a].nome} · frente</div><div id="ftxt" style="font-weight:600">${esc(f.f)}</div>${f.t ? `<div class="small muted" style="margin-top:8px">${esc(f.t)}</div>` : ""}<div class="small muted" style="margin-top:16px">toque para virar</div></div>
       <div class="btn-row" id="fbtns" style="justify-content:center;visibility:hidden"><button class="btn btn-danger" data-q="0">Não lembrei</button><button class="btn btn-secondary" data-q="1">Lembrei</button><button class="btn btn-primary" data-q="2">Fácil</button></div></div>`;
@@ -1671,7 +1740,7 @@ ROTAS["/podcasts"] = el => {
     au.addEventListener("timeupdate", () => { const sp = el.querySelector(`[data-pos="${id}"]`); if (sp) sp.textContent = "em " + fmt(au.currentTime);
       if (Date.now() - ultimo > 15000) { ultimo = Date.now(); st().pos = Math.floor(au.currentTime); salvar(); } });
     au.addEventListener("pause", () => { st().pos = Math.floor(au.currentTime); salvar(); });
-    au.addEventListener("ended", () => { st().pos = 0; st().ouvido = hoje(); S.sessoes.push({ data: hoje(), min: Math.round(au.duration / 60), a: (EPS.find(e => e.id === id) || {}).area || "lp" }); salvar(); });
+    au.addEventListener("ended", () => { st().pos = 0; st().ouvido = hoje(); salvar(); }); // o tempo ouvido já entra pelo registro automático
   });
   el.querySelectorAll("[data-vel]").forEach(b => b.onclick = () => { const id = b.dataset.pv, v = Number(b.dataset.vel);
     S.podcasts[id] = S.podcasts[id] || {}; S.podcasts[id].vel = v; salvar();
