@@ -24,8 +24,9 @@ window.PODCASTS = [
    "Regência verbal e nominal",
    "Colocação pronominal"
   ],
-  "src": null,
-  "dur": null
+  "src": "podcasts/lp1-ortografia-crase-concordancia.m4a",
+  "dur": "28 min",
+  "origem": "Gerado por você no NotebookLM"
  },
  {
   "id": "lp2",
