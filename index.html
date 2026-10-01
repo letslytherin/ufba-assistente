@@ -158,6 +158,28 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
 .daycard .act:hover{color:var(--accent)}
 .resumo{margin:0;padding-left:20px}.resumo li{margin-bottom:8px}
 .assuntos{display:flex;flex-direction:column;gap:8px}
+.mm-wrap{overflow-x:auto;padding:8px 2px 16px}
+.mm{display:flex;align-items:flex-start;gap:0;min-width:640px}
+.mm-raiz{flex:0 0 190px;display:flex;align-items:center;justify-content:center;text-align:center;padding:18px 14px;border-radius:999px;background:var(--cor-raiz);color:#fff;font-weight:700;font-size:1.02rem;line-height:1.3;box-shadow:0 4px 14px rgba(0,0,0,.15);position:sticky;top:16px;z-index:1;min-height:56px}
+.mm-ramos{flex:1;display:flex;flex-direction:column;gap:10px;padding-left:34px;position:relative}
+.mm-ramos::before{content:"";position:absolute;left:0;top:28px;width:34px;border-top:2px solid var(--border-strong)}
+.mm-ramo{position:relative;display:flex;align-items:center;gap:0;padding-left:18px}
+.mm-ramo::before{content:"";position:absolute;left:0;top:0;bottom:0;border-left:2px solid var(--border-strong)}
+.mm-ramo:first-child::before{top:50%}.mm-ramo:last-child::before{bottom:50%}.mm-ramo:only-child::before{display:none}
+.mm-ramo::after{content:"";position:absolute;left:0;top:50%;width:18px;border-top:2px solid var(--cor)}
+.mm-no{flex:0 0 200px;padding:9px 12px;border-radius:12px;border:2px solid var(--cor);background:var(--surface);font-weight:600;font-size:.9rem;line-height:1.3}
+.mm-folhas{list-style:none;margin:0 0 0 14px;padding:0 0 0 14px;border-left:3px solid var(--cor);display:flex;flex-direction:column;gap:5px}
+.mm-folhas li{font-size:.84rem;line-height:1.4;padding:5px 9px;border-radius:8px;background:var(--bg-subtle)}
+.mm-folhas li.mm-prova{background:var(--warning-soft,#fff4d6)}.mm-folhas li.mm-peg{background:#fde2e2;color:#7f1d1d}
+.mm-lista{display:flex;flex-direction:column}
+.mm-item{display:flex;gap:12px;align-items:center;padding:10px 4px;border-bottom:1px solid var(--border);text-decoration:none;color:inherit}
+.mm-item:last-child{border-bottom:0}
+.mm-n{flex:0 0 32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--bg-subtle);font-weight:700;font-size:.85rem}
+@media (max-width:720px){.mm{flex-direction:column;align-items:stretch;min-width:0}.mm-raiz{flex:none;border-radius:16px;margin-bottom:6px;position:static}.mm-ramos{padding-left:0}.mm-ramos::before{display:none}.mm-ramo{flex-direction:column;align-items:stretch;padding-left:0}.mm-ramo::before,.mm-ramo::after{display:none}.mm-no{flex:none}.mm-folhas{margin:6px 0 4px 10px}}
+@media print{.sidebar,.topbar,.bottom-nav,.rodape-fontes,.no-print,.btn-row{display:none!important}.main{padding:0}.mm-wrap{overflow:visible}.mm{min-width:0}}
+.nota-tx{width:100%;min-height:160px;resize:vertical;font:inherit;line-height:1.55;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text)}
+.assunto .nota-tx{min-height:110px;margin-bottom:4px}
+.nota-txt{white-space:pre-wrap;margin-top:8px;line-height:1.55}
 .video-principal{display:flex;gap:12px;align-items:center;margin-top:8px;text-decoration:none;color:inherit}
 .video-principal img{width:160px;height:90px;object-fit:cover;border-radius:8px;flex-shrink:0;background:var(--bg-subtle)}
 @media (max-width:480px){.video-principal{flex-direction:column;align-items:flex-start}.video-principal img{width:100%;height:auto;aspect-ratio:16/9}}
@@ -898,7 +920,7 @@ const NAV = [
     ["/inicio","Início","⌂"],["/hoje","Hoje","☀"],["/semana","Planejamento semanal","▦"],["/cronograma","Cronograma do edital","🗓"],["/prontidao","Prontidão","◎"],["/desempenho","Desempenho","📈"],["/foco","Modo foco","⏱"],
   ]},
   { s: "Estudar", items: [
-    ["/edital","Edital verticalizado","☰"],["/conteudo","Conteúdo (resumos)","📖"],["/biblioteca","Seus materiais","📚"],["/questoes","Questões","✎"],["/flashcards","Flashcards","❐"],["/redacao","Redação","✍"],
+    ["/edital","Edital verticalizado","☰"],["/conteudo","Conteúdo (resumos)","📖"],["/anotacoes","Minhas anotações","📝"],["/mapas","Mapas mentais","🧠"],["/biblioteca","Seus materiais","📚"],["/questoes","Questões","✎"],["/flashcards","Flashcards","❐"],["/redacao","Redação","✍"],
   ]},
   { s: "Praticar", items: [
     ["/erros","Meus erros","⚠"],["/simulados","Simulados","⏲"],["/provas","Provas anteriores","📄"],["/banca","Análise da banca","🔎"],["/nota","Calculadora de nota","∑"],["/sobre","O concurso","ℹ"],
@@ -1302,7 +1324,7 @@ ROTAS["/edital"] = el => {
       <div style="width:120px"><div class="small muted" style="text-align:right">${s.estudados}/${s.total}</div><div class="bar"><i style="width:${s.total?s.estudados/s.total*100:0}%;background:${a.cor}"></i></div></div></summary>
       <div class="body"><ul class="list">${S.topicos[a.id].map((t,i)=>{const ts=statsTopico(a.id,t.nome);return `<li class="topic">
         <input type="checkbox" class="chk" id="t-${t.id}" data-a="${a.id}" data-i="${i}" ${t.estudado?"checked":""}>
-        <label for="t-${t.id}">${esc(t.nome)}${(RESUMOS[t.nome] || (window.RESUMOS_PMPE || {})[t.nome])?` <a class="small" href="#/resumo?a=${a.id}&t=${encodeURIComponent(t.nome)}" onclick="event.stopPropagation()">📖 resumo</a>`:""}<br><span class="small muted">${(() => { const [f, n] = progressoAssuntos(t.nome); return n ? `<a href="#/resumo?a=${a.id}&t=${encodeURIComponent(t.nome)}" onclick="event.stopPropagation()">${f}/${n} assuntos</a> · ` : ""; })()}${t.revisoes?`${t.revisoes} revisão(ões) · última ${fmtData(t.ultima)}`:"sem revisões"}${ts.n?` · ${pct(ts.taxa)} em ${ts.n}q`:""}</span></label>
+        <label for="t-${t.id}">${esc(t.nome)}${(RESUMOS[t.nome] || (window.RESUMOS_PMPE || {})[t.nome])?` <a class="small" href="#/resumo?a=${a.id}&t=${encodeURIComponent(t.nome)}" onclick="event.stopPropagation()">📖 resumo</a>`:""}${nNotas(t.nome) ? ` <a class="small" href="#/resumo?a=${a.id}&t=${encodeURIComponent(t.nome)}" onclick="event.stopPropagation()" title="Suas anotações">📝 ${nNotas(t.nome)}</a>` : ""}<br><span class="small muted">${(() => { const [f, n] = progressoAssuntos(t.nome); return n ? `<a href="#/resumo?a=${a.id}&t=${encodeURIComponent(t.nome)}" onclick="event.stopPropagation()">${f}/${n} assuntos</a> · ` : ""; })()}${t.revisoes?`${t.revisoes} revisão(ões) · última ${fmtData(t.ultima)}`:"sem revisões"}${ts.n?` · ${pct(ts.taxa)} em ${ts.n}q`:""}</span></label>
         <button class="btn btn-sm btn-ghost" data-rev="${a.id}:${i}" title="Registrar revisão">↻ revisei</button>
         <button class="btn btn-sm btn-ghost" data-del="${a.id}:${i}" title="Remover tópico" aria-label="Remover">✕</button></li>`}).join("")}</ul>
         <div class="row" style="margin-top:10px"><input type="text" placeholder="Adicionar tópico do Anexo II…" data-add="${a.id}"><button class="btn btn-secondary btn-sm" data-addbtn="${a.id}">Adicionar</button></div></div></details>`}).join("")}
@@ -1501,6 +1523,125 @@ function linksNuvem(nome){
   if (!ls.length) return "";
   return `<div class="card small" style="margin-top:12px">☁️ <b>Seus links na nuvem:</b> ${ls.map(l => `<a href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${esc(l.nome)} ↗</a>`).join(" · ")}</div>`;
 }
+/* ---------- Minhas anotações: uma por tópico por dia, em S.notas["data|tópico"] ---------- */
+const notaChave = (nome, d) => d + "|" + nome;
+const notasDoTopico = nome => Object.entries(S.notas || {}).filter(([, n]) => n && n.topico === nome && n.t).map(([k, n]) => ({ k, ...n })).sort((x, y) => y.d.localeCompare(x.d));
+const nNotas = nome => notasDoTopico(nome).length;
+function gravarNota(area, nome, d, texto){
+  S.notas = S.notas || {}; const k = notaChave(nome, d);
+  if (texto.trim()) S.notas[k] = { topico: nome, area, d, t: texto, u: Date.now() }; else delete S.notas[k];
+  salvar();
+}
+function renderNotas(area, nome){
+  const hojeK = notaChave(nome, hoje()), atual = ((S.notas || {})[hojeK] || {}).t || "";
+  const antigas = notasDoTopico(nome).filter(n => n.d !== hoje());
+  return `<div class="card notas-card" id="notas" style="margin-top:12px"><div class="row between"><h2>📝 Minha anotação de hoje</h2><span class="small muted" id="notast">${atual ? "salva" : ""}</span></div>
+    <p class="small muted" style="margin:4px 0 8px">Escreva com as suas palavras o que estudou de ${esc(nome)}. Salva sozinha enquanto você digita, entra no backup e sincroniza entre aparelhos.</p>
+    <textarea id="notatx" class="nota-tx" placeholder="Ex.: o que entendi, o que a banca cobra, minhas dúvidas, um exemplo meu…">${esc(atual)}</textarea>
+    ${antigas.length ? `<h3 style="margin:14px 0 6px">Anotações anteriores (${antigas.length})</h3><div class="assuntos">${antigas.map(n => `<details class="assunto"><summary><span class="nome">${fmtData(n.d, { day: "2-digit", month: "long", year: "numeric" })}</span><span class="tag-inc">${n.t.trim().split(/\s+/).length} palavras</span></summary>
+      <textarea class="nota-tx" data-nota="${esc(n.d)}">${esc(n.t)}</textarea><div class="small muted" data-notast="${esc(n.d)}"></div></details>`).join("")}</div>` : ""}
+    <p class="small" style="margin:10px 0 0"><a href="#/anotacoes">Ver todas as minhas anotações →</a></p></div>`;
+}
+function ligarNotas(el, area, nome){
+  const ligar = (tx, d, st) => { let tm = null;
+    tx.oninput = () => { if (st) st.textContent = "digitando…"; clearTimeout(tm); tm = setTimeout(() => { gravarNota(area, nome, d, tx.value); if (st) st.textContent = tx.value.trim() ? "✓ salva " + new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : "apagada"; }, 700); };
+    tx.onblur = () => { clearTimeout(tm); gravarNota(area, nome, d, tx.value); }; };
+  const tx = el.querySelector("#notatx"); if (tx) ligar(tx, hoje(), el.querySelector("#notast"));
+  el.querySelectorAll("[data-nota]").forEach(t => ligar(t, t.dataset.nota, el.querySelector(`[data-notast="${t.dataset.nota}"]`)));
+}
+ROTAS["/anotacoes"] = el => {
+  const params = new URLSearchParams(location.hash.split("?")[1] || "");
+  let q = params.get("q") || "", fa = "todas";
+  const pintar = () => {
+    const todas = Object.values(S.notas || {}).filter(n => n && n.t && (fa === "todas" || n.area === fa) && (!q || (n.t + " " + n.topico).toLowerCase().includes(q.toLowerCase())))
+      .sort((x, y) => y.d.localeCompare(x.d) || x.topico.localeCompare(y.topico));
+    const porDia = {}; todas.forEach(n => (porDia[n.d] = porDia[n.d] || []).push(n));
+    el.querySelector("#lista").innerHTML = todas.length ? Object.entries(porDia).map(([d, ns]) => `<h3>${fmtData(d, { weekday: "long", day: "2-digit", month: "long", year: "numeric" })}</h3>
+      ${ns.map(n => `<div class="card"><div class="row between small"><span>${AREA[n.area] ? areaTag(n.area) : ""}</span><a href="#/resumo?a=${n.area}&t=${encodeURIComponent(n.topico)}">${esc(n.topico)} →</a></div><div class="nota-txt">${esc(n.t)}</div></div>`).join("")}`).join("")
+      : `<div class="card empty"><p>${Object.keys(S.notas || {}).length ? "Nenhuma anotação com esse filtro." : "Você ainda não fez anotações. Abra um tópico em Conteúdo e escreva o que estudou no campo 📝."}</p></div>`;
+    el.querySelector("#cont").textContent = `${todas.length} anotação(ões)`;
+  };
+  const total = Object.values(S.notas || {}).filter(n => n && n.t).length;
+  el.innerHTML = `<div class="container" style="max-width:860px">
+    ${header("Estudar · Anotações", "Minhas anotações", `Seus resumos do estudo de cada dia, por tópico. ${total} no total. Ficam salvos no seu progresso (backup e sincronização).`)}
+    <div class="card"><div class="row" style="gap:8px;flex-wrap:wrap"><input type="text" id="nq" placeholder="Buscar nas anotações…" value="${esc(q)}" style="flex:1;min-width:180px">
+      <select id="na" style="max-width:240px"><option value="todas">Todas as áreas</option>${Object.values(CONCURSOS).flatMap(c => c.areas).filter((a, i, arr) => arr.findIndex(b => b.id === a.id) === i).map(a => `<option value="${a.id}">${a.nome}</option>`).join("")}</select>
+      <button class="btn btn-secondary" id="nbaixar">Baixar (.txt)</button></div><p class="small muted" id="cont" style="margin:8px 0 0"></p></div>
+    <div id="lista"></div></div>`;
+  el.querySelector("#nq").oninput = e => { q = e.target.value; pintar(); };
+  el.querySelector("#na").onchange = e => { fa = e.target.value; pintar(); };
+  el.querySelector("#nbaixar").onclick = () => {
+    const ns = Object.values(S.notas || {}).filter(n => n && n.t).sort((x, y) => x.d.localeCompare(y.d) || x.topico.localeCompare(y.topico));
+    const txt = ns.map(n => `${fmtData(n.d, { day: "2-digit", month: "2-digit", year: "numeric" })} — ${(AREA[n.area] || {}).nome || ""} — ${n.topico}\n${n.t.trim()}\n`).join("\n");
+    const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([txt], { type: "text/plain;charset=utf-8" })); a.download = `minhas-anotacoes-${hoje()}.txt`; a.click();
+  };
+  pintar();
+};
+
+/* ---------- Mapas mentais (gerados dos resumos por assunto) ---------- */
+const MM_CORES = ["#2563eb", "#0f766e", "#c2410c", "#7c3aed", "#be123c", "#15803d", "#b45309", "#0369a1"];
+function mmFolha(b){
+  let tipo = "", x = b.trim();
+  const m = x.match(/^(Na prova|Pegadinha|Atenção)\s*:\s*/i); if (m) { tipo = /pegadinha/i.test(m[1]) ? "peg" : "prova"; x = x.slice(m[0].length); }
+  const dois = x.match(/^([^:]{3,55}):\s+(.+)$/);
+  let txt = dois ? dois[1] + " → " + dois[2] : x;
+  const ABREV = /(?:\b(?:Art|arts?|n|nº|inc|incs|al|Dec|Ex|ex|Sr|Sra|Prof|Dr|cf|p|pp|séc|aprox|etc)|\b[A-Z]|\d)$/i;
+  for (const mm of txt.matchAll(/[.;](?=\s+\S)/g)) { const antes = txt.slice(0, mm.index); if (mm[0] === ";" || !ABREV.test(antes)) { txt = antes + (mm[0] === "." ? "." : ""); break; } }
+  if (txt.length > 110) txt = txt.slice(0, 107).replace(/\s+\S*$/, "") + "…";
+  return { tipo, txt };
+}
+function mapaDados(nome){
+  const subs = SUBTOPICOS[nome] || Object.keys(RA[nome] || {});
+  const ordem = subs.map((_, i) => i).sort((a, b) => ((INC_A[nome] || [])[b] || 0) - ((INC_A[nome] || [])[a] || 0) || a - b);
+  return ordem.map(i => {
+    const bl = (RA[nome] || {})[subs[i]] || [], fs = bl.map(mmFolha);
+    const escolha = [...fs.filter(f => f.tipo), ...fs.filter(f => !f.tipo)].slice(0, 4);
+    return { nome: subs[i], i, inc: incidencia(nome, i), folhas: escolha.sort((a, b) => fs.indexOf(a) - fs.indexOf(b)) };
+  });
+}
+function renderMapa(area, nome){
+  const ramos = mapaDados(nome), notas = notasDoTopico(nome);
+  const cor = AREA[area] ? AREA[area].cor : "var(--accent)";
+  return `<div class="mm" style="--cor-raiz:${cor}"><div class="mm-raiz"><span>${esc(nome)}</span></div><div class="mm-ramos">
+    ${ramos.map((r, k) => `<div class="mm-ramo" style="--cor:${MM_CORES[k % MM_CORES.length]}"><div class="mm-no">${esc(r.nome)}${r.inc && r.inc.nivel === "alta" ? ' <span title="cai muito">🔥</span>' : ""}</div>
+      <ul class="mm-folhas">${r.folhas.map(f => `<li class="${f.tipo ? "mm-" + f.tipo : ""}">${f.tipo === "peg" ? "⚠️ " : f.tipo === "prova" ? "🎯 " : ""}${esc(f.txt)}</li>`).join("")}</ul></div>`).join("")}
+    ${notas.length ? `<div class="mm-ramo" style="--cor:#64748b"><div class="mm-no">📝 Minhas anotações</div><ul class="mm-folhas">${notas.slice(0, 3).map(n => `<li>${fmtData(n.d)}: ${esc(n.t.trim().split(/\n+/)[0].slice(0, 100))}${n.t.trim().length > 100 ? "…" : ""}</li>`).join("")}</ul></div>` : ""}
+  </div></div>`;
+}
+function ordemDeEstudo(){
+  const vistos = new Set(), lista = [];
+  const add = (area, nome, motivo) => { if (vistos.has(nome) || !AREA_ATIVA.has(area)) return; vistos.add(nome); lista.push({ area, nome, motivo }); };
+  try { for (const d of gerarPlanoEstudos().dias) for (const b of d.blocos) for (const nome of b.topicos) add(b.area, nome, b.tipo === "Revisão" ? "revisão" : `plano: ${fmtData(d.data)}`); } catch {}
+  for (const p of prioridadeTopicos()) add(p.area, p.t.nome, p.t.estudado ? "revisão" : "a estudar");
+  return lista;
+}
+ROTAS["/mapas"] = el => {
+  const params = new URLSearchParams(location.hash.split("?")[1] || "");
+  const modo = params.get("m") || "estudo";
+  const est = nome => AREAS.flatMap(a => S.topicos[a.id]).find(t => t.nome === nome);
+  const item = (x, n) => { const t = est(x.nome); return `<a class="mm-item" href="#/mapa?a=${x.area}&t=${encodeURIComponent(x.nome)}&m=${modo}"><span class="mm-n">${n}</span><span style="flex:1"><b>${esc(x.nome)}</b><br><span class="small muted">${areaTag(x.area)}${x.motivo ? " · " + esc(x.motivo) : ""}</span></span>${t && t.estudado ? '<span class="pill pill-ok">estudado</span>' : ""}</a>`; };
+  let corpo;
+  if (modo === "estudo") corpo = `<div class="card"><div class="mm-lista">${ordemDeEstudo().map((x, i) => item(x, i + 1)).join("")}</div></div>`;
+  else corpo = AREAS.map(a => `<h3>${areaTag(a.id)}</h3><div class="card"><div class="mm-lista">${S.topicos[a.id].map((t, i) => item({ area: a.id, nome: t.nome, motivo: "" }, i + 1)).join("")}</div></div>`).join("");
+  el.innerHTML = `<div class="container" style="max-width:860px">
+    ${header("Estudar · Mapas mentais", "Mapas mentais", `Um mapa para cada tópico de ${CONC.nome}, gerado dos resumos por assunto: o tópico no centro, os assuntos como ramos (🔥 = cai muito) e os pontos-chave como folhas (🎯 na prova · ⚠️ pegadinha). Suas anotações entram como um ramo.`)}
+    <div class="row" style="gap:8px;margin-bottom:12px;flex-wrap:wrap"><a class="btn btn-sm ${modo === "estudo" ? "btn-primary" : "btn-secondary"}" href="#/mapas?m=estudo">Ordem de estudo (seu plano)</a><a class="btn btn-sm ${modo === "materia" ? "btn-primary" : "btn-secondary"}" href="#/mapas?m=materia">Por matéria (edital)</a></div>
+    ${corpo}</div>`;
+};
+ROTAS["/mapa"] = el => {
+  const params = new URLSearchParams(location.hash.split("?")[1] || "");
+  const a = params.get("a"), nome = params.get("t"), modo = params.get("m") || "estudo";
+  const seq = modo === "materia" ? AREAS.flatMap(x => S.topicos[x.id].map(t => ({ area: x.id, nome: t.nome }))) : ordemDeEstudo();
+  const i = seq.findIndex(x => x.nome === nome), ant = seq[i - 1], prox = seq[i + 1];
+  const lk = x => `#/mapa?a=${x.area}&t=${encodeURIComponent(x.nome)}&m=${modo}`;
+  el.innerHTML = `<div class="container" style="max-width:1100px">
+    <div class="row between no-print" style="flex-wrap:wrap;gap:8px"><a class="small" href="#/mapas?m=${modo}">← Mapas mentais</a><span class="small muted">${i >= 0 ? `${i + 1} de ${seq.length} · ${modo === "estudo" ? "ordem de estudo" : "por matéria"}` : ""}</span></div>
+    ${header(AREA[a] ? AREA[a].nome : "Mapa mental", esc(nome || ""), "")}
+    <div class="mm-wrap">${renderMapa(a, nome)}</div>
+    <div class="btn-row no-print">${ant ? `<a class="btn btn-secondary" href="${lk(ant)}">← ${esc(ant.nome.slice(0, 40))}</a>` : ""}<a class="btn btn-ghost" href="#/resumo?a=${a}&t=${encodeURIComponent(nome)}">Abrir o resumo</a><button class="btn btn-ghost" id="mmprint">Imprimir / salvar PDF</button>${prox ? `<a class="btn btn-primary" href="${lk(prox)}">${esc(prox.nome.slice(0, 40))} →</a>` : ""}</div></div>`;
+  el.querySelector("#mmprint").onclick = () => window.print();
+};
+
 function renderMateriaisTopico(nome){ return linksNuvem(nome) + renderMateriaisTopicoBase(nome); }
 function renderMateriaisTopicoBase(nome){
   if (!LOCAL) {
@@ -1600,6 +1741,8 @@ ROTAS["/resumo"] = el => {
     <a class="small" href="#/conteudo?a=${a}">← Conteúdo</a>
     ${header(AREA[a] ? AREA[a].nome : "Resumo", esc(nome || ""), "")}
     ${renderVideos(nome)}
+    <div class="btn-row" style="margin-top:10px"><a class="btn btn-secondary" href="#/mapa?a=${a}&t=${encodeURIComponent(nome)}">🧠 Mapa mental deste tópico</a></div>
+    ${renderNotas(a, nome)}
     ${renderAssuntos(a, nome)}
     ${r ? `<details class="card" style="margin-top:12px"><summary style="cursor:pointer;font-weight:600">Visão geral do tópico (pontos-chave)</summary><ul class="resumo" style="margin-top:10px">${r.map(bulletResumo).join("")}</ul></details>` : ""}
     ${renderFontes(nome)}
@@ -1608,7 +1751,7 @@ ROTAS["/resumo"] = el => {
     <div class="grid g3" style="margin-top:14px"><div class="stat"><div class="v">${qs.length}</div><div class="l">questões no app</div></div><div class="stat"><div class="v">${pct(st.taxa)}</div><div class="l">seu acerto (${st.n}q)</div></div><div class="stat"><div class="v">${topico && topico.revisoes || 0}</div><div class="l">revisões registradas</div></div></div>
     <div class="btn-row">${topico ? `<button class="btn btn-primary" id="rv">✓ Marcar como estudado / revisado</button>` : ""}${qs.length ? `<a class="btn btn-secondary" href="#/questoes?a=${a}&t=${encodeURIComponent(nome)}">Fazer as ${qs.length} questões deste tópico</a>` : ""}<a class="btn btn-ghost" href="#/questoes?a=${a}">Questões de ${AREA[a] ? AREA[a].nome : ""}</a></div>
     <p class="small muted" id="rvmsg"></p></div>`;
-  ligarAssuntos(el, nome);
+  ligarAssuntos(el, nome); ligarNotas(el, a, nome);
   const b = el.querySelector("#rv");
   if (b) b.onclick = () => { topico.estudado = true; topico.revisoes++; topico.ultima = hoje(); salvar(); el.querySelector("#rvmsg").textContent = "✓ Registrado."; };
 };
