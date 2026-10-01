@@ -70,8 +70,9 @@ window.PODCASTS = [
    "Planilhas eletrônicas (Excel)",
    "Apresentações (PowerPoint)"
   ],
-  "src": null,
-  "dur": null
+  "src": "podcasts/inf1-hardware-windows-office.m4a",
+  "dur": "33 min",
+  "origem": "Gerado por você no NotebookLM"
  },
  {
   "id": "inf2",
@@ -87,8 +88,9 @@ window.PODCASTS = [
    "Ameaças: vírus, worms, malware, ransomware",
    "Antivírus, firewall, atualizações e backup"
   ],
-  "src": null,
-  "dur": null
+  "src": "podcasts/inf2-internet-nuvem-seguranca.m4a",
+  "dur": "21 min",
+  "origem": "Gerado por você no NotebookLM"
  },
  {
   "id": "ce2",
