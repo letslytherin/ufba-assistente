@@ -158,6 +158,8 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
 .daycard .act:hover{color:var(--accent)}
 .resumo{margin:0;padding-left:20px}.resumo li{margin-bottom:8px}
 .assuntos{display:flex;flex-direction:column;gap:8px}
+.fix-passo h2{display:flex;align-items:center;gap:8px}
+.fix-destaque{outline:2px solid var(--accent);outline-offset:2px}
 #auto-chip{position:fixed;right:14px;bottom:14px;z-index:40;display:none;align-items:center;gap:8px;padding:6px 6px 6px 12px;border-radius:999px;font-size:.8rem;background:var(--surface);border:1px solid var(--border);box-shadow:0 4px 16px rgba(0,0,0,.18);max-width:calc(100vw - 28px)}
 #auto-chip.ativo{border-color:#16a34a}#auto-chip.ativo span::first-letter{color:#16a34a}
 #auto-chip.parado,#auto-chip.pausado{opacity:.75}
@@ -1228,6 +1230,7 @@ ROTAS["/hoje"] = el => {
       <div class="btn-row"><button class="btn btn-primary" id="gerar">Atualizar agenda</button><button class="btn btn-secondary" id="ruim">😩 Dia ruim — só 20 min</button><a class="btn btn-ghost" href="#/semana">Ver a semana →</a></div>
     </div>
     <div id="plano" style="margin-top:14px"></div>
+    ${renderRevisoesFixar()}
     ${renderAutoHoje()}</div>`;
   const r = el.querySelector("#h"), o = el.querySelector("#ho");
   r.oninput = () => o.textContent = r.value + "h";
@@ -1526,9 +1529,10 @@ ROTAS["/erros"] = el => {
 
 ROTAS["/flashcards"] = el => {
   let fila = [], i = 0, verso = false, res = {n:0, ok:0}, fa = "todas", fo = "todas";
+  const tps = (new URLSearchParams(location.hash.split("?")[1] || "").get("t") || "").split("|").filter(Boolean);
   function config(){
-    const flt = f => (fa === "todas" || f.a === fa) && (fo === "todas" || f.orig === fo);
-    const venc = flashVencidos(flt); const tot = todosFlash().filter(flt).length;
+    const flt = f => (fa === "todas" || f.a === fa) && (fo === "todas" || f.orig === fo) && (!tps.length || tps.includes(f.t));
+    const venc = tps.length ? (() => { const fs = todosFlash().filter(flt); return [...fs.filter(f => S.flash[f.id] && S.flash[f.id].proxima <= hoje()), ...fs.filter(f => !S.flash[f.id]).sort(() => Math.random() - .5)].slice(0, 30); })() : flashVencidos(flt); const tot = todosFlash().filter(flt).length;
     const cont = {}; todosFlash().forEach(f => cont[f.orig] = (cont[f.orig] || 0) + 1);
     el.innerHTML = `<div class="container" style="max-width:720px">
       ${header("Estudar · Flashcards","Flashcards",`Frente e verso com repetição espaçada — errou, volta amanhã; acertou, o intervalo cresce. ${Object.entries(cont).map(([k, v]) => `${v} ${(FC_ORIGENS[k] || k).toLowerCase()}`).join(" · ")}.`)}
@@ -1628,7 +1632,7 @@ ROTAS["/anotacoes"] = el => {
       .sort((x, y) => y.d.localeCompare(x.d) || x.topico.localeCompare(y.topico));
     const porDia = {}; todas.forEach(n => (porDia[n.d] = porDia[n.d] || []).push(n));
     el.querySelector("#lista").innerHTML = todas.length ? Object.entries(porDia).map(([d, ns]) => `<h3>${fmtData(d, { weekday: "long", day: "2-digit", month: "long", year: "numeric" })}</h3>
-      ${ns.map(n => `<div class="card"><div class="row between small"><span>${AREA[n.area] ? areaTag(n.area) : ""}</span><a href="#/resumo?a=${n.area}&t=${encodeURIComponent(n.topico)}">${esc(n.topico)} →</a></div><div class="nota-txt">${esc(n.t)}</div></div>`).join("")}`).join("")
+      ${ns.map(n => `<div class="card"><div class="row between small"><span>${AREA[n.area] ? areaTag(n.area) : ""}</span><a href="${n.ep ? "#/podcasts?e=" + n.ep : `#/resumo?a=${n.area}&t=${encodeURIComponent(n.topico)}`}">${n.ep ? "🎧 " : ""}${esc(n.topico)} →</a></div><div class="nota-txt">${esc(n.t)}</div></div>`).join("")}`).join("")
       : `<div class="card empty"><p>${Object.keys(S.notas || {}).length ? "Nenhuma anotação com esse filtro." : "Você ainda não fez anotações. Abra um tópico em Conteúdo e escreva o que estudou no campo 📝."}</p></div>`;
     el.querySelector("#cont").textContent = `${todas.length} anotação(ões)`;
   };
@@ -1726,7 +1730,8 @@ ROTAS["/podcasts"] = el => {
       ${e.src ? `<audio controls preload="none" src="${esc(e.src)}" data-pod="${e.id}" style="width:100%"></audio>
         <div class="row" style="gap:6px;flex-wrap:wrap;margin-top:6px">${[1, 1.25, 1.5, 1.75, 2].map(v => `<button class="btn btn-sm ${(st.vel || 1) === v ? "btn-primary" : "btn-ghost"}" data-vel="${v}" data-pv="${e.id}">${v}x</button>`).join("")}
         <span class="small muted" style="margin-left:auto" data-pos="${e.id}">${st.pos ? "parou em " + fmt(st.pos) : ""}</span>
-        <button class="btn btn-sm btn-ghost" data-ouvi="${e.id}">${st.ouvido ? "Marcar como não ouvido" : "✓ Marcar como ouvido"}</button></div>`
+        <button class="btn btn-sm btn-ghost" data-ouvi="${e.id}">${st.ouvido ? "Marcar como não ouvido" : "✓ Marcar como ouvido"}</button>
+        <a class="btn btn-sm btn-primary" href="#/fixar?e=${e.id}">🧠 Fixar agora</a></div>`
       : `<p class="small muted" style="margin:0">Ainda sem áudio. Fonte pronta para o NotebookLM na pasta <b>Downloads › Podcasts NotebookLM</b> (arquivo que começa com “${e.id}”). Gere o Resumo em Áudio e me avise.</p>`}</div>`; };
   const grupos = AREAS.map(a => [a, EPS.filter(e => e.area === a.id)]).filter(([, l]) => l.length);
   el.innerHTML = `<div class="container" style="max-width:860px">
@@ -1740,7 +1745,8 @@ ROTAS["/podcasts"] = el => {
     au.addEventListener("timeupdate", () => { const sp = el.querySelector(`[data-pos="${id}"]`); if (sp) sp.textContent = "em " + fmt(au.currentTime);
       if (Date.now() - ultimo > 15000) { ultimo = Date.now(); st().pos = Math.floor(au.currentTime); salvar(); } });
     au.addEventListener("pause", () => { st().pos = Math.floor(au.currentTime); salvar(); });
-    au.addEventListener("ended", () => { st().pos = 0; st().ouvido = hoje(); salvar(); }); // o tempo ouvido já entra pelo registro automático
+    au.addEventListener("ended", () => { st().pos = 0; st().ouvido = hoje(); S.fixarPendente = { e: id, d: hoje() }; salvar(); // o tempo ouvido já entra pelo registro automático
+      if (document.visibilityState === "visible") location.hash = "#/fixar?e=" + id; });
   });
   el.querySelectorAll("[data-vel]").forEach(b => b.onclick = () => { const id = b.dataset.pv, v = Number(b.dataset.vel);
     S.podcasts[id] = S.podcasts[id] || {}; S.podcasts[id].vel = v; salvar();
@@ -1749,6 +1755,77 @@ ROTAS["/podcasts"] = el => {
   el.querySelectorAll("[data-ouvi]").forEach(b => b.onclick = () => { const st = S.podcasts[b.dataset.ouvi] = S.podcasts[b.dataset.ouvi] || {}; st.ouvido = st.ouvido ? null : hoje(); salvar(); ROTAS["/podcasts"](el); });
   limpar = () => el.querySelectorAll("audio").forEach(a => a.pause());
   if (foco) { const c = el.querySelector("#pod-" + foco); if (c) setTimeout(() => c.scrollIntoView({ block: "center" }), 50); }
+};
+
+/* ---------- Fixar agora (depois de um podcast) ---------- */
+const FIX_DIAS = [1, 7, 30];
+function agendaFixar(e){
+  S.fixar = S.fixar || {};
+  if (!S.fixar[e.id]) S.fixar[e.id] = { inicio: hoje(), datas: FIX_DIAS.map(n => addDias(hoje(), n)), feitas: [], sessoes: {} };
+  return S.fixar[e.id];
+}
+function revisoesFixarHoje(){
+  const EPS = window.PODCASTS || [];
+  return Object.entries(S.fixar || {}).flatMap(([id, ag]) => { const e = EPS.find(x => x.id === id); if (!e || !AREA_ATIVA.has(e.area)) return [];
+    const k = ag.datas.findIndex((d, i) => d <= hoje() && !ag.feitas.includes(i)); return k >= 0 ? [{ e, k, d: ag.datas[k] }] : []; });
+}
+function renderRevisoesFixar(){
+  const pend = S.fixarPendente && (window.PODCASTS || []).find(x => x.id === S.fixarPendente.e);
+  const revs = revisoesFixarHoje();
+  if (!revs.length && !pend) return "";
+  return `<div class="card" style="margin-top:14px"><h2>🧠 Fixar conteúdo dos podcasts</h2><ul class="list">
+    ${pend ? `<li><span style="flex:1">Você terminou <b>${esc(pend.titulo)}</b>. Fixe agora: 3 min de memória + questões.</span><a class="btn btn-sm btn-primary" href="#/fixar?e=${pend.id}">Fixar agora</a></li>` : ""}
+    ${revs.map(r => `<li><span style="flex:1">Revisão ${r.k + 1} de 3 (${FIX_DIAS[r.k]} dia${FIX_DIAS[r.k] > 1 ? "s" : ""} depois): <b>${esc(r.e.titulo)}</b>${r.d < hoje() ? ` <span class="small muted">· atrasada desde ${fmtData(r.d)}</span>` : ""}</span><a class="btn btn-sm btn-secondary" href="#/fixar?e=${r.e.id}&rev=${r.k}">Revisar</a></li>`).join("")}</ul></div>`;
+}
+ROTAS["/fixar"] = el => {
+  const params = new URLSearchParams(location.hash.split("?")[1] || "");
+  const e = (window.PODCASTS || []).find(x => x.id === params.get("e"));
+  if (!e) { el.innerHTML = `<div class="container"><div class="card empty"><p>Episódio não encontrado. <a href="#/podcasts">Voltar aos podcasts</a></p></div></div>`; return; }
+  const rev = params.get("rev") != null ? Number(params.get("rev")) : null;
+  const ag = agendaFixar(e);
+  if (S.fixarPendente && S.fixarPendente.e === e.id) S.fixarPendente = null;
+  salvar();
+  const ses = ag.sessoes[hoje()] = ag.sessoes[hoje()] || {};
+  // questões dos tópicos do episódio: prioriza as nunca respondidas e as erradas
+  const resp = new Set(S.respostas.map(r => r.id));
+  const pool = todasQuestoes().filter(q => e.topicos.includes(q.t));
+  const n = rev == null ? 12 : 8;
+  const qs = [...pool.filter(q => S.erros[q.id]), ...pool.filter(q => !resp.has(q.id) && !S.erros[q.id]).sort(() => Math.random() - .5), ...pool.filter(q => resp.has(q.id) && !S.erros[q.id]).sort(() => Math.random() - .5)].slice(0, n);
+  if (rev != null && !qs.length && !ag.feitas.includes(rev)) { ag.feitas.push(rev); salvar(); } // sem questões no banco: a revisão vale pela memória + mapa
+  const nFlash = todosFlash().filter(f => e.topicos.includes(f.t)).length;
+  const notaK = `${hoje()}|🎧 ${e.id}`, nota = ((S.notas || {})[notaK] || {}).t || "";
+  const tps = e.topicos.map(t => `<a href="#/mapa?a=${e.area}&t=${encodeURIComponent(t)}">🧠 ${esc(t)}</a>`).join(" · ");
+  el.innerHTML = `<div class="container" style="max-width:860px">
+    <a class="small" href="#/podcasts?e=${e.id}">← Podcasts</a>
+    ${header(rev == null ? "Fixar agora" : `Revisão ${rev + 1} de 3`, esc(e.titulo), rev == null ? "Ouvir dá a sensação de que aprendeu; o que fixa é buscar na memória. Siga os passos — leva uns 20 minutos." : "Revisão espaçada: buscar de novo na memória alguns dias depois é o que transforma o que você ouviu em memória de longo prazo.")}
+    <div class="card fix-passo"><h2>1. Lembre sem olhar <span class="small muted">(3 min)</span></h2>
+      <p class="small muted" style="margin:4px 0 8px">Escreva tudo o que lembra: conceitos, regras, exemplos, pegadinhas. Não consulte nada — os buracos mostram o que ainda não fixou.</p>
+      <textarea id="fxnota" class="nota-tx" placeholder="O que eu lembro do episódio…">${esc(nota)}</textarea><div class="small muted" id="fxst">${nota ? "salva em Minhas anotações" : ""}</div></div>
+    <div class="card fix-passo"><div class="row between"><h2>2. Questões dos tópicos do episódio</h2><span class="pill" id="fxplac">0/${qs.length}</span></div>
+      ${qs.length ? `<p class="small muted" style="margin:4px 0 8px">${qs.length} questões (primeiro as que você já errou, depois as inéditas). Responda de memória.</p><div id="fxqs"></div>` : `<p class="small muted">Ainda não há questões destes tópicos no banco.</p>`}</div>
+    <div class="card fix-passo"><h2>3. Confira só o que errou</h2><p class="small muted" style="margin:4px 0 8px" id="fxerr">Depois das questões, os tópicos em que você errou aparecem aqui em destaque. Use o mapa mental para conferir — reler tudo rende pouco.</p><div class="small">${tps}</div></div>
+    <div class="card fix-passo"><h2>4. Flashcards destes tópicos</h2><p class="small muted" style="margin:4px 0 8px">${nFlash ? `${nFlash} cards destes tópicos; cada sessão traz até 30 (primeiro os vencidos). Eles entram na repetição espaçada e voltam nos dias certos.` : "Ainda não há flashcards destes tópicos."}</p>
+      ${nFlash ? `<a class="btn btn-secondary" id="fxflash" href="#/flashcards?t=${encodeURIComponent(e.topicos.join("|"))}">Revisar flashcards (até 30)</a>` : ""}</div>
+    <div class="card fix-passo"><h2>5. Revisões programadas</h2><ul class="list">${ag.datas.map((d, i) => `<li><span style="flex:1">Revisão ${i + 1}: ${fmtData(d, { day: "2-digit", month: "long" })} <span class="small muted">(${FIX_DIAS[i]} dia${FIX_DIAS[i] > 1 ? "s" : ""} depois)</span></span>${ag.feitas.includes(i) ? '<span class="pill pill-ok">feita</span>' : d <= hoje() ? '<span class="pill pill-warn">hoje</span>' : '<span class="small muted">agendada</span>'}</li>`).join("")}</ul>
+      <p class="small muted" style="margin:6px 0 0">Elas aparecem na tela <a href="#/hoje">Hoje</a> no dia certo. Para reforçar, reouça o episódio a 1,5x no trajeto alguns dias depois.</p></div></div>`;
+  // passo 1: anotação de memória
+  const tx = el.querySelector("#fxnota"); let tm = null;
+  const gravarFx = () => { S.notas = S.notas || {}; if (tx.value.trim()) S.notas[notaK] = { topico: e.titulo, area: e.area, d: hoje(), t: tx.value, u: Date.now(), ep: e.id }; else delete S.notas[notaK]; ses.anot = !!tx.value.trim(); salvar(); el.querySelector("#fxst").textContent = tx.value.trim() ? "✓ salva em Minhas anotações" : ""; };
+  tx.oninput = () => { clearTimeout(tm); tm = setTimeout(gravarFx, 700); }; tx.onblur = gravarFx;
+  // passo 2: questões com correção imediata
+  const box = el.querySelector("#fxqs"); let feitas = 0, certas = 0; const errosT = new Set();
+  if (box) qs.forEach((q, i) => { const h = document.createElement("div"); h.className = "small muted"; h.style.margin = "14px 0 6px"; h.textContent = `${i + 1}.`;
+    box.append(h, renderQuestao(q, (alt, ok) => { registrarResposta(q, ok); feitas++; if (ok) certas++; else errosT.add(q.t);
+      el.querySelector("#fxplac").textContent = `${certas}/${feitas} certas · ${feitas}/${qs.length}`;
+      if (feitas === qs.length) {
+        ses.quiz = { n: qs.length, ok: certas };
+        if (rev != null && !ag.feitas.includes(rev)) ag.feitas.push(rev);
+        salvar();
+        el.querySelector("#fxerr").innerHTML = errosT.size ? `<b>Confira agora:</b> ${[...errosT].map(t => `<a href="#/mapa?a=${e.area}&t=${encodeURIComponent(t)}">🧠 ${esc(t)}</a> (<a href="#/resumo?a=${e.area}&t=${encodeURIComponent(t)}">resumo</a>)`).join(" · ")}` : "✓ Você acertou tudo — não precisa reler. Vá para os flashcards.";
+        el.querySelector("#fxerr").closest(".card").classList.add("fix-destaque");
+      }
+    })); });
+  autoContexto({ a: e.area, t: e.titulo, tipo: "fixação de podcast" });
 };
 
 function renderMateriaisTopico(nome){ return linksNuvem(nome) + renderMateriaisTopicoBase(nome); }
