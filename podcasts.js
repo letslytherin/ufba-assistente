@@ -102,8 +102,9 @@ window.PODCASTS = [
    "Controle da Administração e responsabilidade civil do Estado",
    "Licitações (Lei 14.133/2021): modalidades, dispensa, inexigibilidade, fases"
   ],
-  "src": null,
-  "dur": null
+  "src": "podcasts/ce2-dir-adm-poderes-servicos-controle-licitacoes.m4a",
+  "dur": "37 min",
+  "origem": "Gerado por você no NotebookLM"
  },
  {
   "id": "ce3",
@@ -116,8 +117,9 @@ window.PODCASTS = [
    "Gestão da qualidade",
    "Gestão de projetos"
   ],
-  "src": null,
-  "dur": null
+  "src": "podcasts/ce3-administracao-geral.m4a",
+  "dur": "21 min",
+  "origem": "Gerado por você no NotebookLM"
  },
  {
   "id": "ce4",
@@ -129,8 +131,9 @@ window.PODCASTS = [
    "Trabalho em equipe, relações interpessoais e comunicação",
    "Atendimento ao público: qualidade e postura"
   ],
-  "src": null,
-  "dur": null
+  "src": "podcasts/ce4-gestao-de-pessoas-atendimento.m4a",
+  "dur": "29 min",
+  "origem": "Gerado por você no NotebookLM"
  },
  {
   "id": "ce5",
@@ -141,8 +144,9 @@ window.PODCASTS = [
    "Compras, modalidades e cadastro de fornecedores",
    "Recebimento, conferência e armazenagem"
   ],
-  "src": null,
-  "dur": null
+  "src": "podcasts/ce5-materiais-compras-armazenagem.m4a",
+  "dur": "17 min",
+  "origem": "Gerado por você no NotebookLM"
  },
  {
   "id": "ce6",
@@ -155,7 +159,8 @@ window.PODCASTS = [
    "Tipologias, suportes, microfilmagem e automação",
    "Preservação, conservação e restauração"
   ],
-  "src": null,
-  "dur": null
+  "src": "podcasts/ce6-arquivologia.m4a",
+  "dur": "30 min",
+  "origem": "Gerado por você no NotebookLM"
  }
 ];
