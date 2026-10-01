@@ -40,8 +40,9 @@ window.PODCASTS = [
    "Semântica: denotação, conotação, sinonímia, paronímia, figuras de linguagem",
    "Reescrita de frases e equivalência de estruturas"
   ],
-  "src": null,
-  "dur": null
+  "src": "podcasts/lp2-classes-oracoes-pontuacao-coesao.m4a",
+  "dur": "33 min",
+  "origem": "Gerado por você no NotebookLM"
  },
  {
   "id": "lp3",
@@ -53,8 +54,9 @@ window.PODCASTS = [
    "Variação linguística e adequação de registro",
    "Redação Oficial (Manual da Presidência, 3ª ed.)"
   ],
-  "src": null,
-  "dur": null
+  "src": "podcasts/lp3-interpretacao-redacao-oficial.m4a",
+  "dur": "20 min",
+  "origem": "Gerado por você no NotebookLM"
  },
  {
   "id": "inf1",
