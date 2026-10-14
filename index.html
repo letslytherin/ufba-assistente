@@ -275,7 +275,9 @@ details.texto div{white-space:pre-line;margin-top:8px;line-height:1.7}
 <script src="resumos-assuntos.js?v=20260930"></script>
 <script src="resumos-pmpe.js?v=20260930"></script>
 <script src="questoes-pmpe.js?v=20260930"></script>
-<script src="videos.js?v=20260930"></script>
+<script src="resumos-chapreta.js?v=20261014"></script>
+<script src="questoes-chapreta.js?v=20261014"></script>
+<script src="videos.js?v=20261014"></script>
 <script src="podcasts.js?v=20260930e"></script>
 <script src="materiais-publicos.js?v=20260930"></script>
 <script src="materiais-locais.js?v=20260930"></script>
@@ -283,7 +285,7 @@ details.texto div{white-space:pre-line;margin-top:8px;line-height:1.7}
 <script src="questoes-publicas.js?v=20260930"></script>
 <script src="flashcards-locais.js?v=20260930"></script>
 <script src="flashcards-publicos.js?v=20260930"></script>
-<script src="flashcards-extra.js?v=20260930"></script>
+<script src="flashcards-extra.js?v=20261014"></script>
 <script>
 "use strict";
 /* =========================================================================
@@ -403,6 +405,52 @@ const TOPICOS_PMPE = {
   dh: ["Teoria geral dos Direitos Humanos","Evolução histórica e gerações de direitos humanos","Incorporação dos tratados de DH (art. 5º, §§ 2º e 3º)","Declaração Universal dos Direitos Humanos (1948)","Pacto de San José da Costa Rica (Decreto 678/1992)","ECA (Lei 8.069/1990) e a atuação policial","Abuso de Autoridade (Lei 13.869/2019)","Lei de Tortura (Lei 9.455/1997)","Lei Maria da Penha (Lei 11.340/2006)","Crimes de preconceito de raça ou de cor (Lei 7.716/1989)","Crimes ambientais (Lei 9.605/1998)","Crimes hediondos (Lei 8.072/1990)","Lei de Drogas (Lei 11.343/2006)","Estatuto dos Policiais Militares de PE (Lei 6.783/1974)","Estatuto da Pessoa Idosa (Lei 10.741/2003)","Estatuto da Juventude (Lei 12.852/2013)"],
 };
 
+/* =========================================================================
+   Chã Preta-AL — Edital de Concurso Público 001/2026 (REPUBLICADO em 08/10/2026), Prefeitura Municipal
+   de Chã Preta, executora FUNVAPI — cargo Professor Anos Finais (6º ao 9º) – Inglês.
+   ========================================================================= */
+const EDITAL_CHAPRETA = {
+  cargo: "Professor Anos Finais (6º ao 9º ano) – Inglês", vagas: 2, remuneracao: 2870.09, taxa: 121.80,
+  banca: "FUNVAPI (Fundação Vale do Piauí)", site: "www.funvapi.com.br", duracao: "4 horas (14h às 18h)", dataProva: "2026-12-06",
+  turno: "Tarde", jornada: "30h semanais",
+};
+const AREAS_CHAPRETA = [
+  { id: "lp",  nome: "Língua Portuguesa",                          q: 10, peso: 2, cor: "var(--c-lp)" },
+  { id: "fe",  nome: "Fundamentos da Educação",                    q: 10, peso: 2, cor: "#0891b2" },
+  { id: "ing", nome: "Conhecimento Específico (Inglês)",           q: 15, peso: 3, cor: "#2563eb" },
+  { id: "leg", nome: "Legislação e Ética na Administração Pública", q: 5,  peso: 3, cor: "#a16207" },
+];
+const DATAS_CHAPRETA = [
+  { ini: "2026-10-08", fim: "2026-10-08", t: "Republicação do edital" },
+  { ini: "2026-10-09", fim: "2026-10-09", t: "Impugnação do edital" },
+  { ini: "2026-10-12", fim: "2026-10-13", t: "Pedido de isenção da taxa" },
+  { ini: "2026-10-12", fim: "2026-11-12", t: "Inscrições (www.funvapi.com.br)" },
+  { ini: "2026-10-27", fim: "2026-10-27", t: "Resultado dos pedidos de isenção" },
+  { ini: "2026-10-28", fim: "2026-10-29", t: "Recurso contra o indeferimento da isenção" },
+  { ini: "2026-11-07", fim: "2026-11-07", t: "Resultado dos recursos de isenção" },
+  { ini: "2026-11-13", fim: "2026-11-13", t: "Prazo final para emitir o boleto" },
+  { ini: "2026-11-16", fim: "2026-11-16", t: "Pagamento da taxa de R$ 121,80 (inclusive isenções indeferidas)" },
+  { ini: "2026-11-20", fim: "2026-11-20", t: "Homologação das inscrições" },
+  { ini: "2026-11-24", fim: "2026-11-24", t: "Locais de prova e cartão de informação" },
+  { ini: "2026-12-06", fim: "2026-12-06", t: "PROVA OBJETIVA + entrega dos TÍTULOS (tarde, 14h às 18h)", prova: true },
+  { ini: "2026-12-07", fim: "2026-12-07", t: "Gabarito parcial da objetiva" },
+  { ini: "2026-12-08", fim: "2026-12-09", t: "Recurso contra o gabarito parcial" },
+  { ini: "2026-12-21", fim: "2026-12-21", t: "Julgamento dos recursos e gabarito oficial" },
+  { ini: "2026-12-22", fim: "2026-12-22", t: "Resultado parcial da objetiva" },
+  { ini: "2026-12-23", fim: "2026-12-24", t: "Recurso contra o resultado parcial" },
+  { ini: "2026-12-30", fim: "2026-12-30", t: "Resultado final da objetiva e parcial dos títulos" },
+  { ini: "2027-01-14", fim: "2027-01-14", t: "Resultado final" },
+  { ini: "2027-01-18", fim: "2027-01-18", t: "Homologação do concurso" },
+];
+/* Conteúdo programático — Anexo IV (nível superior e Professor 6º ao 9º – Inglês). Tópicos com o MESMO
+   nome de um tópico da UFBA compartilham o progresso. */
+const TOPICOS_CHAPRETA = {
+  lp: ["Compreensão e interpretação de textos","Tipologia textual e gêneros textuais","Ortografia oficial e acentuação gráfica","Coesão e coerência: referência, conectores, progressão","Morfossintaxe: classes e formação de palavras, termos da oração","Coordenação, subordinação, vozes verbais e pronomes relativos","Pontuação e efeitos de sentido","Concordância verbal e nominal","Regência verbal e nominal","Crase","Semântica: denotação, conotação, sinonímia, paronímia, figuras de linguagem","Funções da linguagem","Reescrita de frases e equivalência de estruturas"],
+  fe: ["CF/88: Educação (arts. 205 a 214)","Tendências pedagógicas: liberais e progressistas","LDB (Lei 9.394/1996): princípios, organização e níveis de ensino","LDB (Lei 9.394/1996): modalidades de educação","Avaliação da aprendizagem","BNCC: competências gerais e organização","PNE e Lei do Piso do Magistério (Lei 11.738/2008)","Planejamento escolar e Projeto Político-Pedagógico (PPP)","Educação, sociedade e política"],
+  ing: ["Métodos e abordagens no ensino de inglês","BNCC de Língua Inglesa: eixos, competências e habilidades (6º ao 9º)","PCN de Língua Estrangeira e LDB no ensino de idiomas","Reading strategies: skimming, scanning, predicting e inferring","Text genres, cohesion and coherence","Verb to be e simple tenses","Continuous and perfect tenses","Active and passive voice","Modal verbs","Phrasal verbs","Nouns, articles, numbers and genitive case","Pronouns and possessive adjectives","Adjectives (comparatives and superlatives) and adverbs","Prepositions of time, place and movement","Linking words","Sentence forms: negative, interrogative, question tags and imperative","Reported speech","Written × spoken English, visual literacy and TDICs"],
+  leg: ["Ética e moral no serviço público e conflito de interesses (Lei 12.813/2013)","Ética: Decreto 1.171/1994 e Decreto 6.029/2007","CF/88: princípios e disposições gerais (Título III, Cap. VII)","Improbidade administrativa (Lei 8.429/1992 e alterações)","LAI (Lei 12.527/2011 e Decreto 7.724/2012)","LGPD (Lei 13.709/2018) na Administração Pública","Governo Digital (Lei 14.129/2021)","Licitações e contratos (Lei 14.133/2021)","Processo administrativo federal (Lei 9.784/1999)","Estatuto dos Servidores, Lei Orgânica e processo administrativo de Chã Preta"],
+};
+
 const CONCURSOS = {
   ufba: {
     id: "ufba", nome: "UFBA", marca: "UFBA Assistente", sub: "Edital 007/2026 · cargo 201",
@@ -445,6 +493,26 @@ const CONCURSOS = {
       ["isencao","Decidir se vou pedir isenção da taxa (05/10 a 08/10, até 13h)"],["inscricao","Fazer a inscrição no site do Instituto AOCP (05/10 a 05/11)"],["boleto","Pagar o boleto de R$ 180,00 (até 06/11)"],
       ["deferida","Conferir se a inscrição foi deferida (19/11; pós-recurso 15/12)"],["taf","Começar o treino para o Teste de Aptidão Física (jul/2027) — já"],
       ["cartao","Conferir local de prova (02/02/2027) e o Cartão de Informação (15/02/2027)"],["caneta","Separar caneta esferográfica azul ou preta de tubo transparente + documento com foto"]],
+  },
+  chapreta: {
+    id: "chapreta", nome: "Chã Preta", marca: "Chã Preta · Inglês", sub: "Edital 001/2026 · Professor de Inglês",
+    titulo: "Chã Preta-AL 2026 · Professor de Inglês (6º ao 9º)", edital: EDITAL_CHAPRETA, areas: AREAS_CHAPRETA, datas: DATAS_CHAPRETA, topicos: TOPICOS_CHAPRETA,
+    areaForte: "ing", horasProva: "4h", site: "www.funvapi.com.br", semRedacao: true,
+    provaSub: "Prova objetiva (40 questões, A–D) + títulos", pesoNota: "Inglês vale 3 pts/questão (45 dos 100 pontos) e Legislação também 3 pts/questão. É preciso fazer 60 pontos para não ser eliminado.",
+    aviso: "Anexo IV do Edital 001/2026 (republicado) da Prefeitura de Chã Preta-AL — nível superior e Professor 6º ao 9º ano – Inglês. Tópicos com o mesmo nome dos da UFBA compartilham o seu progresso.",
+    cronoDesc: "Anexo IX — Cronograma de execução do Edital 001/2026 (republicado em 08/10/2026). Pode ser alterado — acompanhe www.funvapi.com.br.",
+    simDesc: "Mesma proporção da prova (10 LP e 10 Fundamentos com peso 2, 15 Inglês e 5 Legislação com peso 3), com tempo corrido e correção só no final. A nota é projetada para a escala de 100 pontos.",
+    regra: pts => { const tot = Object.values(pts).reduce((a, b) => a + b, 0);
+      return { ok: tot >= 60, itens: [[tot >= 60, `Objetiva ≥ 60 pontos (60% de 100)${tot < 60 ? ` (faltam ${Math.round((60 - tot) * 10) / 10})` : ""}`]] }; },
+    ativDia: {
+      1: { t: "Inglês: gramática do dia + 10 questões (40 min)", l: "#/conteudo?a=ing" }, 2: { t: "Flashcards + Meus erros (20 min)", l: "#/flashcards" },
+      3: { t: "Reading: 1 texto em inglês com estratégias de leitura (30 min)", l: "#/conteudo?a=ing" }, 4: { t: "Lei seca: LDB e CF/88, arts. 205 a 214 (20 min)", l: "#/conteudo?a=fe" },
+      5: { t: "20 questões mistas das 4 áreas", l: "#/questoes" }, 6: { t: "Mini simulado + correção dos erros", l: "#/simulados" },
+      0: { t: "Revisão leve: erros e flashcards da semana", l: "#/erros" } },
+    checklist: [["inscricao","Fazer a inscrição em www.funvapi.com.br (12/10 a 12/11)"],["boleto","Emitir o boleto até 13/11 e pagar R$ 121,80 até 16/11"],
+      ["homolog","Conferir a homologação da inscrição (20/11)"],["titulos","Separar cópias dos títulos (pós-graduação) em envelope lacrado para entregar no dia da prova"],
+      ["leis","Baixar o Estatuto dos Servidores e a Lei Orgânica de Chã Preta (www.chapreta.al.gov.br)"],["local","Conferir o local de prova (24/11) e planejar a ida a Chã Preta"],
+      ["caneta","Separar caneta esferográfica azul ou preta de tubo transparente + documento com foto"]],
   },
 };
 const CONC_KEY = "ufba-assistente:concurso";
@@ -854,15 +922,19 @@ function montarDadosLocais(){
   F_LOCAIS = [...base, ...(window.FLASH_EXTRA || []).filter(f => !ids.has(f.id))];
 }
 montarDadosLocais();
-const Q_APP = [...Q_SEED, ...(window.Q_PMPE || [])].map((q,i)=>({...q,id:"s"+i, orig:"app"}));
-const todasQuestoes = () => { const rep = S.reportes || {}; return [...Q_APP, ...S.qExtras.map(q => ({...q, orig: String(q.id).startsWith("i") ? "importada" : "propria"})), ...Q_LOCAIS].filter(q => !rep[q.id] && AREA_ATIVA.has(q.a)); };
+/* Tópico com o mesmo nome em outra área (ex.: LAI em Adm. Pública na UFBA e em Legislação na Chã Preta):
+   a questão/flashcard aparece na área do concurso ativo. */
+const AREA_DO_TOPICO = Object.fromEntries(Object.entries(TOPICOS_PADRAO).flatMap(([a, l]) => l.map(n => [n, a])));
+const paraAreaAtiva = x => AREA_ATIVA.has(x.a) || !AREA_DO_TOPICO[x.t] ? x : { ...x, a: AREA_DO_TOPICO[x.t] };
+const Q_APP = [...Q_SEED, ...(window.Q_PMPE || []), ...(window.Q_CHAPRETA || [])].map((q,i)=>({...q,id:"s"+i, orig:"app"}));
+const todasQuestoes = () => { const rep = S.reportes || {}; return [...Q_APP, ...S.qExtras.map(q => ({...q, orig: String(q.id).startsWith("i") ? "importada" : "propria"})), ...Q_LOCAIS].map(paraAreaAtiva).filter(q => !rep[q.id] && AREA_ATIVA.has(q.a)); };
 // uma vez: respostas dadas com o gabarito antigo das questões corrigidas não contam
 (() => { const g = (window.CORRECOES_QUESTOES || {}).gabarito || {}; S._corrigidas = S._corrigidas || [];
   const novas = Object.keys(g).filter(id => !S._corrigidas.includes(id)); if (!novas.length) return;
   S.respostas = S.respostas.filter(r => !novas.includes(r.id)); novas.forEach(id => delete S.erros[id]); S._corrigidas.push(...novas); gravar(); })();
 const ORIGENS = { app: "Autorais do app", prova: "Provas reais", apostila: "Apostilas", simulado: "Simulados", importada: "Importadas", propria: "Criadas por você" };
 const FC_ORIGENS = { app: "Do app", resumo: "Dos resumos por assunto", prova_ae: "Múltipla escolha (provas)", ce: "Certo ou errado (provas)", apostila: "Conceitos das apostilas", propria: "Criados por você" };
-const todosFlash = () => [...FC_SEED.map((f,i)=>({a:f[0],f:f[1],v:f[2],id:"f"+i,orig:"app"})), ...S.fcExtras.map(f => ({...f, orig:"propria"})), ...F_LOCAIS].filter(f => AREA_ATIVA.has(f.a));
+const todosFlash = () => [...FC_SEED.map((f,i)=>({a:f[0],f:f[1],v:f[2],id:"f"+i,orig:"app"})), ...S.fcExtras.map(f => ({...f, orig:"propria"})), ...F_LOCAIS].map(paraAreaAtiva).filter(f => AREA_ATIVA.has(f.a));
 function novosHoje(){ const n = S.fcNovos || {}; return n.data === hoje() ? n.n : 0; }
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
@@ -943,7 +1015,7 @@ const mainEl = document.getElementById("main");
 const appEl = document.getElementById("app");
 
 function pintarNav(path){
-  document.getElementById("nav").innerHTML = NAV.map(g => `<div class="nav-title">${g.s}</div>` + g.items.map(([p,l,i]) =>
+  document.getElementById("nav").innerHTML = NAV.map(g => `<div class="nav-title">${g.s}</div>` + g.items.filter(([p]) => !(CONC.semRedacao && p === "/redacao")).map(([p,l,i]) =>
     `<a class="nav-link${p===path?" active":""}" href="#${p}"${p===path?' aria-current="page"':""}><span class="ic">${i}</span><span>${l}</span></a>`).join("")).join("");
   document.getElementById("bottom-nav").innerHTML = BOTTOM.map(([p,l,i]) =>
     `<a class="${p===path?"active":""}" href="#${p}"><span class="ic">${i}</span>${l}</a>`).join("");
@@ -1133,7 +1205,7 @@ function prioridadeTopicos(){
    todo dia, alternando com LP / AP / Informática) + uma atividade fixa do
    dia da semana. As 3 últimas semanas são de reta final (revisão e simulados).
    ========================================================================= */
-const CURTO = { lp: "Português", inf: "Informática", ap: "Adm. Pública", ce: "Específicos", hpe: "História de PE", rl: "Raciocínio", dc: "Constitucional", dh: "DH e Legislação" };
+const CURTO = { lp: "Português", inf: "Informática", ap: "Adm. Pública", ce: "Específicos", hpe: "História de PE", rl: "Raciocínio", dc: "Constitucional", dh: "DH e Legislação", fe: "Fundamentos", ing: "Inglês", leg: "Legislação e Ética" };
 const DIAS_SEM = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
 const DIAS_SEM_LONGO = ["Domingo","Segunda","Terça","Quarta","Quinta","Sexta","Sábado"];
 const ATIV_DIA = CONC.ativDia;
@@ -1212,10 +1284,10 @@ function gerarPlanoEstudos(){
 function atividadeDoDia(dia){
   if (dia.fase === "prova") return { t: "PROVA — chegue cedo, documento com foto e caneta azul/preta transparente", l: "#/cronograma" };
   if (dia.fase === "vespera") return { t: "Véspera: revisão leve dos flashcards, separar documentos, dormir cedo", l: "#/flashcards" };
-  if (dia.fase === "reta" && (dia.w === 6 || dia.w === 3)) return { t: `Simulado COMPLETO cronometrado (objetiva + redação em ${CONC.horasProva})`, l: "#/simulados" };
+  if (dia.fase === "reta" && (dia.w === 6 || dia.w === 3)) return { t: `Simulado COMPLETO cronometrado (${CONC.semRedacao ? "objetiva" : "objetiva + redação"} em ${CONC.horasProva})`, l: "#/simulados" };
   const a = ATIV_DIA[dia.w];
   const pm = atividadeConciliada(dia); if (pm) return pm;
-  if (dia.w === 3) return { t: `Redação: “${temaDaSemana(dia.data)[1]}”`, l: "#/redacao?tema=" + encodeURIComponent(temaDaSemana(dia.data)[1]) };
+  if (dia.w === 3 && !CONC.semRedacao) return { t: `Redação: “${temaDaSemana(dia.data)[1]}”`, l: "#/redacao?tema=" + encodeURIComponent(temaDaSemana(dia.data)[1]) };
   return a;
 }
 
@@ -1294,9 +1366,9 @@ ROTAS["/semana"] = el => {
       <div class="stat"><div class="v">${pend}</div><div class="l">tópicos ainda não estudados</div></div>
       <div class="stat"><div class="v">${porBloco}</div><div class="l">tópico(s) por bloco para fechar o edital</div></div>
       <div class="stat"><div class="v">${S.diasSemana}</div><div class="l">dias de estudo/semana <a href="#/config" class="small">alterar</a></div></div></div>
-    <div class="card" style="margin-top:14px"><h2>Rotina fixa da semana</h2><div class="grid g4 small">${[1,2,3,4,5,6,0].map(w => `<div><b>${DIAS_SEM_LONGO[w]}</b><br><span class="muted">${w === 3 ? "Redação do tema da semana" : ATIV_DIA[w].t}</span></div>`).join("")}</div></div>
+    <div class="card" style="margin-top:14px"><h2>Rotina fixa da semana</h2><div class="grid g4 small">${[1,2,3,4,5,6,0].map(w => `<div><b>${DIAS_SEM_LONGO[w]}</b><br><span class="muted">${w === 3 && !CONC.semRedacao ? "Redação do tema da semana" : ATIV_DIA[w].t}</span></div>`).join("")}</div></div>
     ${semanas.map((s, i) => `<details class="disc" ${i < 2 ? "open" : ""}><summary><div style="flex:1"><div style="font-weight:700">Semana ${i + 1} · ${fmtData(s.seg)} a ${fmtData(addDias(s.seg, 6))}</div>
-      <div class="small muted">Redação: ${esc(temaDaSemana(s.dias[0].data)[1])}</div><div style="margin-top:4px">${resumoAreas(s)}</div></div></summary>
+      ${CONC.semRedacao ? "" : `<div class="small muted">Redação: ${esc(temaDaSemana(s.dias[0].data)[1])}</div>`}<div style="margin-top:4px">${resumoAreas(s)}</div></div></summary>
       <div class="body"><div class="weekgrid">${s.dias.map(cardDia).join("")}</div></div></details>`).join("")}
     <p class="small muted">O plano se recalcula conforme você marca tópicos no <a href="#/edital">Edital verticalizado</a>. A agenda de hoje fica fixa até amanhã.</p>
   </div>`;
@@ -1397,7 +1469,7 @@ ROTAS["/edital"] = el => {
       <div style="width:120px"><div class="small muted" style="text-align:right">${s.estudados}/${s.total}</div><div class="bar"><i style="width:${s.total?s.estudados/s.total*100:0}%;background:${a.cor}"></i></div></div></summary>
       <div class="body"><ul class="list">${S.topicos[a.id].map((t,i)=>{const ts=statsTopico(a.id,t.nome);return `<li class="topic">
         <input type="checkbox" class="chk" id="t-${t.id}" data-a="${a.id}" data-i="${i}" ${t.estudado?"checked":""}>
-        <label for="t-${t.id}">${esc(t.nome)}${(RESUMOS[t.nome] || (window.RESUMOS_PMPE || {})[t.nome])?` <a class="small" href="#/resumo?a=${a.id}&t=${encodeURIComponent(t.nome)}" onclick="event.stopPropagation()">📖 resumo</a>`:""}${nNotas(t.nome) ? ` <a class="small" href="#/resumo?a=${a.id}&t=${encodeURIComponent(t.nome)}" onclick="event.stopPropagation()" title="Suas anotações">📝 ${nNotas(t.nome)}</a>` : ""}<br><span class="small muted">${(() => { const [f, n] = progressoAssuntos(t.nome); return n ? `<a href="#/resumo?a=${a.id}&t=${encodeURIComponent(t.nome)}" onclick="event.stopPropagation()">${f}/${n} assuntos</a> · ` : ""; })()}${t.revisoes?`${t.revisoes} revisão(ões) · última ${fmtData(t.ultima)}`:"sem revisões"}${ts.n?` · ${pct(ts.taxa)} em ${ts.n}q`:""}</span></label>
+        <label for="t-${t.id}">${esc(t.nome)}${(RESUMOS[t.nome] || (window.RESUMOS_PMPE || {})[t.nome] || (window.RESUMOS_CHAPRETA || {})[t.nome])?` <a class="small" href="#/resumo?a=${a.id}&t=${encodeURIComponent(t.nome)}" onclick="event.stopPropagation()">📖 resumo</a>`:""}${nNotas(t.nome) ? ` <a class="small" href="#/resumo?a=${a.id}&t=${encodeURIComponent(t.nome)}" onclick="event.stopPropagation()" title="Suas anotações">📝 ${nNotas(t.nome)}</a>` : ""}<br><span class="small muted">${(() => { const [f, n] = progressoAssuntos(t.nome); return n ? `<a href="#/resumo?a=${a.id}&t=${encodeURIComponent(t.nome)}" onclick="event.stopPropagation()">${f}/${n} assuntos</a> · ` : ""; })()}${t.revisoes?`${t.revisoes} revisão(ões) · última ${fmtData(t.ultima)}`:"sem revisões"}${ts.n?` · ${pct(ts.taxa)} em ${ts.n}q`:""}</span></label>
         <button class="btn btn-sm btn-ghost" data-rev="${a.id}:${i}" title="Registrar revisão">↻ revisei</button>
         <button class="btn btn-sm btn-ghost" data-del="${a.id}:${i}" title="Remover tópico" aria-label="Remover">✕</button></li>`}).join("")}</ul>
         <div class="row" style="margin-top:10px"><input type="text" placeholder="Adicionar tópico do Anexo II…" data-add="${a.id}"><button class="btn btn-secondary btn-sm" data-addbtn="${a.id}">Adicionar</button></div></div></details>`}).join("")}
@@ -1852,7 +1924,7 @@ function renderNotasApostilas(nome){
     <p class="small muted" style="margin:6px 0 0">Anotações feitas a partir das apostilas da sua pasta (Gran, IBGE, mapas), reescritas para revisão. Só aparecem no seu computador.</p></div>`;
 }
 const RA = window.RESUMOS_ASSUNTOS || {}, INC_A = window.INCIDENCIA_ASSUNTOS || {}, VID = window.VIDEOS_TOPICOS || {};
-Object.assign(RA, window.RESUMOS_PMPE || {});
+Object.assign(RA, window.RESUMOS_PMPE || {}, window.RESUMOS_CHAPRETA || {});
 for (const [t, subs] of Object.entries(RA)) if (!SUBTOPICOS[t]) SUBTOPICOS[t] = Object.keys(subs);
 const ytBusca = q => "https://www.youtube.com/results?search_query=" + encodeURIComponent(q);
 function renderVideos(nome){
@@ -1944,6 +2016,7 @@ ROTAS["/resumo"] = el => {
 
 /* ---------- Análise da banca ---------- */
 ROTAS["/banca"] = el => {
+  if (CID === "chapreta") return bancaChapreta(el);
   const barra = (l, v, max, cor) => `<div class="row" style="margin-bottom:6px"><span class="small" style="width:210px">${l}</span><div class="bar" style="flex:1"><i style="width:${v / max * 100}%;background:${cor}"></i></div><span class="small muted" style="width:60px;text-align:right">${v}</span></div>`;
   el.innerHTML = `<div class="container">
     ${CID === "pmpe" ? `<div class="notice" style="margin-bottom:12px"><b>PM-PE:</b> a prova é do <b>Instituto AOCP</b> — a própria “matriz” da Avalia; o estilo descrito abaixo (textos longos em Português, questões diretas de lei seca, 5 alternativas) vale igual. Diferenças: 6 matérias de 10 questões, blocos com mínimo de 30%, e nada de Adm. Pública/Específicos.</div>` : ""}
@@ -2117,26 +2190,27 @@ function rodarSimulado(el, qs){
 }
 
 ROTAS["/nota"] = el => {
-  const E = EDITAL, redMax = E.redMax || 60, redMin = E.redMin || 30;
+  const E = EDITAL, semRed = !!CONC.semRedacao, redMax = semRed ? 0 : E.redMax || 60, redMin = semRed ? 0 : E.redMin || 30;
   el.innerHTML = `<div class="container" style="max-width:780px">
-    ${header("Praticar · Nota","Calculadora de nota",`Use depois de um simulado externo ou do gabarito preliminar. Regras do edital de ${CONC.nome}: veja os critérios abaixo; redação ≥ ${redMin} de ${redMax}.`)}
+    ${header("Praticar · Nota","Calculadora de nota",`Use depois de um simulado externo ou do gabarito preliminar. Regras do edital de ${CONC.nome}: veja os critérios abaixo${semRed ? " (não há redação; títulos valem até 5 pontos extras)" : `; redação ≥ ${redMin} de ${redMax}`}.`)}
     <div class="card">${AREAS.map(a=>`<div class="row" style="margin-bottom:10px"><span style="flex:1">${areaTag(a.id)} <span class="small muted">(${a.q}q × ${a.peso}${a.bloco ? " · bloco " + a.bloco : ""})</span></span><input type="number" min="0" max="${a.q}" value="0" data-n="${a.id}" style="max-width:100px"></div>`).join("")}
-      <div class="row" style="margin-bottom:10px"><span style="flex:1">Redação <span class="small muted">(0–${redMax})</span></span><input type="number" min="0" max="${redMax}" value="0" id="nr" style="max-width:100px"></div></div>
+      <div class="row" style="margin-bottom:10px${semRed ? ";display:none" : ""}"><span style="flex:1">Redação <span class="small muted">(0–${redMax})</span></span><input type="number" min="0" max="${redMax}" value="0" id="nr" style="max-width:100px"></div></div>
     <div id="nres" style="margin-top:14px"></div></div>`;
   const calc = () => {
     const pts = {}; let obj = 0;
     for (const a of AREAS){ const inp = el.querySelector(`[data-n="${a.id}"]`); const v = Math.min(a.q, Math.max(0, Number(inp.value)||0)); pts[a.id] = v*a.peso; obj += v*a.peso; }
     const red = Math.min(redMax, Math.max(0, Number(el.querySelector("#nr").value)||0));
     const r = CONC.regra(pts), okRed = red >= redMin;
-    el.querySelector("#nres").innerHTML = `<div class="grid g3"><div class="stat"><div class="v">${obj}</div><div class="l">objetiva (de ${TOTAL_OBJ})</div></div><div class="stat"><div class="v">${red}</div><div class="l">redação (de ${redMax})</div></div><div class="stat"><div class="v">${obj+red}</div><div class="l">nota final (de ${TOTAL_OBJ+redMax})</div></div></div>
-      <div class="card" style="margin-top:14px"><ul class="list">${r.itens.map(([ok, t]) => `<li>${ok ? "✅" : "❌"} ${esc(t)}</li>`).join("")}<li>${okRed?"✅":"❌"} Redação ≥ ${redMin} pontos</li></ul>
-      <p class="small muted" style="margin-bottom:0">${r.ok&&okRed?"Dentro dos critérios de nota. A correção da redação ainda depende de estar dentro do limite de classificação do edital.":"Ajuste os valores para ver o que falta."}</p></div>`;
+    el.querySelector("#nres").innerHTML = `<div class="grid g3"><div class="stat"><div class="v">${obj}</div><div class="l">objetiva (de ${TOTAL_OBJ})</div></div>${semRed ? "" : `<div class="stat"><div class="v">${red}</div><div class="l">redação (de ${redMax})</div></div>`}<div class="stat"><div class="v">${obj+red}</div><div class="l">nota final (de ${TOTAL_OBJ+redMax})</div></div></div>
+      <div class="card" style="margin-top:14px"><ul class="list">${r.itens.map(([ok, t]) => `<li>${ok ? "✅" : "❌"} ${esc(t)}</li>`).join("")}${semRed ? "" : `<li>${okRed?"✅":"❌"} Redação ≥ ${redMin} pontos</li>`}</ul>
+      <p class="small muted" style="margin-bottom:0">${r.ok&&okRed?(semRed?"Dentro do mínimo. Os títulos só são avaliados para quem fica até 5× o número de vagas.":"Dentro dos critérios de nota. A correção da redação ainda depende de estar dentro do limite de classificação do edital."):"Ajuste os valores para ver o que falta."}</p></div>`;
   };
   el.querySelectorAll("input").forEach(i => i.oninput = calc); calc();
 };
 
 ROTAS["/sobre"] = el => {
   if (CID === "pmpe") return sobrePMPE(el);
+  if (CID === "chapreta") return sobreChapreta(el);
   const v = EDITAL.vagas;
   el.innerHTML = `<div class="container">
     ${header("Praticar · O concurso","UFBA 2026 — Assistente em Administração","Resumo do Edital de Abertura nº 007/2026, de 25/09/2026.")}
@@ -2189,6 +2263,42 @@ function sobrePMPE(el){
     <div class="card"><h2>Etapas depois da prova</h2><ul class="resumo small">
       <li>Exames médicos (25 a 29/06/2027) → Teste de Aptidão Física (23/07 a 01/08/2027) → Avaliação psicológica (29/08/2027) e entrevista → classificação (14/10/2027).</li>
       <li>Validade do concurso: 2 anos, prorrogável uma vez. Regime: Estatuto dos Policiais Militares de PE (Lei 6.783/1974).</li></ul></div></div>`;
+}
+function sobreChapreta(el){
+  el.innerHTML = `<div class="container">
+    ${header("Praticar · O concurso","Chã Preta-AL — Professor de Inglês (6º ao 9º ano)","Resumo do Edital de Concurso Público 001/2026 (republicado em 08/10/2026), executado pela FUNVAPI. Confira sempre o edital oficial.")}
+    <div class="grid g4"><div class="stat"><div class="v">2</div><div class="l">vagas de Inglês</div></div><div class="stat"><div class="v">R$ 2.870</div><div class="l">+ complemento do piso</div></div><div class="stat"><div class="v">30h</div><div class="l">semanais</div></div><div class="stat"><div class="v">06/12</div><div class="l">prova, à tarde</div></div></div>
+    <div class="grid g2" style="margin-top:14px">
+      <div class="card"><h2>A prova objetiva (14h às 18h)</h2><table><thead><tr><th>Disciplina</th><th class="n">Questões</th><th class="n">Peso</th><th class="n">Pontos</th></tr></thead><tbody>
+        ${AREAS_CHAPRETA.map(a => `<tr><td>${a.nome}</td><td class="n">${a.q}</td><td class="n">${a.peso}</td><td class="n">${a.q * a.peso}</td></tr>`).join("")}
+        <tr><td><b>Total</b></td><td class="n"><b>40</b></td><td></td><td class="n"><b>100</b></td></tr></tbody></table>
+        <p class="small muted" style="margin-bottom:0">4 alternativas (A–D), 1 correta. Não há redação.</p></div>
+      <div class="card"><h2>Para passar</h2><ul class="resumo small">
+        <li>Mínimo de <b>60 pontos</b> (60% de 100) na objetiva — sem arredondamento. Abaixo disso, eliminada.</li>
+        <li>Só os títulos de quem atinge os 60% e fica até <b>5 vezes o número de vagas</b> são avaliados.</li>
+        <li><b>Prova de títulos</b> (classificatória, até 5 pontos): especialização na área de Educação (360h) 0,25 a 0,50 · mestrado 0,75 · doutorado 1,5.</li>
+        <li>Os títulos são entregues <b>em envelope lacrado no dia da prova</b>.</li></ul></div></div>
+    <div class="card"><h2>Pontos-chave</h2><ul class="resumo small">
+      <li>Banca: <b>FUNVAPI</b> (www.funvapi.com.br) · taxa de R$ 121,80 (nível superior) · inscrições de 12/10 a 12/11/2026.</li>
+      <li>Requisito: licenciatura em Letras (Português/Inglês ou só Inglês).</li>
+      <li>Remuneração: R$ 2.870,09 + complemento do piso (Lei Federal 11.738/2008 e Lei Municipal 770/2026).</li>
+      <li>Prova em Chã Preta-AL. Resultado final previsto para 14/01/2027 e homologação em 18/01/2027.</li></ul></div></div>`;
+}
+function bancaChapreta(el){
+  el.innerHTML = `<div class="container">
+    ${header("Praticar · Banca", "Análise da banca: FUNVAPI", "Fundação Vale do Piauí — banca regional que organiza concursos de prefeituras e câmaras no Nordeste (PI, MA, AL, PE…). Confira provas anteriores de professor no site da banca.")}
+    <div class="grid g4"><div class="stat"><div class="v">A–D</div><div class="l">4 alternativas, 1 correta</div></div><div class="stat"><div class="v">40</div><div class="l">questões em 4 horas</div></div><div class="stat"><div class="v">60</div><div class="l">pontos para não ser eliminada</div></div><div class="stat"><div class="v">45</div><div class="l">pontos só em Inglês</div></div></div>
+    <div class="card" style="margin-top:14px"><h2>Perfil esperado</h2><ul class="resumo">
+      <li>Questões <b>curtas e diretas</b>: conceito, letra de lei e gramática aplicada. Pouca questão de \"interpretação extensa\".</li>
+      <li><b>Inglês</b>: textos curtos em inglês com perguntas de compreensão (skimming/scanning, referência de pronomes, falsos cognatos) + gramática (tempos verbais, modais, preposições, voz passiva, reported speech) + metodologia (métodos, BNCC, PCN).</li>
+      <li><b>Fundamentos da Educação</b>: LDB e CF/88 em letra de lei (percentuais, idades, carga horária), BNCC (competências gerais), tendências pedagógicas e avaliação.</li>
+      <li><b>Legislação</b>: só 5 questões, mas valem 3 pontos cada — LIMPE, estabilidade, improbidade, LAI e LGPD são os temas mais prováveis.</li>
+      <li>Português: 10 questões de peso 2 — gramática normativa clássica (crase, concordância, regência, pontuação) e interpretação.</li></ul></div>
+    <div class="card"><h2>Estratégia de pontos</h2><ul class="resumo small">
+      <li>Inglês (45) + Legislação (15) = 60 pontos: dominar essas duas já dá a nota mínima.</li>
+      <li>Cada erro em Inglês ou Legislação custa 3 pontos; em Português ou Fundamentos, 2.</li>
+      <li>Com 4 alternativas, eliminar duas deixa 50% de chance — nunca deixe em branco.</li>
+      <li>Treine com o simulado do app (proporção da prova) e cronometre: 4 horas sobram para 40 questões; use o tempo para reler os textos em inglês.</li></ul></div></div>`;
 }
 function renderOutroConcurso(){
   const outros = Object.values(CONCURSOS).filter(c => c.id !== CID);
