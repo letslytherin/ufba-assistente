@@ -1423,16 +1423,28 @@ ROTAS["/desempenho"] = el => {
     ${header("Minha Preparação · Desempenho","Análise de desempenho","Acerto por área, tempo de estudo e histórico de simulados.")}
     <div class="grid g3"><div class="stat"><div class="v">${Math.floor(totMin/60)}h${String(totMin%60).padStart(2,"0")}</div><div class="l">tempo total registrado</div></div>
       <div class="stat"><div class="v">${S.respostas.length}</div><div class="l">questões respondidas</div></div>
-      <div class="stat"><div class="v">${S.simulados.length}</div><div class="l">simulados feitos</div></div></div>
+      <div class="stat"><div class="v">${S.simulados.filter(simDoConcurso).length}</div><div class="l">simulados feitos</div></div></div>
     <div class="card" style="margin-top:14px"><h2>Minutos por dia (últimos 14 dias)</h2>
       <div class="chart-bars">${mins.map(m=>`<div class="b" title="${fmtData(m.d)}: ${m.m} min"><span>${m.m||""}</span><i style="height:${m.m/maxM*100}%;min-height:${m.m?3:0}px"></i><span>${fmtData(m.d,{day:"2-digit"})}</span></div>`).join("")}</div></div>
     <div class="card"><h2>Por área</h2><table><thead><tr><th>Área</th><th class="n">Questões</th><th class="n">Acerto</th><th class="n">Tempo</th><th class="n">Tópicos</th></tr></thead><tbody>
       ${AREAS.map(a=>{const s=st[a.id];const m=porArea.find(p=>p.a===a).m;return `<tr><td>${areaTag(a.id)}</td><td class="n">${s.resp}</td><td class="n">${pillTaxa(s.taxa)}</td><td class="n">${m} min</td><td class="n">${s.estudados}/${s.total}</td></tr>`}).join("")}
     </tbody></table></div>
-    <div class="card"><h2>Simulados</h2>${S.simulados.length?`<table><thead><tr><th>Data</th><th class="n">Acertos</th><th class="n">Nota proj. (0–90)</th><th>Situação</th></tr></thead><tbody>
-      ${S.simulados.slice().reverse().map(s=>`<tr><td>${fmtData(s.data,{day:"2-digit",month:"2-digit",year:"2-digit"})}</td><td class="n">${s.acertos}/${s.total}</td><td class="n">${s.proj.toFixed(1)}</td><td>${s.proj>=45?'<span class="pill pill-ok">acima do mínimo</span>':'<span class="pill pill-bad">abaixo de 45</span>'}</td></tr>`).join("")}</tbody></table>`:`<p class="muted">Nenhum simulado ainda. <a href="#/simulados">Fazer o primeiro →</a></p>`}</div>
+    ${histSimulados() || `<div class="card"><h2>Simulados</h2><p class="small muted" style="margin:0">Nenhum simulado ainda. <a href="#/simulados">Fazer um agora</a>.</p></div>`}
+    ${topicosFracos()}
   </div>`;
 };
+
+/* Tópicos em que mais erra (concurso ativo): pelo menos 3 respostas, ordenados pelo acerto mais baixo. */
+function topicosFracos(){
+  const m = new Map();
+  for (const r of S.respostas) { const a = AREA_ATIVA.has(r.a) ? r.a : AREA_DO_TOPICO[r.t]; if (!a || !r.t) continue;
+    const k = a + "|" + r.t, v = m.get(k) || { a, t: r.t, n: 0, ok: 0 }; v.n++; if (r.ok) v.ok++; m.set(k, v); }
+  const l = [...m.values()].filter(v => v.n >= 3 && v.ok / v.n < 0.7).sort((x, y) => x.ok / x.n - y.ok / y.n || y.n - x.n).slice(0, 12);
+  return `<div class="card"><h2>Onde preciso melhorar</h2>${l.length ? `<p class="small muted" style="margin-top:0">Tópicos com acerto abaixo de 70% (mínimo de 3 questões respondidas), do pior para o melhor.</p><ul class="list">
+    ${l.map(v => `<li style="flex-wrap:wrap;gap:6px"><span class="area-dot" style="background:${AREA[v.a]?.cor}"></span><span style="flex:1;min-width:200px">${esc(v.t)} <span class="small muted">— ${v.ok}/${v.n}</span></span>${pillTaxa(v.ok / v.n)}
+      <a class="btn btn-sm btn-secondary" href="#/resumo?a=${v.a}&t=${encodeURIComponent(v.t)}">Resumo</a><a class="btn btn-sm btn-secondary" href="#/questoes?a=${v.a}&t=${encodeURIComponent(v.t)}">Questões</a></li>`).join("")}</ul>`
+    : `<p class="small muted" style="margin:0">Ainda não há tópico com acerto abaixo de 70% (com pelo menos 3 questões respondidas).</p>`}</div>`;
+}
 
 ROTAS["/foco"] = el => {
   let dur = 25*60, restante = dur, rodando = false, timer = null, inicio = null;
@@ -2157,9 +2169,10 @@ ROTAS["/simulados"] = el => {
       <button class="btn btn-primary" id="start">Iniciar simulado</button>
       <p class="small muted" style="margin-bottom:0">Se o banco tiver menos questões que o necessário, o simulado usa o que houver — adicione questões de provas anteriores em <a href="#/questoes">Questões</a>.</p></div>
     ${prontos.length ? `<h3 style="margin-top:22px">Simulados prontos no estilo da banca</h3><p class="small muted" style="margin-top:0">Questões inéditas, que não aparecem no banco até você fazer o simulado. Depois de entregar, elas entram em Questões e os erros vão para Meus erros.</p>
-      ${prontos.map(p => { const ult = S.simulados.filter(x => x.sim === p.id).slice(-1)[0];
+      ${prontos.map(p => { const ult = S.simulados.filter(x => x.sim === p.id).slice(-1)[0], ultI = S.simulados.lastIndexOf(ult);
         return `<div class="card"><div class="row between" style="gap:10px;flex-wrap:wrap"><div style="flex:1;min-width:220px"><b>${esc(p.titulo)}</b><div class="small muted">${esc(p.desc)} · ${p.q.length} questões · ${p.min} min</div>${ult ? `<div class="small" style="margin-top:4px">Última vez: ${fmtData(ult.data)} — ${ult.acertos}/${ult.total}${p.completo ? ` · ${ult.proj.toFixed(1)} pts` : ""}</div>` : ""}</div>
-          <button class="btn ${ult ? "btn-secondary" : "btn-primary"}" data-sim="${p.id}">${ult ? "Refazer" : "Começar"}</button></div></div>`; }).join("")}` : ""}</div>`;
+          <div class="btn-row" style="margin:0">${ult ? `<button class="btn btn-primary" data-versim="${simChave(ult, ultI)}">Ver resultado e erros</button>` : ""}<button class="btn ${ult ? "btn-secondary" : "btn-primary"}" data-sim="${p.id}">${ult ? "Refazer" : "Começar"}</button></div></div></div>`; }).join("")}` : ""}
+    ${histSimulados()}</div>`;
   el.querySelectorAll("[data-sim]").forEach(b => b.onclick = () => { const p = prontos.find(x => x.id === b.dataset.sim); rodarSimulado(el, p.q, { titulo: p.titulo, min: p.min, parcial: !p.completo, sim: p.id }); });
   el.querySelector("#start").onclick = () => {
     const f = Number(el.querySelector("#sz").value);
@@ -2167,37 +2180,112 @@ ROTAS["/simulados"] = el => {
     rodarSimulado(el, qs);
   };
 };
+let TELA_PRESA = false; // simulado em andamento ou resultado aberto: a sincronização não redesenha a tela
+const simDoConcurso = s => !s.cid || s.cid === CID;
+const simChave = (s, i) => s.id || "i" + i;
 function rodarSimulado(el, qs, op = {}){
   const resp = {}; const t0 = Date.now(); const limite = op.min ? op.min * 60 : Math.round(qs.length * 3.2 * 60);
+  TELA_PRESA = true;
   el.innerHTML = `<div class="container" style="max-width:780px"><div class="row between" style="position:sticky;top:0;background:var(--bg-subtle);padding:10px 0;z-index:5"><b>${op.titulo ? esc(op.titulo) : "Simulado"} · ${qs.length} questões</b><span class="pill" id="st"></span></div><div id="sq"></div>
     <div class="btn-row"><button class="btn btn-primary" id="fim">Entregar e corrigir</button></div></div>`;
   const box = el.querySelector("#sq");
   qs.forEach((q,i) => { const h = document.createElement("div"); h.className="small muted"; h.style.margin="18px 0 6px"; h.textContent=`${i+1}.`; box.append(h, renderQuestao(q, (alt) => { resp[q.id] = alt; }, {semFeedback:true})); });
   const tick = setInterval(() => { const s = Math.round((Date.now()-t0)/1000); el.querySelector("#st").textContent = `⏱ ${Math.floor(s/60)}:${String(s%60).padStart(2,"0")} / ${Math.round(limite/60)} min`; }, 1000);
-  limpar = () => clearInterval(tick);
+  limpar = () => { clearInterval(tick); TELA_PRESA = false; };
   el.querySelector("#fim").onclick = () => {
     const semResp = qs.filter(q=>resp[q.id]==null).length;
     if (semResp && !confirm(`${semResp} questão(ões) sem resposta. Entregar mesmo assim?`)) return;
     clearInterval(tick);
-    const porArea = Object.fromEntries(AREAS.map(a=>[a.id,{n:0,ok:0}]));
-    qs.forEach(q => { const ok = resp[q.id] === q.c; porArea[q.a].n++; if (ok) porArea[q.a].ok++; if (resp[q.id]!=null) registrarResposta(q, ok); });
-    const proj = AREAS.reduce((s,a)=>{ const p = porArea[a.id]; return s + (p.n ? p.ok/p.n : 0) * a.q * a.peso; }, 0);
-    const regra = CONC.regra(Object.fromEntries(AREAS.map(a => { const p = porArea[a.id]; return [a.id, p.n ? p.ok / p.n * a.q * a.peso : 0]; })));
+    const pa = Object.fromEntries(AREAS.map(a=>[a.id,{n:0,ok:0}]));
+    qs.forEach(q => { const ok = resp[q.id] === q.c; if (pa[q.a]) { pa[q.a].n++; if (ok) pa[q.a].ok++; } if (resp[q.id]!=null) registrarResposta(q, ok); });
+    const proj = AREAS.reduce((s,a)=>{ const p = pa[a.id]; return s + (p.n ? p.ok/p.n : 0) * a.q * a.peso; }, 0);
     const acertos = qs.filter(q=>resp[q.id]===q.c).length;
     const min = Math.round((Date.now()-t0)/60000);
-    S.simulados.push({data:hoje(), acertos, total:qs.length, proj, min, ...(op.sim ? { sim: op.sim } : {})}); S.sessoes.push({data:hoje(), min, a:"ce"}); salvar();
-    el.innerHTML = `<div class="container" style="max-width:780px">${header("Simulado · Resultado", `${acertos}/${qs.length} acertos`)}
-      ${op.parcial ? `<div class="grid g3"><div class="stat"><div class="v">${pct(acertos / qs.length)}</div><div class="l">de acertos</div></div><div class="stat"><div class="v">${min} min</div><div class="l">tempo usado</div></div><div class="stat"><div class="v">${acertos / qs.length >= 0.6 ? "✓" : "✗"}</div><div class="l">${acertos / qs.length >= 0.6 ? "acima de 60%" : "abaixo de 60%"}</div></div></div>` : `<div class="grid g3"><div class="stat"><div class="v">${proj.toFixed(1)}</div><div class="l">nota projetada (0–${TOTAL_OBJ})</div></div><div class="stat"><div class="v">${min} min</div><div class="l">tempo usado</div></div>
-      <div class="stat"><div class="v">${regra.ok?"✓":"✗"}</div><div class="l">${regra.ok?"dentro dos mínimos do edital":"abaixo de algum mínimo do edital"}</div></div></div>
-      <div class="card small" style="margin-top:10px"><ul class="list">${regra.itens.map(([ok, t]) => `<li>${ok ? "✅" : "❌"} ${esc(t)}</li>`).join("")}</ul></div>`}
-      <div class="card" style="margin-top:14px"><table><thead><tr><th>Área</th><th class="n">Acertos</th><th class="n">%</th><th class="n">Projeção</th></tr></thead><tbody>
-      ${AREAS.filter(a => porArea[a.id].n).map(a=>{const p=porArea[a.id];return `<tr><td>${areaTag(a.id)}</td><td class="n">${p.ok}/${p.n}</td><td class="n">${p.n?pct(p.ok/p.n):"—"}</td><td class="n">${(p.n?p.ok/p.n*a.q*a.peso:0).toFixed(1)} / ${a.q*a.peso}</td></tr>`}).join("")}</tbody></table></div>
-      <h3>Gabarito comentado</h3>
-      ${qs.map((q,i)=>`<div class="card"><div class="small muted">${i+1}. ${AREA[q.a].nome}</div><div class="q-enun" style="margin-bottom:8px">${esc(q.e)}</div>
-        <div class="small">Sua resposta: <b style="color:${resp[q.id]===q.c?"var(--success)":"var(--danger)"}">${resp[q.id]!=null?"ABCDE"[resp[q.id]]:"—"}</b> · Gabarito: <b>${"ABCDE"[q.c]}) ${esc(q.o[q.c])}</b></div>${q.x?`<div class="expl">${esc(q.x)}</div>`:""}</div>`).join("")}
-      <div class="btn-row"><a class="btn btn-primary" href="#/erros">Ir para Meus erros</a><a class="btn btn-secondary" href="#/desempenho">Ver desempenho</a></div></div>`;
+    const reg = { id: "sim" + Date.now(), data: hoje(), acertos, total: qs.length, proj, min, cid: CID, titulo: op.titulo || "Simulado proporcional", parcial: !!op.parcial,
+      itens: qs.map(q => [q.id, resp[q.id] ?? null]), ...(op.sim ? { sim: op.sim } : {}) };
+    S.simulados.push(reg); S.sessoes.push({data:hoje(), min, a: CONC.areaForte || AREAS[0].id, tipo: "simulado"}); salvar();
+    mostrarResultadoSimulado(el, reg, qs);
   };
 }
+/* Questões de um simulado salvo: procura no banco inteiro, inclusive questões de outros concursos e de simulados prontos. */
+function questoesDoRegistro(reg){
+  const mapa = new Map([...Q_APP, ...Q_FUNVAPI, ...Q_SIMULADOS, ...todasQuestoes()].map(q => [q.id, q]));
+  return (reg.itens || []).map(([id, r]) => mapa.has(id) ? { q: paraAreaAtiva(mapa.get(id)), r } : null).filter(Boolean);
+}
+/* Simulados antigos (antes de guardar as respostas): reconstrói pelos registros de resposta do mesmo dia. */
+function reconstruirSimulado(reg){
+  const def = reg.sim && (window.SIMULADOS_CHAPRETA || []).find(p => p.id === reg.sim);
+  if (def && !reg.titulo) reg = { ...reg, titulo: def.titulo, parcial: !def.completo };
+  if (reg.itens) return reg;
+  const doDia = S.respostas.filter(r => r.data === reg.data);
+  let ids;
+  if (reg.sim) ids = [...new Set(doDia.filter(r => String(r.id).startsWith(reg.sim + "-")).map(r => r.id))];
+  else { const n = Math.min(doDia.length, reg.total); ids = doDia.slice(-n).map(r => r.id); }
+  if (!ids.length) return null;
+  const ultimo = new Map(doDia.map(r => [r.id, r]));
+  const mapa = new Map([...Q_APP, ...Q_FUNVAPI, ...Q_SIMULADOS, ...todasQuestoes()].map(q => [q.id, q]));
+  // sem a alternativa marcada: guarda só certo/errado (-1 = errou, sem saber qual marcou)
+  return { ...reg, aproximado: !reg.sim, itens: ids.filter(id => mapa.has(id)).map(id => [id, ultimo.get(id).ok ? mapa.get(id).c : -1]) };
+}
+function mostrarResultadoSimulado(el, reg0, qsAtuais){
+  const reg = reconstruirSimulado(reg0);
+  if (!reg) { el.innerHTML = `<div class="container" style="max-width:780px">${header("Simulado · Resultado", `${reg0.acertos}/${reg0.total} acertos`)}<div class="card">Este simulado foi feito antes de o app guardar as respostas. Os erros dele estão em <a href="#/erros">Meus erros</a>.</div></div>`; return; }
+  TELA_PRESA = true; limpar = () => { TELA_PRESA = false; };
+  const lista = qsAtuais ? qsAtuais.map(q => ({ q, r: reg.itens.find(([id]) => id === q.id)?.[1] ?? null })) : questoesDoRegistro(reg);
+  const ok = x => x.r === x.q.c, erros = lista.filter(x => !ok(x));
+  const pa = Object.fromEntries(AREAS.map(a => [a.id, { n: 0, ok: 0 }]));
+  lista.forEach(x => { if (pa[x.q.a]) { pa[x.q.a].n++; if (ok(x)) pa[x.q.a].ok++; } });
+  const regra = CONC.regra(Object.fromEntries(AREAS.map(a => { const p = pa[a.id]; return [a.id, p.n ? p.ok / p.n * a.q * a.peso : 0]; })));
+  const proj = AREAS.reduce((s, a) => { const p = pa[a.id]; return s + (p.n ? p.ok / p.n : 0) * a.q * a.peso; }, 0);
+  const acertos = lista.length - erros.length;
+  // onde melhorar: tópicos com erro, pesando pelo valor da questão
+  const porTopico = new Map();
+  lista.forEach(x => { const k = x.q.a + "|" + (x.q.t || "(sem tópico)"); const v = porTopico.get(k) || { a: x.q.a, t: x.q.t || "", n: 0, err: 0 }; v.n++; if (!ok(x)) v.err++; porTopico.set(k, v); });
+  const fracos = [...porTopico.values()].filter(v => v.err).sort((x, y) => (y.err * (AREA[y.a]?.peso || 1)) - (x.err * (AREA[x.a]?.peso || 1)) || y.err / y.n - x.err / x.n);
+  const piorArea = AREAS.filter(a => pa[a.id].n).map(a => ({ a, perda: (pa[a.id].n - pa[a.id].ok) / pa[a.id].n * a.q * a.peso })).sort((x, y) => y.perda - x.perda)[0];
+  const letra = (q, r) => r == null ? "—" : r < 0 ? "✗" : (q.o.length === 2 && q.o[0] === "Certo" ? (r ? "E" : "C") : "ABCDE"[r]);
+  el.innerHTML = `<div class="container" style="max-width:780px">${header("Simulado · Resultado", `${esc(reg.titulo || "Simulado")} — ${acertos}/${lista.length} acertos`, `Feito em ${fmtData(reg.data)}${reg.min ? ` · ${reg.min} min` : ""}${reg.aproximado ? " · resultado reconstruído pelas respostas do dia (pode incluir questões feitas fora do simulado)" : ""}.`)}
+    ${reg.parcial ? `<div class="grid g3"><div class="stat"><div class="v">${pct(acertos / Math.max(1, lista.length))}</div><div class="l">de acertos</div></div><div class="stat"><div class="v">${erros.length}</div><div class="l">erros para revisar</div></div><div class="stat"><div class="v">${acertos / Math.max(1, lista.length) >= 0.6 ? "✓" : "✗"}</div><div class="l">${acertos / Math.max(1, lista.length) >= 0.6 ? "acima de 60%" : "abaixo de 60%"}</div></div></div>`
+      : `<div class="grid g3"><div class="stat"><div class="v">${proj.toFixed(1)}</div><div class="l">nota projetada (0–${TOTAL_OBJ})</div></div><div class="stat"><div class="v">${erros.length}</div><div class="l">erros para revisar</div></div>
+      <div class="stat"><div class="v">${regra.ok?"✓":"✗"}</div><div class="l">${regra.ok?"dentro dos mínimos do edital":"abaixo de algum mínimo do edital"}</div></div></div>
+      <div class="card small" style="margin-top:10px"><ul class="list">${regra.itens.map(([o, t]) => `<li>${o ? "✅" : "❌"} ${esc(t)}</li>`).join("")}</ul></div>`}
+    <div class="card" style="margin-top:14px"><h2>Desempenho por área</h2><table><thead><tr><th>Área</th><th class="n">Acertos</th><th class="n">%</th><th class="n">Pontos</th></tr></thead><tbody>
+      ${AREAS.filter(a => pa[a.id].n).map(a => { const p = pa[a.id]; return `<tr><td>${areaTag(a.id)}</td><td class="n">${p.ok}/${p.n}</td><td class="n">${pillTaxa(p.ok / p.n)}</td><td class="n">${(p.ok / p.n * a.q * a.peso).toFixed(1)} / ${a.q * a.peso}</td></tr>`; }).join("")}</tbody></table>
+      ${piorArea && piorArea.perda > 0 ? `<p class="small" style="margin-bottom:0">Onde você mais perdeu pontos: <b>${esc(piorArea.a.nome)}</b> (−${piorArea.perda.toFixed(1)} pts${piorArea.a.peso > 1 ? `, cada questão vale ${piorArea.a.peso}` : ""}).</p>` : ""}</div>
+    <div class="card"><h2>Onde preciso melhorar</h2>${fracos.length ? `<p class="small muted" style="margin-top:0">Tópicos com erro, dos que mais custaram pontos para os que menos custaram. Estude o resumo e refaça as questões do tópico.</p><ul class="list">
+      ${fracos.map(v => `<li style="flex-wrap:wrap;gap:6px"><span class="area-dot" style="background:${AREA[v.a]?.cor}"></span><span style="flex:1;min-width:200px">${esc(v.t || "(sem tópico)")} <span class="small muted">— errou ${v.err} de ${v.n}</span></span>
+        ${v.t ? `<a class="btn btn-sm btn-secondary" href="#/resumo?a=${v.a}&t=${encodeURIComponent(v.t)}">Resumo</a><a class="btn btn-sm btn-secondary" href="#/questoes?a=${v.a}&t=${encodeURIComponent(v.t)}">Questões</a>` : ""}</li>`).join("")}</ul>` : `<p class="small" style="margin:0">Nenhum erro — ótimo! 🎉</p>`}</div>
+    <div class="btn-row">${erros.length ? `<button class="btn btn-primary" id="rerr">Refazer só os ${erros.length} erros</button>` : ""}<a class="btn btn-secondary" href="#/erros">Meus erros</a><a class="btn btn-secondary" href="#/desempenho">Desempenho geral</a></div>
+    <div class="row between" style="margin-top:18px"><h3 style="margin:0">Gabarito comentado</h3><label class="small"><input type="checkbox" id="soerr" ${erros.length ? "checked" : ""}> só os erros</label></div>
+    <div id="gab"></div></div>`;
+  const pintarGab = () => { const so = el.querySelector("#soerr").checked;
+    el.querySelector("#gab").innerHTML = lista.map((x, i) => (so && ok(x)) ? "" : `<div class="card"><div class="small muted">${i+1}. ${AREA[x.q.a]?.nome || ""}${x.q.t ? " · " + esc(x.q.t) : ""}</div><div class="q-enun" style="margin-bottom:8px">${esc(x.q.e)}</div>
+      <div class="small">Sua resposta: <b style="color:${ok(x)?"var(--success)":"var(--danger)"}">${letra(x.q, x.r)}${x.r != null && x.r >= 0 && x.q.o[x.r] ? ") " + esc(x.q.o[x.r]) : ""}</b> · Gabarito: <b>${letra(x.q, x.q.c)}) ${esc(x.q.o[x.q.c])}</b></div>${x.q.x?`<div class="expl">${esc(x.q.x)}</div>`:""}</div>`).join(""); };
+  el.querySelector("#soerr").onchange = pintarGab; pintarGab();
+  const rb = el.querySelector("#rerr");
+  if (rb) rb.onclick = () => {
+    el.innerHTML = `<div class="container" style="max-width:780px">${header("Simulado · Revisão", "Refazendo os erros", "Agora com correção na hora. Acertos e erros contam para Meus erros (cada erro volta em 1, 3, 7… dias).")}<div id="rv"></div>
+      <div class="btn-row"><button class="btn btn-secondary" id="volta">Voltar ao resultado</button></div></div>`;
+    const box = el.querySelector("#rv");
+    erros.forEach((x, i) => { const h = document.createElement("div"); h.className = "small muted"; h.style.margin = "18px 0 6px"; h.textContent = `${i + 1}/${erros.length} · ${x.q.t || ""}`; box.append(h, renderQuestao(x.q, alt => registrarResposta(x.q, alt === x.q.c))); });
+    el.querySelector("#volta").onclick = () => mostrarResultadoSimulado(el, reg0, qsAtuais);
+    window.scrollTo(0, 0);
+  };
+  window.scrollTo(0, 0);
+}
+function histSimulados(){
+  const regs = S.simulados.map((s, i) => [s, i]).filter(([s]) => simDoConcurso(s)).reverse();
+  if (!regs.length) return "";
+  return `<div class="card" style="margin-top:14px"><h2>Meus simulados</h2><table><thead><tr><th>Data</th><th>Simulado</th><th class="n">Acertos</th><th class="n">Nota</th><th></th></tr></thead><tbody>
+    ${regs.map(([s, i]) => {
+      return `<tr><td>${fmtData(s.data,{day:"2-digit",month:"2-digit"})}</td><td class="small">${esc(s.titulo || ((window.SIMULADOS_CHAPRETA || []).find(p => p.id === s.sim) || {}).titulo || "Simulado proporcional")}</td><td class="n">${s.acertos}/${s.total}</td>
+        <td class="n">${(s.parcial || (s.sim && !((window.SIMULADOS_CHAPRETA || []).find(p => p.id === s.sim) || {}).completo)) ? pct(s.acertos / s.total) : `${s.proj.toFixed(1)}/${TOTAL_OBJ}`}</td><td class="n"><button class="btn btn-sm btn-secondary" data-versim="${simChave(s, i)}">Ver</button></td></tr>`; }).join("")}</tbody></table></div>`;
+}
+function abrirSimuladoSalvo(id){
+  const reg = S.simulados.find(s => (s.id || "") === id) || S.simulados[Number(String(id).replace("i", ""))];
+  if (reg) mostrarResultadoSimulado(mainEl, reg);
+}
+document.addEventListener("click", e => { const b = e.target.closest && e.target.closest("[data-versim]"); if (b) { e.preventDefault(); abrirSimuladoSalvo(b.dataset.versim); } });
 
 ROTAS["/nota"] = el => {
   const E = EDITAL, semRed = !!CONC.semRedacao, redMax = semRed ? 0 : E.redMax || 60, redMin = semRed ? 0 : E.redMin || 30;
@@ -3316,7 +3404,7 @@ async function syncAgora(){
     if (mudouLocal) gravar();
     if (enviar) await gh("/gists/" + id, token, { method: "PATCH", body: JSON.stringify({ files: { [SYNC.arq]: { content: await syncCifrar(S, token) } } }) });
     lsSet(SYNC.base, String(S._t || 0)); lsSet(SYNC.quando, String(Date.now()));
-    if (mudouLocal) rotear();
+    if (mudouLocal) { if (TELA_PRESA) { const st = document.querySelector("#st") || null; if (st) st.title = "Progresso sincronizado"; } else rotear(); }
   } catch (e) {
     syncErro = e.message === "token" ? "O token foi recusado pelo GitHub (expirou ou não tem permissão de Gists)." : "Sem conexão com o GitHub agora; tento de novo mais tarde.";
     if (e.message === "token") lsSet(SYNC.gist, null);
