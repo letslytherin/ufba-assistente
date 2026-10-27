@@ -111,3 +111,15 @@ window.Q_CHAPRETA = [
 {a:"leg",t:"Estatuto dos Servidores, Lei Orgânica e processo administrativo de Chã Preta",e:"De acordo com a CF/88, são estáveis após ______ de efetivo exercício os servidores nomeados para cargo de provimento efetivo em virtude de concurso público.",o:["dois anos","três anos","cinco anos","um ano"],c:1,x:"Art. 41."},
 {a:"leg",t:"Estatuto dos Servidores, Lei Orgânica e processo administrativo de Chã Preta",e:"Compete aos Municípios, segundo a CF/88,",o:["legislar sobre direito penal.","legislar sobre assuntos de interesse local.","emitir moeda.","organizar as Forças Armadas."],c:1,x:"Art. 30, I."},
 ];
+
+/* Embaralha as alternativas de forma fixa (semente = id da questão), para o gabarito não se concentrar numa letra.
+   Questões cuja explicação cita letras (“A erra…”) ficam na ordem original. */
+window.Q_CHAPRETA = window.Q_CHAPRETA.map((q, i) => embaralharAlternativas(q, "QC" + i));
+function embaralharAlternativas(q, semente){
+  if (/(^|[\s(;.,“])[A-D](\s?=|:|\s(erra|acerta|e\s[A-D]|são|é|descreve)|,\s?[A-D]\b)/.test(q.x || "")) return q;
+  let h = 2166136261; for (const ch of semente) h = Math.imul(h ^ ch.charCodeAt(0), 16777619);
+  const rnd = () => { h = Math.imul(h ^ (h >>> 15), 2246822507); h = Math.imul(h ^ (h >>> 13), 3266489909); return ((h ^= h >>> 16) >>> 0) / 4294967296; };
+  const idx = q.o.map((_, i) => i); for (let i = idx.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [idx[i], idx[j]] = [idx[j], idx[i]]; }
+  return { ...q, o: idx.map(i => q.o[i]), c: idx.indexOf(q.c) };
+}
+

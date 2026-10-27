@@ -275,8 +275,11 @@ details.texto div{white-space:pre-line;margin-top:8px;line-height:1.7}
 <script src="resumos-assuntos.js?v=20260930"></script>
 <script src="resumos-pmpe.js?v=20260930"></script>
 <script src="questoes-pmpe.js?v=20260930"></script>
-<script src="resumos-chapreta.js?v=20261014"></script>
-<script src="questoes-chapreta.js?v=20261014"></script>
+<script src="resumos-chapreta.js?v=20261027"></script>
+<script src="questoes-chapreta.js?v=20261027"></script>
+<script src="questoes-funvapi.js?v=20261027"></script>
+<script src="simulados-chapreta.js?v=20261027"></script>
+<script src="funvapi-raiox.js?v=20261027"></script>
 <script src="videos.js?v=20261014"></script>
 <script src="podcasts.js?v=20260930e"></script>
 <script src="materiais-publicos.js?v=20260930"></script>
@@ -927,7 +930,9 @@ montarDadosLocais();
 const AREA_DO_TOPICO = Object.fromEntries(Object.entries(TOPICOS_PADRAO).flatMap(([a, l]) => l.map(n => [n, a])));
 const paraAreaAtiva = x => AREA_ATIVA.has(x.a) || !AREA_DO_TOPICO[x.t] ? x : { ...x, a: AREA_DO_TOPICO[x.t] };
 const Q_APP = [...Q_SEED, ...(window.Q_PMPE || []), ...(window.Q_CHAPRETA || [])].map((q,i)=>({...q,id:"s"+i, orig:"app"}));
-const todasQuestoes = () => { const rep = S.reportes || {}; return [...Q_APP, ...S.qExtras.map(q => ({...q, orig: String(q.id).startsWith("i") ? "importada" : "propria"})), ...Q_LOCAIS].map(paraAreaAtiva).filter(q => !rep[q.id] && AREA_ATIVA.has(q.a)); };
+const Q_FUNVAPI = (window.Q_FUNVAPI || []);
+const Q_SIMULADOS = (window.SIMULADOS_CHAPRETA || []).flatMap(s => s.q);
+const todasQuestoes = () => { const rep = S.reportes || {}, feitas = new Set(S.respostas.map(r => r.id)); return [...Q_APP, ...Q_FUNVAPI, ...Q_SIMULADOS.filter(q => feitas.has(q.id)), ...S.qExtras.map(q => ({...q, orig: String(q.id).startsWith("i") ? "importada" : "propria"})), ...Q_LOCAIS].map(paraAreaAtiva).filter(q => !rep[q.id] && AREA_ATIVA.has(q.a)); };
 // uma vez: respostas dadas com o gabarito antigo das questões corrigidas não contam
 (() => { const g = (window.CORRECOES_QUESTOES || {}).gabarito || {}; S._corrigidas = S._corrigidas || [];
   const novas = Object.keys(g).filter(id => !S._corrigidas.includes(id)); if (!novas.length) return;
@@ -2142,7 +2147,7 @@ ROTAS["/redacao"] = el => {
 
 /* ---------- Simulados ---------- */
 ROTAS["/simulados"] = el => {
-  const todas = todasQuestoes();
+  const todas = todasQuestoes(), prontos = (window.SIMULADOS_CHAPRETA || []).filter(p => p.cid === CID);
   const disp = Object.fromEntries(AREAS.map(a=>[a.id, todas.filter(q=>q.a===a.id).length]));
   el.innerHTML = `<div class="container" style="max-width:780px">
     ${header("Praticar · Simulados","Simulado proporcional",CONC.simDesc)}
@@ -2150,16 +2155,21 @@ ROTAS["/simulados"] = el => {
       <div class="field"><label>Tamanho</label><select id="sz"><option value="0.33">Mini — 20 questões (~25 min)</option><option value="0.5">Médio — 30 questões (~40 min)</option><option value="1">Completo — ${AREAS.reduce((x, a) => x + a.q, 0)} questões (se houver no banco)</option></select></div>
       <div class="field"><label>Banco disponível</label><div class="small muted" style="padding-top:8px">${AREAS.map(a=>`${a.nome.split(" ")[0]}: ${disp[a.id]}`).join(" · ")}</div></div></div>
       <button class="btn btn-primary" id="start">Iniciar simulado</button>
-      <p class="small muted" style="margin-bottom:0">Se o banco tiver menos questões que o necessário, o simulado usa o que houver — adicione questões de provas anteriores em <a href="#/questoes">Questões</a>.</p></div></div>`;
+      <p class="small muted" style="margin-bottom:0">Se o banco tiver menos questões que o necessário, o simulado usa o que houver — adicione questões de provas anteriores em <a href="#/questoes">Questões</a>.</p></div>
+    ${prontos.length ? `<h3 style="margin-top:22px">Simulados prontos no estilo da banca</h3><p class="small muted" style="margin-top:0">Questões inéditas, que não aparecem no banco até você fazer o simulado. Depois de entregar, elas entram em Questões e os erros vão para Meus erros.</p>
+      ${prontos.map(p => { const ult = S.simulados.filter(x => x.sim === p.id).slice(-1)[0];
+        return `<div class="card"><div class="row between" style="gap:10px;flex-wrap:wrap"><div style="flex:1;min-width:220px"><b>${esc(p.titulo)}</b><div class="small muted">${esc(p.desc)} · ${p.q.length} questões · ${p.min} min</div>${ult ? `<div class="small" style="margin-top:4px">Última vez: ${fmtData(ult.data)} — ${ult.acertos}/${ult.total}${p.completo ? ` · ${ult.proj.toFixed(1)} pts` : ""}</div>` : ""}</div>
+          <button class="btn ${ult ? "btn-secondary" : "btn-primary"}" data-sim="${p.id}">${ult ? "Refazer" : "Começar"}</button></div></div>`; }).join("")}` : ""}</div>`;
+  el.querySelectorAll("[data-sim]").forEach(b => b.onclick = () => { const p = prontos.find(x => x.id === b.dataset.sim); rodarSimulado(el, p.q, { titulo: p.titulo, min: p.min, parcial: !p.completo, sim: p.id }); });
   el.querySelector("#start").onclick = () => {
     const f = Number(el.querySelector("#sz").value);
     const qs = AREAS.flatMap(a => todas.filter(q=>q.a===a.id && q.o.length >= 4).sort(()=>Math.random()-.5).slice(0, Math.max(1, Math.round(a.q*f))));
     rodarSimulado(el, qs);
   };
 };
-function rodarSimulado(el, qs){
-  const resp = {}; const t0 = Date.now(); const limite = Math.round(qs.length * 3.2 * 60);
-  el.innerHTML = `<div class="container" style="max-width:780px"><div class="row between" style="position:sticky;top:0;background:var(--bg-subtle);padding:10px 0;z-index:5"><b>Simulado · ${qs.length} questões</b><span class="pill" id="st"></span></div><div id="sq"></div>
+function rodarSimulado(el, qs, op = {}){
+  const resp = {}; const t0 = Date.now(); const limite = op.min ? op.min * 60 : Math.round(qs.length * 3.2 * 60);
+  el.innerHTML = `<div class="container" style="max-width:780px"><div class="row between" style="position:sticky;top:0;background:var(--bg-subtle);padding:10px 0;z-index:5"><b>${op.titulo ? esc(op.titulo) : "Simulado"} · ${qs.length} questões</b><span class="pill" id="st"></span></div><div id="sq"></div>
     <div class="btn-row"><button class="btn btn-primary" id="fim">Entregar e corrigir</button></div></div>`;
   const box = el.querySelector("#sq");
   qs.forEach((q,i) => { const h = document.createElement("div"); h.className="small muted"; h.style.margin="18px 0 6px"; h.textContent=`${i+1}.`; box.append(h, renderQuestao(q, (alt) => { resp[q.id] = alt; }, {semFeedback:true})); });
@@ -2175,13 +2185,13 @@ function rodarSimulado(el, qs){
     const regra = CONC.regra(Object.fromEntries(AREAS.map(a => { const p = porArea[a.id]; return [a.id, p.n ? p.ok / p.n * a.q * a.peso : 0]; })));
     const acertos = qs.filter(q=>resp[q.id]===q.c).length;
     const min = Math.round((Date.now()-t0)/60000);
-    S.simulados.push({data:hoje(), acertos, total:qs.length, proj, min}); S.sessoes.push({data:hoje(), min, a:"ce"}); salvar();
+    S.simulados.push({data:hoje(), acertos, total:qs.length, proj, min, ...(op.sim ? { sim: op.sim } : {})}); S.sessoes.push({data:hoje(), min, a:"ce"}); salvar();
     el.innerHTML = `<div class="container" style="max-width:780px">${header("Simulado · Resultado", `${acertos}/${qs.length} acertos`)}
-      <div class="grid g3"><div class="stat"><div class="v">${proj.toFixed(1)}</div><div class="l">nota projetada (0–${TOTAL_OBJ})</div></div><div class="stat"><div class="v">${min} min</div><div class="l">tempo usado</div></div>
+      ${op.parcial ? `<div class="grid g3"><div class="stat"><div class="v">${pct(acertos / qs.length)}</div><div class="l">de acertos</div></div><div class="stat"><div class="v">${min} min</div><div class="l">tempo usado</div></div><div class="stat"><div class="v">${acertos / qs.length >= 0.6 ? "✓" : "✗"}</div><div class="l">${acertos / qs.length >= 0.6 ? "acima de 60%" : "abaixo de 60%"}</div></div></div>` : `<div class="grid g3"><div class="stat"><div class="v">${proj.toFixed(1)}</div><div class="l">nota projetada (0–${TOTAL_OBJ})</div></div><div class="stat"><div class="v">${min} min</div><div class="l">tempo usado</div></div>
       <div class="stat"><div class="v">${regra.ok?"✓":"✗"}</div><div class="l">${regra.ok?"dentro dos mínimos do edital":"abaixo de algum mínimo do edital"}</div></div></div>
-      <div class="card small" style="margin-top:10px"><ul class="list">${regra.itens.map(([ok, t]) => `<li>${ok ? "✅" : "❌"} ${esc(t)}</li>`).join("")}</ul></div>
+      <div class="card small" style="margin-top:10px"><ul class="list">${regra.itens.map(([ok, t]) => `<li>${ok ? "✅" : "❌"} ${esc(t)}</li>`).join("")}</ul></div>`}
       <div class="card" style="margin-top:14px"><table><thead><tr><th>Área</th><th class="n">Acertos</th><th class="n">%</th><th class="n">Projeção</th></tr></thead><tbody>
-      ${AREAS.map(a=>{const p=porArea[a.id];return `<tr><td>${areaTag(a.id)}</td><td class="n">${p.ok}/${p.n}</td><td class="n">${p.n?pct(p.ok/p.n):"—"}</td><td class="n">${(p.n?p.ok/p.n*a.q*a.peso:0).toFixed(1)} / ${a.q*a.peso}</td></tr>`}).join("")}</tbody></table></div>
+      ${AREAS.filter(a => porArea[a.id].n).map(a=>{const p=porArea[a.id];return `<tr><td>${areaTag(a.id)}</td><td class="n">${p.ok}/${p.n}</td><td class="n">${p.n?pct(p.ok/p.n):"—"}</td><td class="n">${(p.n?p.ok/p.n*a.q*a.peso:0).toFixed(1)} / ${a.q*a.peso}</td></tr>`}).join("")}</tbody></table></div>
       <h3>Gabarito comentado</h3>
       ${qs.map((q,i)=>`<div class="card"><div class="small muted">${i+1}. ${AREA[q.a].nome}</div><div class="q-enun" style="margin-bottom:8px">${esc(q.e)}</div>
         <div class="small">Sua resposta: <b style="color:${resp[q.id]===q.c?"var(--success)":"var(--danger)"}">${resp[q.id]!=null?"ABCDE"[resp[q.id]]:"—"}</b> · Gabarito: <b>${"ABCDE"[q.c]}) ${esc(q.o[q.c])}</b></div>${q.x?`<div class="expl">${esc(q.x)}</div>`:""}</div>`).join("")}
@@ -2298,7 +2308,22 @@ function bancaChapreta(el){
       <li>Inglês (45) + Legislação (15) = 60 pontos: dominar essas duas já dá a nota mínima.</li>
       <li>Cada erro em Inglês ou Legislação custa 3 pontos; em Português ou Fundamentos, 2.</li>
       <li>Com 4 alternativas, eliminar duas deixa 50% de chance — nunca deixe em branco.</li>
-      <li>Treine com o simulado do app (proporção da prova) e cronometre: 4 horas sobram para 40 questões; use o tempo para reler os textos em inglês.</li></ul></div></div>`;
+      <li>Treine com os <a href="#/simulados">simulados prontos no estilo FUNVAPI</a> e cronometre: 4 horas sobram para 40 questões; use o tempo para reler os textos em inglês.</li></ul></div>
+    ${raioXFunvapi()}</div>`;
+}
+function raioXFunvapi(){
+  const R = window.RAIOX_FUNVAPI; if (!R) return "";
+  const nQ = (window.Q_FUNVAPI || []).length, top = [...R.top].sort((a, b) => b.vezes - a.vezes);
+  const lista = arr => `<ul class="resumo small" style="margin:4px 0 0">${arr.map(x => `<li>${esc(x)}</li>`).join("")}</ul>`;
+  return `<h2 style="margin-top:26px">Raio-X da FUNVAPI: o que mais cai</h2>
+    <p class="small muted" style="margin-top:0">${esc(R.base)} As ${nQ} questões estão em <a href="#/questoes">Questões</a> (fonte “FUNVAPI”), com gabarito comentado.</p>
+    <div class="card"><h3 style="margin-top:0">Padrões da banca</h3>${lista(R.padroes)}</div>
+    ${top.map((x, i) => `<details class="card"${i < 3 ? " open" : ""}><summary style="cursor:pointer"><b>${i + 1}. ${esc(x.titulo)}</b> ${areaTag(x.area)} <span class="pill">${x.vezes} questões</span></summary>
+      <div class="grid g3" style="margin-top:10px;align-items:start">
+        <div><b class="small">📌 Resumo</b>${lista(x.resumo)}</div>
+        <div><b class="small">⚠️ Pegadinhas da banca</b>${lista(x.pegadinhas)}</div>
+        <div><b class="small">🧠 Para memorizar</b>${lista(x.dicas)}</div></div>
+      <div class="btn-row" style="margin-top:10px"><a class="btn btn-sm btn-secondary" href="#/resumo?a=${x.area}&t=${encodeURIComponent(x.t)}">Resumo completo</a><a class="btn btn-sm btn-secondary" href="#/questoes?a=${x.area}&t=${encodeURIComponent(x.t)}">Questões do tópico</a></div></details>`).join("")}`;
 }
 function renderOutroConcurso(){
   const outros = Object.values(CONCURSOS).filter(c => c.id !== CID);
