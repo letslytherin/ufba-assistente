@@ -280,12 +280,13 @@ details.texto div{white-space:pre-line;margin-top:8px;line-height:1.7}
 <script src="resumos-assuntos.js?v=20260930"></script>
 <script src="resumos-pmpe.js?v=20260930"></script>
 <script src="questoes-pmpe.js?v=20260930"></script>
-<script src="resumos-chapreta.js?v=20261027"></script>
+<script src="resumos-chapreta.js?v=20261028"></script>
 <script src="questoes-chapreta.js?v=20261027"></script>
 <script src="questoes-funvapi.js?v=20261027"></script>
 <script src="simulados-chapreta.js?v=20261027"></script>
 <script src="funvapi-raiox.js?v=20261027"></script>
 <script src="explica-simples.js?v=20261028"></script>
+<script src="edital-destrinchado.js?v=20261028"></script>
 <script src="videos.js?v=20261014"></script>
 <script src="podcasts.js?v=20260930e"></script>
 <script src="materiais-publicos.js?v=20260930"></script>
@@ -294,7 +295,7 @@ details.texto div{white-space:pre-line;margin-top:8px;line-height:1.7}
 <script src="questoes-publicas.js?v=20260930"></script>
 <script src="flashcards-locais.js?v=20260930"></script>
 <script src="flashcards-publicos.js?v=20260930"></script>
-<script src="flashcards-extra.js?v=20261014"></script>
+<script src="flashcards-extra.js?v=20261028"></script>
 <script>
 "use strict";
 /* =========================================================================
@@ -1019,7 +1020,7 @@ const NAV = [
     ["/inicio","Início","⌂"],["/hoje","Hoje","☀"],["/semana","Planejamento semanal","▦"],["/cronograma","Cronograma do edital","🗓"],["/prontidao","Prontidão","◎"],["/desempenho","Desempenho","📈"],["/foco","Modo foco","⏱"],
   ]},
   { s: "Estudar", items: [
-    ["/edital","Edital verticalizado","☰"],["/conteudo","Conteúdo (resumos)","📖"],["/anotacoes","Minhas anotações","📝"],["/mapas","Mapas mentais","🧠"],["/podcasts","Podcasts","🎧"],["/biblioteca","Seus materiais","📚"],["/questoes","Questões","✎"],["/flashcards","Flashcards","❐"],["/redacao","Redação","✍"],
+    ["/edital","Edital verticalizado","☰"],["/destrinchado","Edital destrinchado","🔬"],["/conteudo","Conteúdo (resumos)","📖"],["/anotacoes","Minhas anotações","📝"],["/mapas","Mapas mentais","🧠"],["/podcasts","Podcasts","🎧"],["/biblioteca","Seus materiais","📚"],["/questoes","Questões","✎"],["/flashcards","Flashcards","❐"],["/redacao","Redação","✍"],
   ]},
   { s: "Praticar", items: [
     ["/erros","Meus erros","⚠"],["/simulados","Simulados","⏲"],["/provas","Provas anteriores","📄"],["/banca","Análise da banca","🔎"],["/nota","Calculadora de nota","∑"],["/sobre","O concurso","ℹ"],
@@ -1031,7 +1032,7 @@ const mainEl = document.getElementById("main");
 const appEl = document.getElementById("app");
 
 function pintarNav(path){
-  document.getElementById("nav").innerHTML = NAV.map(g => `<div class="nav-title">${g.s}</div>` + g.items.filter(([p]) => !(CONC.semRedacao && p === "/redacao")).map(([p,l,i]) =>
+  document.getElementById("nav").innerHTML = NAV.map(g => `<div class="nav-title">${g.s}</div>` + g.items.filter(([p]) => !(CONC.semRedacao && p === "/redacao") && !(p === "/destrinchado" && !(window.EDITAL_DESTRINCHADO || {})[CID])).map(([p,l,i]) =>
     `<a class="nav-link${p===path?" active":""}" href="#${p}"${p===path?' aria-current="page"':""}><span class="ic">${i}</span><span>${l}</span></a>`).join("")).join("");
   document.getElementById("bottom-nav").innerHTML = BOTTOM.map(([p,l,i]) =>
     `<a class="${p===path?"active":""}" href="#${p}"><span class="ic">${i}</span>${l}</a>`).join("");
@@ -1057,6 +1058,7 @@ function ctxDaRota(path){
   if (path === "/questoes") return q.get("a") ? { a: q.get("a"), t: q.get("t") || "", tipo: "questões" } : null;
   if (path === "/redacao") return { a: "lp", t: "Redação", tipo: "redação" };
   if (path === "/conteudo" && q.get("a")) return { a: q.get("a"), t: "", tipo: "leitura" };
+  if (path === "/destrinchado") return { a: null, t: "", tipo: "leitura" };
   if (["/flashcards", "/erros", "/anotacoes"].includes(path)) return { a: null, t: "", tipo: path === "/erros" ? "revisão de erros" : path.slice(1) };
   return null; // demais telas não contam (planejamento, configurações, simulados, provas, foco…)
 }
@@ -1456,6 +1458,43 @@ function topicosFracos(){
       <a class="btn btn-sm btn-secondary" href="#/resumo?a=${v.a}&t=${encodeURIComponent(v.t)}">Resumo</a><a class="btn btn-sm btn-secondary" href="#/questoes?a=${v.a}&t=${encodeURIComponent(v.t)}">Questões</a></li>`).join("")}</ul>`
     : `<p class="small muted" style="margin:0">Ainda não há tópico com acerto abaixo de 70% (com pelo menos 3 questões respondidas).</p>`}</div>`;
 }
+
+/* Edital destrinchado: cada item do conteúdo programático com quanto cai, dicas da banca e o resumo completo. */
+ROTAS["/destrinchado"] = el => {
+  const D = (window.EDITAL_DESTRINCHADO || {})[CID];
+  if (!D) { el.innerHTML = `<div class="container">${header("Estudar · Edital", "Edital destrinchado", "Ainda não disponível para este concurso.")}</div>`; return; }
+  const FOGO = { 3: ["🔥🔥🔥", "cai muito", "var(--danger)"], 2: ["🔥🔥", "cai", "var(--warning)"], 1: ["🔥", "pode cair", "var(--muted)"] };
+  const selo = n => `<span class="pill" style="border-color:${FOGO[n][2]};color:${FOGO[n][2]}" title="${FOGO[n][1]}">${FOGO[n][0]} ${FOGO[n][1]}</span>`;
+  const est = t => { const tp = (S.topicos[D.find(d => d.itens.some(i => i.t.includes(t)))?.area] || []).find(x => x.nome === t); return tp && tp.estudado ? "✅" : "⬜"; };
+  const vid = t => ((window.VIDEOS_TOPICOS || {})[t] || [])[0];
+  const resumoCompleto = t => { const r = RA[t]; if (!r) return (RESUMOS[t] ? `<ul class="resumo small">${RESUMOS[t].map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : `<p class="small muted">Sem resumo.</p>`);
+    return Object.entries(r).map(([as, pts]) => `<h4 style="margin:12px 0 4px">${esc(as)}</h4><ul class="resumo small" style="margin:0">${pts.map(x => `<li>${esc(x)}</li>`).join("")}</ul>`).join(""); };
+  const todos = D.flatMap(d => d.itens.map(i => ({ ...i, area: d.area })));
+  const top = todos.filter(i => i.inc === 3);
+  const filtro = new URLSearchParams(location.hash.split("?")[1] || "").get("f") || "";
+  const card = (i, k) => `<details class="card" id="it-${k}" style="padding:12px 16px"><summary style="cursor:pointer;list-style:none"><div class="row between" style="gap:8px;flex-wrap:wrap"><b style="flex:1;min-width:220px">${esc(i.item)}</b>${selo(i.inc)}</div>
+      <div class="small muted" style="margin-top:4px">${i.t.map(t => `${est(t)} ${esc(t)}`).join(" · ")}</div></summary>
+    <div style="margin-top:10px">
+      <p class="small" style="margin:0 0 8px"><b>Quanto cai:</b> ${esc(i.porque)}</p>
+      <div style="padding:10px 12px;border-radius:10px;background:var(--accent-soft);border:1px solid var(--accent-soft-border)"><b class="small">🎯 Dicas para a banca</b><ul class="resumo small" style="margin:4px 0 0">${i.dicas.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>
+      ${i.extra ? `<div style="margin-top:8px"><b class="small">➕ O que o edital pede e vale saber</b><ul class="resumo small" style="margin:4px 0 0">${i.extra.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>` : ""}
+      ${i.t.map(t => { const E = (window.EXPLICA_SIMPLES || {})[t], v = vid(t);
+        return `<details class="texto" style="margin-top:10px"><summary>📖 Resumo completo — ${esc(t)}</summary><div>${resumoCompleto(t)}
+          ${E ? `<details class="eli5"><summary>🧸 Explica como se eu tivesse 3 anos</summary><div class="eli5-c"><p><b>${E.e} Imagine assim:</b> ${esc(E.analogia)}</p><p><b>⭐ Regrinha:</b> ${esc(E.regra)}</p><p><b>👀 Exemplo:</b> ${esc(E.exemplo)}</p><p><b>🧠 Truque:</b> ${esc(E.truque)}</p></div></details>` : ""}</div></details>
+        <div class="btn-row" style="margin-top:6px"><a class="btn btn-sm btn-secondary" href="#/resumo?a=${i.area}&t=${encodeURIComponent(t)}">Página do tópico</a><a class="btn btn-sm btn-secondary" href="#/mapa?a=${i.area}&t=${encodeURIComponent(t)}">Mapa mental</a><a class="btn btn-sm btn-secondary" href="#/questoes?a=${i.area}&t=${encodeURIComponent(t)}">Questões</a>${v ? `<a class="btn btn-sm btn-secondary" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener">▶ Aula</a>` : ""}</div>`; }).join("")}
+    </div></details>`;
+  let k = 0;
+  el.innerHTML = `<div class="container" style="max-width:900px">
+    ${header("Estudar · Edital", "Edital destrinchado", `Anexo IV do edital de ${CONC.nome}, item por item: quanto cai, dicas da banca e o resumo completo de cada tópico. “Quanto cai” é uma estimativa do app (provas de professor da FUNVAPI em Belo Jardim-PE e padrão de provas de professor), não estatística oficial.`)}
+    <div class="btn-row" style="margin-bottom:8px"><a class="btn btn-sm ${filtro ? "btn-secondary" : "btn-primary"}" href="#/destrinchado">Tudo</a><a class="btn btn-sm ${filtro === "3" ? "btn-primary" : "btn-secondary"}" href="#/destrinchado?f=3">Só 🔥🔥🔥 (o que mais cai)</a>${D.map(d => `<a class="btn btn-sm btn-secondary" href="#/destrinchado" data-ir="disc-${d.area}">${esc(d.disciplina.split(" — ")[0])}</a>`).join("")}</div>
+    <div class="card"><h2>🔥 O que mais cai (${top.length} itens)</h2><p class="small muted" style="margin-top:0">Comece por aqui: são os itens que, juntos, valem a maior parte da prova.</p><ol class="small" style="margin:0;padding-left:20px">${top.map(i => `<li>${areaTag(i.area)} ${esc(i.item)}</li>`).join("")}</ol></div>
+    ${D.map(d => `<h2 id="disc-${d.area}" style="margin-top:26px">${areaTag(d.area)} ${esc(d.disciplina)} <span class="small muted">· ${esc(d.resumoQ)}</span></h2>
+      <details class="texto"><summary>Texto do edital</summary><div class="small">${esc(d.edital)}</div></details>
+      <p class="small" style="margin:8px 0"><b>Como a banca cobra:</b> ${esc(d.como)}</p>
+      ${d.itens.map(i => ({ ...i, area: d.area })).filter(i => !filtro || String(i.inc) === filtro).map(i => card(i, k++)).join("")}`).join("")}
+  </div>`;
+  el.querySelectorAll("[data-ir]").forEach(a => a.onclick = e => { e.preventDefault(); document.getElementById(a.dataset.ir)?.scrollIntoView({ behavior: "smooth" }); });
+};
 
 ROTAS["/foco"] = el => {
   let dur = 25*60, restante = dur, rodando = false, timer = null, inicio = null;
