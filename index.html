@@ -203,6 +203,11 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
 .inc-alta{border-left:4px solid #e0763a}.inc-alta .tag-inc{background:#e0763a22;color:#c75f22}
 .inc-media{border-left:4px solid var(--border-strong)}
 .resumo li.destaque{background:var(--warning-soft, #fff4d6);border-radius:6px;padding:4px 8px;margin-left:-8px;list-style-position:inside}
+details.eli5{background:var(--accent-soft);border:1px solid var(--accent-soft-border);border-radius:var(--radius-md);padding:10px 14px;margin:10px 0 4px}
+details.eli5 summary{cursor:pointer;font-weight:600;font-size:.9rem}
+.eli5-c{margin-top:8px;font-size:.92rem;line-height:1.6}.eli5-c p{margin:6px 0}
+details.eli5-t{background:var(--surface);border:1px dashed var(--border);border-radius:var(--radius-md);padding:8px 12px;margin:8px 0}
+details.eli5-t summary{cursor:pointer;font-weight:600}
 details.texto{background:var(--bg-subtle);border:1px solid var(--border);border-radius:var(--radius-md);padding:10px 14px;margin:8px 0 4px}
 details.texto summary{cursor:pointer;font-weight:600;font-size:.85rem}
 details.texto div{white-space:pre-line;margin-top:8px;line-height:1.7}
@@ -280,6 +285,7 @@ details.texto div{white-space:pre-line;margin-top:8px;line-height:1.7}
 <script src="questoes-funvapi.js?v=20261027"></script>
 <script src="simulados-chapreta.js?v=20261027"></script>
 <script src="funvapi-raiox.js?v=20261027"></script>
+<script src="explica-simples.js?v=20261028"></script>
 <script src="videos.js?v=20261014"></script>
 <script src="podcasts.js?v=20260930e"></script>
 <script src="materiais-publicos.js?v=20260930"></script>
@@ -500,7 +506,7 @@ const CONCURSOS = {
   chapreta: {
     id: "chapreta", nome: "Chã Preta", marca: "Chã Preta · Inglês", sub: "Edital 001/2026 · Professor de Inglês",
     titulo: "Chã Preta-AL 2026 · Professor de Inglês (6º ao 9º)", edital: EDITAL_CHAPRETA, areas: AREAS_CHAPRETA, datas: DATAS_CHAPRETA, topicos: TOPICOS_CHAPRETA,
-    areaForte: "ing", horasProva: "4h", site: "www.funvapi.com.br", semRedacao: true,
+    areaForte: "ing", horasProva: "4h", site: "www.funvapi.com.br", semRedacao: true, alternativas: 4,
     provaSub: "Prova objetiva (40 questões, A–D) + títulos", pesoNota: "Inglês vale 3 pts/questão (45 dos 100 pontos) e Legislação também 3 pts/questão. É preciso fazer 60 pontos para não ser eliminado.",
     aviso: "Anexo IV do Edital 001/2026 (republicado) da Prefeitura de Chã Preta-AL — nível superior e Professor 6º ao 9º ano – Inglês. Tópicos com o mesmo nome dos da UFBA compartilham o seu progresso.",
     cronoDesc: "Anexo IX — Cronograma de execução do Edital 001/2026 (republicado em 08/10/2026). Pode ser alterado — acompanhe www.funvapi.com.br.",
@@ -932,7 +938,12 @@ const paraAreaAtiva = x => AREA_ATIVA.has(x.a) || !AREA_DO_TOPICO[x.t] ? x : { .
 const Q_APP = [...Q_SEED, ...(window.Q_PMPE || []), ...(window.Q_CHAPRETA || [])].map((q,i)=>({...q,id:"s"+i, orig:"app"}));
 const Q_FUNVAPI = (window.Q_FUNVAPI || []);
 const Q_SIMULADOS = (window.SIMULADOS_CHAPRETA || []).flatMap(s => s.q);
-const todasQuestoes = () => { const rep = S.reportes || {}, feitas = new Set(S.respostas.map(r => r.id)); return [...Q_APP, ...Q_FUNVAPI, ...Q_SIMULADOS.filter(q => feitas.has(q.id)), ...S.qExtras.map(q => ({...q, orig: String(q.id).startsWith("i") ? "importada" : "propria"})), ...Q_LOCAIS].map(paraAreaAtiva).filter(q => !rep[q.id] && AREA_ATIVA.has(q.a)); };
+/* Questão que depende de um texto, tirinha ou trecho que não veio na extração: não serve para estudar. */
+const RX_DEPENDE = /\b(d?o texto|n?o texto|do trecho|no trecho|texto acima|texto abaixo|do poema|no poema|da tirinha|na tirinha|do autor|o autor|a autora|da charge|na charge|do quadrinho|linhas? \d|\(l\.|par[áa]grafo|segundo o texto|de acordo com o texto|o narrador|a crônica|o cronista|da reportagem|da not[íi]cia|do artigo|na fala|da fala|o enunciador|the text|the passage|the author|in the text|according to the text)/i;
+const RX_CITACAO = /[“"«][^”"»]{30,}[”"»]/;
+const questaoIncompleta = q => !q.txt && (!!q.aviso || (q.e.length < 400 && (q.a === "lp" || q.a === "ing") && !RX_CITACAO.test(q.e) &&
+  (RX_DEPENDE.test(q.e) || (q.t === "Compreensão e interpretação de textos" && q.e.length < 170 && !/[“"«]/.test(q.e)))));
+const todasQuestoes = () => { const rep = S.reportes || {}, feitas = new Set(S.respostas.map(r => r.id)); return [...Q_APP, ...Q_FUNVAPI, ...Q_SIMULADOS.filter(q => feitas.has(q.id)), ...S.qExtras.map(q => ({...q, orig: String(q.id).startsWith("i") ? "importada" : "propria"})), ...(S.mostrarIncompletas ? Q_LOCAIS : Q_LOCAIS.filter(q => !questaoIncompleta(q)))].map(paraAreaAtiva).filter(q => !rep[q.id] && AREA_ATIVA.has(q.a)); };
 // uma vez: respostas dadas com o gabarito antigo das questões corrigidas não contam
 (() => { const g = (window.CORRECOES_QUESTOES || {}).gabarito || {}; S._corrigidas = S._corrigidas || [];
   const novas = Object.keys(g).filter(id => !S._corrigidas.includes(id)); if (!novas.length) return;
@@ -1499,13 +1510,24 @@ ROTAS["/edital"] = el => {
 };
 
 /* ---------- Questões ---------- */
+/* Explicação bem simples para um erro: o que marcou × o certo, por quê, e o cartão do tópico (comparação, regra, exemplo, truque, mini-teste). */
+function explicaSimplesHTML(q, marcada, aberto){
+  const E = (window.EXPLICA_SIMPLES || {})[q.t], L = i => (q.o.length === 2 && q.o[0] === "Certo") ? (i ? "E" : "C") : "ABCDE"[i];
+  const resumo1 = !E && (RA[q.t] ? Object.values(RA[q.t]).flat()[0] : (RESUMOS[q.t] || [])[0]);
+  return `<details class="eli5"${aberto ? " open" : ""}><summary>🧸 Me explica como se eu tivesse 3 anos</summary><div class="eli5-c">
+    ${marcada != null && marcada >= 0 && marcada !== q.c ? `<p><b>Você escolheu ${L(marcada)}</b>: “${esc(q.o[marcada])}”<br><b>A certa é ${L(q.c)}</b>: “${esc(q.o[q.c])}”</p>` : `<p><b>A certa é ${L(q.c)}</b>: “${esc(q.o[q.c])}”</p>`}
+    ${q.x ? `<p><b>Por quê, em uma frase:</b> ${esc(q.x)}</p>` : ""}
+    ${E ? `<p><b>${E.e} Imagine assim:</b> ${esc(E.analogia)}</p><p><b>⭐ A regrinha:</b> ${esc(E.regra)}</p><p><b>👀 Olha um exemplo:</b> ${esc(E.exemplo)}</p><p><b>🧠 Truque para não esquecer:</b> ${esc(E.truque)}</p>
+      <details class="eli5-t"><summary>🎯 Mini-teste: ${esc(E.teste.p)}</summary><p>${esc(E.teste.r)}</p></details>` : resumo1 ? `<p><b>⭐ A regrinha:</b> ${esc(resumo1)}</p>` : ""}
+    <p class="small muted" style="margin-bottom:0"><b>Plano para não errar de novo:</b> 1) leia a regrinha em voz alta · 2) faça o mini-teste sem olhar · 3) explique para alguém (ou para você mesma) com as suas palavras · 4) esta questão volta em Meus erros amanhã, depois em 3 e 7 dias${q.t ? ` · 5) se quiser mais, leia o <a href="#/resumo?a=${q.a}&t=${encodeURIComponent(q.t)}">resumo do tópico</a>` : ""}.</p></div></details>`;
+}
 function renderQuestao(q, onResp, opts={}){
   if (!opts.semFeedback && q && AREA[q.a]) autoContexto({ a: q.a, t: q.t || "", tipo: "questões" });
   const wrap = document.createElement("div"); wrap.className = "card";
   const verLink = q.link && typeof linkLocal === "function" && (q.link.startsWith("provas-locais/") || (LOCAL && linkLocal(q.link, q.pg) !== "#")) ? `<a href="${esc(q.link.startsWith("provas-locais/") ? q.link + (q.pg ? "#page=" + q.pg : "") : linkLocal(q.link, q.pg))}" target="_blank">ver ${q.orig === "apostila" ? "na apostila" : q.orig === "simulado" ? "no simulado" : "na prova"}${q.pg ? " (p. " + q.pg + ")" : ""} ↗</a>` : "";
   wrap.innerHTML = `<div class="row between small"><span>${areaTag(q.a)}</span><span class="muted">${esc(q.t||"")}</span></div>
     ${q.fonte ? `<div class="small muted" style="margin-top:4px">📄 ${esc(q.fonte)} ${verLink}</div>` : ""}
-    ${q.aviso ? `<div class="small" style="margin-top:6px;padding:6px 10px;border-radius:8px;background:var(--warning-soft)">⚠️ Esta questão depende de um texto ou de destaque (sublinhado/negrito) que não veio na extração — ${verLink || "consulte o material original"}.</div>` : ""}
+    ${(q.aviso || (q.orig && q.orig !== "app" && q.orig !== "simulado" && !String(q.id).startsWith("BJ") && questaoIncompleta(q))) ? `<div class="small" style="margin-top:6px;padding:6px 10px;border-radius:8px;background:var(--warning-soft)">⚠️ Esta questão depende de um texto ou de destaque (sublinhado/negrito) que não veio na extração — ${verLink || "consulte o material original"}.</div>` : ""}
     ${q.nota ? `<div class="small" style="margin-top:6px;padding:6px 10px;border-radius:8px;background:var(--bg-subtle)">ℹ️ ${esc(q.nota)}</div>` : ""}
     ${q.txt?`<details class="texto" ${opts.semFeedback?"":"open"}><summary>Texto-base</summary><div class="small">${esc(q.txt)}</div></details>`:""}
     <div class="q-enun">${esc(q.e)}</div>
@@ -1514,7 +1536,7 @@ function renderQuestao(q, onResp, opts={}){
     const i = Number(b.dataset.i); const ok = i === q.c;
     if (opts.semFeedback){ wrap.querySelectorAll(".alt").forEach(x=>x.classList.remove("sel")); b.classList.add("sel"); onResp(i, ok); return; }
     wrap.querySelectorAll(".alt").forEach(x => { x.disabled = true; const xi = Number(x.dataset.i); if (xi===q.c) x.classList.add("ok"); else if (xi===i) x.classList.add("bad"); });
-    wrap.querySelector(".fb").innerHTML = `<div class="expl"><b>${ok?"✓ Correta":"✗ Incorreta — gabarito "+(q.o.length === 2 && q.o[0] === "Certo" ? q.o[q.c] : "ABCDE"[q.c])}.</b> ${esc(q.x||"")}</div>
+    wrap.querySelector(".fb").innerHTML = `<div class="expl"><b>${ok?"✓ Correta":"✗ Incorreta — gabarito "+(q.o.length === 2 && q.o[0] === "Certo" ? q.o[q.c] : "ABCDE"[q.c])}.</b> ${esc(q.x||"")}</div>${ok ? "" : explicaSimplesHTML(q, i)}
       ${q.orig && q.orig !== "app" ? `<button class="btn btn-ghost btn-sm" data-rep style="margin-top:6px">⚑ Esta questão tem erro</button>` : ""}`;
     const br = wrap.querySelector("[data-rep]");
     if (br) br.onclick = () => {
@@ -2176,7 +2198,9 @@ ROTAS["/simulados"] = el => {
   el.querySelectorAll("[data-sim]").forEach(b => b.onclick = () => { const p = prontos.find(x => x.id === b.dataset.sim); rodarSimulado(el, p.q, { titulo: p.titulo, min: p.min, parcial: !p.completo, sim: p.id }); });
   el.querySelector("#start").onclick = () => {
     const f = Number(el.querySelector("#sz").value);
-    const qs = AREAS.flatMap(a => todas.filter(q=>q.a===a.id && q.o.length >= 4).sort(()=>Math.random()-.5).slice(0, Math.max(1, Math.round(a.q*f))));
+    const nota = q => (TOPICOS_PADRAO[q.a] || []).includes(q.t) * 2 + (CONC.alternativas ? (q.o.length === CONC.alternativas) : 0) + Math.random();
+    const qs = AREAS.flatMap(a => todas.filter(q=>q.a===a.id && q.o.length >= 4 && (!q.t || !(TOPICOS_PADRAO[a.id] || []).length || (TOPICOS_PADRAO[a.id] || []).includes(q.t)))
+      .map(q => [nota(q), q]).sort((x, y) => y[0] - x[0]).map(x => x[1]).slice(0, Math.max(1, Math.round(a.q*f))).sort(() => Math.random() - .5));
     rodarSimulado(el, qs);
   };
 };
@@ -2255,12 +2279,17 @@ function mostrarResultadoSimulado(el, reg0, qsAtuais){
     <div class="card"><h2>Onde preciso melhorar</h2>${fracos.length ? `<p class="small muted" style="margin-top:0">Tópicos com erro, dos que mais custaram pontos para os que menos custaram. Estude o resumo e refaça as questões do tópico.</p><ul class="list">
       ${fracos.map(v => `<li style="flex-wrap:wrap;gap:6px"><span class="area-dot" style="background:${AREA[v.a]?.cor}"></span><span style="flex:1;min-width:200px">${esc(v.t || "(sem tópico)")} <span class="small muted">— errou ${v.err} de ${v.n}</span></span>
         ${v.t ? `<a class="btn btn-sm btn-secondary" href="#/resumo?a=${v.a}&t=${encodeURIComponent(v.t)}">Resumo</a><a class="btn btn-sm btn-secondary" href="#/questoes?a=${v.a}&t=${encodeURIComponent(v.t)}">Questões</a>` : ""}</li>`).join("")}</ul>` : `<p class="small" style="margin:0">Nenhum erro — ótimo! 🎉</p>`}</div>
+    ${fracos.some(v => (window.EXPLICA_SIMPLES || {})[v.t]) ? `<div class="card"><h2>🧸 Estratégia para os seus erros</h2><p class="small muted" style="margin-top:0">Um tópico por vez, do que mais custou pontos. Para cada um: leia a comparação, decore a regrinha, veja o exemplo e faça o mini-teste. Depois toque em “Refazer só os erros”.</p>
+      ${fracos.filter(v => (window.EXPLICA_SIMPLES || {})[v.t]).slice(0, 8).map((v, i) => { const E = window.EXPLICA_SIMPLES[v.t];
+        return `<details class="eli5"${i === 0 ? " open" : ""}><summary>${i + 1}. ${E.e} ${esc(v.t)} <span class="small muted">(errou ${v.err})</span></summary><div class="eli5-c">
+          <p><b>Imagine assim:</b> ${esc(E.analogia)}</p><p><b>⭐ A regrinha:</b> ${esc(E.regra)}</p><p><b>👀 Exemplo:</b> ${esc(E.exemplo)}</p><p><b>🧠 Truque:</b> ${esc(E.truque)}</p>
+          <details class="eli5-t"><summary>🎯 Mini-teste: ${esc(E.teste.p)}</summary><p>${esc(E.teste.r)}</p></details></div></details>`; }).join("")}</div>` : ""}
     <div class="btn-row">${erros.length ? `<button class="btn btn-primary" id="rerr">Refazer só os ${erros.length} erros</button>` : ""}<a class="btn btn-secondary" href="#/erros">Meus erros</a><a class="btn btn-secondary" href="#/desempenho">Desempenho geral</a></div>
     <div class="row between" style="margin-top:18px"><h3 style="margin:0">Gabarito comentado</h3><label class="small"><input type="checkbox" id="soerr" ${erros.length ? "checked" : ""}> só os erros</label></div>
     <div id="gab"></div></div>`;
   const pintarGab = () => { const so = el.querySelector("#soerr").checked;
     el.querySelector("#gab").innerHTML = lista.map((x, i) => (so && ok(x)) ? "" : `<div class="card"><div class="small muted">${i+1}. ${AREA[x.q.a]?.nome || ""}${x.q.t ? " · " + esc(x.q.t) : ""}</div><div class="q-enun" style="margin-bottom:8px">${esc(x.q.e)}</div>
-      <div class="small">Sua resposta: <b style="color:${ok(x)?"var(--success)":"var(--danger)"}">${letra(x.q, x.r)}${x.r != null && x.r >= 0 && x.q.o[x.r] ? ") " + esc(x.q.o[x.r]) : ""}</b> · Gabarito: <b>${letra(x.q, x.q.c)}) ${esc(x.q.o[x.q.c])}</b></div>${x.q.x?`<div class="expl">${esc(x.q.x)}</div>`:""}</div>`).join(""); };
+      <div class="small">Sua resposta: <b style="color:${ok(x)?"var(--success)":"var(--danger)"}">${letra(x.q, x.r)}${x.r != null && x.r >= 0 && x.q.o[x.r] ? ") " + esc(x.q.o[x.r]) : ""}</b> · Gabarito: <b>${letra(x.q, x.q.c)}) ${esc(x.q.o[x.q.c])}</b></div>${x.q.x?`<div class="expl">${esc(x.q.x)}</div>`:""}${ok(x) ? "" : explicaSimplesHTML(x.q, x.r)}</div>`).join(""); };
   el.querySelector("#soerr").onchange = pintarGab; pintarGab();
   const rb = el.querySelector("#rerr");
   if (rb) rb.onclick = () => {
@@ -2454,12 +2483,15 @@ ROTAS["/config"] = el => {
       <div class="field"><label>Link (https://…)</label><input type="url" id="lurl" placeholder="https://drive.google.com/…"></div>
       <button class="btn btn-primary" id="ladd">Adicionar link</button> <span class="small muted" id="lmsg"></span>
       <ul class="list" id="llista" style="margin-top:12px">${(S.linksNuvem || []).map(l => `<li><span style="flex:1"><a href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${esc(l.nome)}</a><br><span class="small muted">${esc(l.t)}</span></span><button class="btn btn-ghost btn-sm" data-ldel="${esc(l.id)}">Remover</button></li>`).join("") || '<li class="small muted">Nenhum link cadastrado.</li>'}</ul></div>
+    <div class="card"><h2>Questões sem texto-base</h2><p class="small muted">${Q_LOCAIS.filter(questaoIncompleta).length} questões das apostilas dependem de um texto, tirinha ou trecho que não veio na extração. Elas ficam fora das listas e dos simulados.</p>
+      <label class="small"><input type="checkbox" id="cfinc" ${S.mostrarIncompletas ? "checked" : ""}> Mostrar mesmo assim (com aviso e link para o material original)</label></div>
     ${Object.keys(S.reportes || {}).length ? `<div class="card"><h2>⚑ Questões retiradas</h2><p class="small muted">Você marcou ${Object.keys(S.reportes).length} questão(ões) com erro; elas não aparecem nas listas nem nos simulados.</p><button class="btn btn-secondary" id="represt">Devolver todas ao banco</button></div>` : ""}
     <div class="card"><h2>Backup</h2><div class="btn-row"><button class="btn btn-secondary" id="exp">Exportar (.json)</button><label class="btn btn-secondary">Importar<input type="file" id="imp" accept=".json" hidden></label><button class="btn btn-danger" id="reset">Apagar tudo</button></div></div></div>`;
   const $ = s => el.querySelector(s);
   $("#csave").onclick = () => { S.dataProva = $("#cd").value || EDITAL.dataProva; S.horasDia = Number($("#ch").value)||2; S.diasSemana = Math.min(7,Math.max(1,Number($("#cs").value)||6)); salvar(); pintarNav("/config"); $("#cmsg").textContent = "✓ Salvo"; };
   ligarCofre(el); ligarSync(el);
   $("#concil").onchange = e => { S.conciliar = e.target.checked; S.planoHoje = null; salvar(); };
+  $("#cfinc").onchange = e => { S.mostrarIncompletas = e.target.checked; salvar(); };
   if ($("#represt")) $("#represt").onclick = () => { S.reportes = {}; salvar(); rotear(); };
   $("#ladd").onclick = () => {
     const nome = $("#lnome").value.trim(), url = $("#lurl").value.trim(), t = $("#ltop").value;
